@@ -1,0 +1,158 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "com.herojoneslabs.fleethub.announcements",
+  "title": "FleetHub - Announcements",
+  "description": "Announcement feed and behavior settings for FleetHub. Preference domain: com.herojoneslabs.fleethub.announcements \u2014 deploy as its own Jamf Pro Application & Custom Settings profile. Visibility of the Announcements module itself is gated by the access domain's roles; the ui domain's showAnnouncements switch can hide it further.",
+  "type": "object",
+  "properties": {
+    "configurationVersion": {
+      "type": "string",
+      "title": "Configuration Version",
+      "description": "Schema/profile version stamp (informational \u2014 logged, nothing else reads it).",
+      "default": "1.1"
+    },
+    "announcementsEnabled": {
+      "type": "boolean",
+      "title": "Announcements Enabled",
+      "description": "Master switch for the announcements feature. False hides and empties it.",
+      "default": true
+    },
+    "refreshInterval": {
+      "type": "integer",
+      "title": "Refresh Interval (min)",
+      "description": "How often to check for announcement updates, in minutes. 0 = manual refresh only.",
+      "default": 60,
+      "minimum": 0,
+      "maximum": 1440
+    },
+    "allowLocalFile": {
+      "type": "boolean",
+      "title": "Allow Local File Source",
+      "description": "Allow loading announcements from the machine-wide local JSON file. Testing convenience only \u2014 keep false in production.",
+      "default": false
+    },
+    "allowUserDismiss": {
+      "type": "boolean",
+      "title": "Allow User Dismiss",
+      "description": "Allow users to dismiss dismissible announcements.",
+      "default": true
+    },
+    "showUnreadBadge": {
+      "type": "boolean",
+      "title": "Show Unread Badge",
+      "description": "Show the unread-count badge on the sidebar row.",
+      "default": true
+    },
+    "announcements": {
+      "type": "array",
+      "title": "Announcements",
+      "description": "The list of announcements to display.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "ID",
+            "description": "Unique identifier. Read/dismissed state is tracked per id, so reusing an id resurfaces old state.",
+            "minLength": 1
+          },
+          "title": {
+            "type": "string",
+            "title": "Title",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": "Body text. Supports basic markdown.",
+            "minLength": 1,
+            "maxLength": 5000
+          },
+          "type": {
+            "type": "string",
+            "title": "Type",
+            "description": "Category \u2014 sets the icon and color. Default: info.",
+            "enum": [
+              "info",
+              "warning",
+              "critical",
+              "success",
+              "maintenance",
+              "update"
+            ],
+            "default": "info"
+          },
+          "priority": {
+            "type": "string",
+            "title": "Priority",
+            "description": "Sort priority. Default: normal.",
+            "enum": [
+              "low",
+              "normal",
+              "high",
+              "urgent"
+            ],
+            "default": "normal"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At",
+            "description": "Publish date, ISO 8601. Absent = now."
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Expires At",
+            "description": "Expiration date, ISO 8601. Absent = never expires."
+          },
+          "dismissible": {
+            "type": "boolean",
+            "title": "Dismissible",
+            "description": "Whether users may dismiss this announcement (also requires allowUserDismiss).",
+            "default": true
+          },
+          "requiredReading": {
+            "type": "boolean",
+            "title": "Required Reading",
+            "description": "Mark as required reading \u2014 cannot be dismissed until acknowledged.",
+            "default": false
+          },
+          "actionURL": {
+            "type": "string",
+            "format": "uri",
+            "title": "Action URL",
+            "description": "URL opened by the action button. Absent = no button."
+          },
+          "actionLabel": {
+            "type": "string",
+            "title": "Action Label",
+            "description": "Action button label.",
+            "default": "Learn More",
+            "maxLength": 50
+          },
+          "targetPlatforms": {
+            "type": "array",
+            "title": "Target Platforms",
+            "description": "Limit this announcement to specific platforms. Absent = all platforms.",
+            "items": {
+              "type": "string",
+              "enum": [
+                "macOS",
+                "iOS",
+                "iPadOS",
+                "visionOS"
+              ]
+            }
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "message"
+        ]
+      }
+    }
+  }
+}

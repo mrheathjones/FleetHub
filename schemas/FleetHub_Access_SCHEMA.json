@@ -1,0 +1,216 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "com.herojoneslabs.fleethub.access",
+  "title": "FleetHub - Access",
+  "description": "Role-capability configuration for FleetHub. Preference domain: com.herojoneslabs.fleethub.access \u2014 deploy as its own Jamf Pro Application & Custom Settings profile, scoped to all Macs running FleetHub. Every capability (modules, device actions, cleanup, export) is defined by the `roles` block \u2014 nothing is hardcoded in the app. FAIL-CLOSED: no roles block, or an unmatched role name, grants nothing. Role names come from the Entra token's roles claim (Entra sign-in) or the `role` key (MDM mode); matching multiple roles grants the union. Scope variants granting destructive actions to the same Macs as write-capable credentials profiles. Note: managed-preference plists are world-readable on disk.",
+  "type": "object",
+  "properties": {
+    "configurationVersion": {
+      "type": "string",
+      "title": "Configuration Version",
+      "description": "Schema/profile version stamp (informational \u2014 the app logs it, nothing else reads it).",
+      "default": "3.0"
+    },
+    "role": {
+      "type": "string",
+      "title": "Role Name (MDM sign-in mode only)",
+      "description": "Role name used only when Entra sign-in is not configured. Must exactly match (case-sensitive) the `name` of one entry in `roles` below. Ignored entirely when signIn.method=entra. Absent, blank, or unmatched = user signs in to an empty app (fail-closed). Deliver one profile variant per Mac population.",
+      "examples": [
+        "FleetHub.Support"
+      ]
+    },
+    "roles": {
+      "type": "array",
+      "title": "Role Definitions (capability sets)",
+      "description": "The capability source of truth \u2014 a list of admin-named capability sets. Name matching is exact and case-sensitive: in Entra mode against the token's app-role values, in MDM mode against the `role` key. A user matching several entries gets the union of their capabilities. FAIL-CLOSED: an absent block or unmatched name grants nothing (Entra mode refuses sign-in; MDM mode shows an empty app). Unknown ids in a role's lists are ignored, so newer profiles deploy safely to older builds. Entries sharing a name are unioned; entries without a name are skipped. See Deployment/sample.mobileconfig for a working example.",
+      "items": {
+        "type": "object",
+        "title": "Role Definition",
+        "description": "The capability set granted by one role name. Lists are unioned across a user's matched roles; an omitted list grants nothing of that kind.",
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Role Name",
+            "description": "Admin-chosen role name \u2014 required. Must exactly match (case-sensitive) an Entra app-role value or the `role` key above."
+          },
+          "modules": {
+            "type": "array",
+            "title": "Modules (sidebar / route ids)",
+            "description": "Sidebar module ids this role may see and open. Absent or empty = none. Array order IS the sidebar order (except `settings`, which is pinned below the divider). Multi-role users get one merged list, walked in the order roles are authored here, first appearance wins. Unknown ids are skipped, so newer profiles deploy safely to older builds. Pair `cleanup` with cleanupActions below to make that module useful. `myDevices` is the read-only self-service view of the signed-in user's OWN devices \u2014 it grants no actions and is safe to give to everyone.",
+            "items": {
+              "type": "string",
+              "title": "Module ID",
+              "enum": [
+                "dashboard",
+                "devices",
+                "myDevices",
+                "announcements",
+                "logs",
+                "reports",
+                "cleanup",
+                "settings"
+              ]
+            },
+            "default": []
+          },
+          "deviceTabs": {
+            "type": "array",
+            "title": "Devices-View Tabs (for this role)",
+            "description": "Extra tab ids this role may open inside the Devices module (requires `devices` in modules). Absent or empty = base device list only. Array order is the tab order; same multi-role union rule as modules. `abmLookup` needs the core domain's appleBusinessManager block; `prestage` pairs with allowedPrestages below. Unknown ids are skipped.",
+            "items": {
+              "type": "string",
+              "title": "Tab ID",
+              "enum": [
+                "abmLookup",
+                "prestage"
+              ]
+            },
+            "default": []
+          },
+          "computerActions": {
+            "type": "array",
+            "title": "Allowed Computer Actions \u2014 usable by THIS ROLE",
+            "description": "Computer device-action ids this role may see and run. An action not listed here is hidden and blocked. Unioned across matched roles; absent or empty = none. Labels/icons are cosmetic and live in the ui domain. Unknown ids are skipped.",
+            "items": {
+              "type": "string",
+              "title": "Action ID",
+              "enum": [
+                "sendBlankPush",
+                "restart",
+                "restartSilent",
+                "shutdown",
+                "returnToService",
+                "enableRemoteDesktop",
+                "disableRemoteDesktop",
+                "enableBluetooth",
+                "disableBluetooth",
+                "viewFileVaultKey",
+                "viewLocalAdminPassword",
+                "screenShare",
+                "ssh",
+                "unlockUserAccount",
+                "wipe",
+                "abmAssign",
+                "abmUnassign",
+                "assignPreStage",
+                "moveToSite"
+              ]
+            },
+            "default": []
+          },
+          "mobileDeviceActions": {
+            "type": "array",
+            "title": "Allowed Mobile Device Actions \u2014 usable by THIS ROLE",
+            "description": "Mobile-device action ids this role may run. Today only `moveToSite` has a UI in the mobile device detail view (Move to Site, gated additionally by allowedSites); the others (sendBlankPush, restart, shutdown, wipe) are forward-looking and render nothing yet. Absent or empty = none.",
+            "items": {
+              "type": "string",
+              "title": "Action ID",
+              "enum": [
+                "moveToSite",
+                "sendBlankPush",
+                "restart",
+                "shutdown",
+                "wipe"
+              ]
+            },
+            "default": []
+          },
+          "cleanupActions": {
+            "type": "array",
+            "title": "Allowed Cleanup Sub-Actions (for this role)",
+            "description": "Cleanup sub-actions this role may run. Absent or empty = none, even when modules includes `cleanup` \u2014 grant both to make the module useful. deleteFromProtect requires the core domain's jamfProtect block; deleteRecord and unmanage are destructive \u2014 pair with write-capable credentials scoping.",
+            "items": {
+              "type": "string",
+              "title": "Cleanup Action ID",
+              "enum": [
+                "unmanage",
+                "addToGroup",
+                "moveToSite",
+                "deleteFromProtect",
+                "deleteRecord"
+              ]
+            },
+            "default": []
+          },
+          "allowedMdmServers": {
+            "type": "array",
+            "title": "Allowed MDM Servers (ABM assign / unassign)",
+            "description": "ABM MDM server names this role may target with abmAssign/abmUnassign. Each entry must match the ABM serverName exactly (case-sensitive); the reserved literal `all` grants every server. Absent or empty = those actions are inert (fail-closed). Unioned across matched roles. Typical admin role: [\"all\"].",
+            "items": {
+              "type": "string",
+              "title": "ABM Server Name (or `all`)"
+            },
+            "default": []
+          },
+          "allowedPrestages": {
+            "type": "array",
+            "title": "Allowed PreStages (Pre-Stage tab + prestage-on-assign + Assign to PreStage action)",
+            "description": "Jamf PreStage displayNames this role may select \u2014 in the Pre-Stage tab, the prestage-on-assign step, and the assignPreStage action. Each entry must match a displayName exactly (case-sensitive); the reserved literal `all` grants every PreStage. Absent or empty = none offered (fail-closed). Unioned across matched roles.",
+            "items": {
+              "type": "string",
+              "title": "PreStage Display Name (or `all`)"
+            },
+            "default": []
+          },
+          "allowedSites": {
+            "type": "array",
+            "title": "Allowed Sites (Move to Site action)",
+            "description": "Jamf Pro site IDs this role may move a device INTO with the moveToSite action — gates BOTH the computer and mobile-device Move to Site flows. Each entry must be a site ID (the numeric id, NOT the display name — sites get renamed, ids do not); the reserved literal `all` grants every site Jamf returns. The picker always shows the site's display name. Absent or empty = the moveToSite action is hidden even when listed in computerActions or mobileDeviceActions (fail-closed). Unioned across matched roles. Typical admin role: [\"all\"]; support role: a curated list like [\"12\",\"17\",\"23\"].",
+            "items": {
+              "type": "string",
+              "title": "Site ID (or `all`)"
+            },
+            "default": []
+          },
+          "allowPrestageOnAssign": {
+            "type": "boolean",
+            "title": "Offer PreStage Registration After ABM Assign",
+            "description": "Whether abmAssign may offer the optional PreStage registration step after a successful assignment. Offered PreStages come from allowedPrestages. Absent = false (fail-closed). OR'd across matched roles.",
+            "default": false
+          },
+          "returnToServiceOptions": {
+            "type": "object",
+            "title": "Return to Service \u2014 post-erase cleanup (for this role)",
+            "description": "Post-erase cleanup steps for the returnToService action. The erase always runs first and always waits for ERASE_DEVICE acknowledgment; only the cleanup steps are configurable. Both default true (full decommission). OR'd across matched roles.",
+            "properties": {
+              "deleteJamfRecord": {
+                "type": "boolean",
+                "title": "Delete Jamf Pro Record",
+                "description": "Remove the computer record from Jamf Pro after the erase is acknowledged.",
+                "default": true
+              },
+              "deleteEntraObject": {
+                "type": "boolean",
+                "title": "Delete Entra Device Object",
+                "description": "Delete the device object from Microsoft Entra after the erase is acknowledged, so the device can re-enroll cleanly.",
+                "default": true
+              }
+            },
+            "additionalProperties": false
+          },
+          "allowExport": {
+            "type": "boolean",
+            "title": "Allow Export / Download",
+            "description": "Whether this role may extract data out of the app. Gates every export surface: the Reports export menu, both Cleanup export menus, and the Logs Export CSV button. Absent = false (fail-closed). OR'd across matched roles.",
+            "default": false
+          },
+          "allowScorecardDiagnostics": {
+            "type": "boolean",
+            "title": "Allow Health Scorecard Diagnostics",
+            "default": false,
+            "description": "Whether this role sees the scorecard's coverage diagnostics: which devices no card measures, targets matching nothing, and the Scope IDs inspector. These name sites, groups and device counts the rest of the console does not expose, so it is off unless granted. OR'd across roles. Users who have it get a show/hide toggle on the scorecard."
+          },
+          "jamfApiRoleName": {
+            "type": "string",
+            "title": "Jamf API Role Name",
+            "description": "Name of the Jamf Pro API Role attached to the personal API client of everyone who holds this role. Every app function runs as that client, so this is what limits the role's holders in Jamf Pro itself (the lists above only decide what the app shows them). Give it exactly the privileges this role's functions need. Leave empty to use the Core profile's Required Jamf API Role Name. A person holding several roles gets every named Jamf role. Changing this, or a person's roles, re-syncs their client at their next sign-in or launch."
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "additionalProperties": false
+      }
+    }
+  }
+}

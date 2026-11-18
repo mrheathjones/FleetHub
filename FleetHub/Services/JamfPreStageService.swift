@@ -1,0 +1,741 @@
+//
+//  JamfPreStageService.swift
+//  FleetHub
+//
+//  Jamf Pro PreStage enrollment + Inventory Preload client for the
+//  Pre-Stage tab (and the prestage-on-assign step). Master-credential
+//  OAuth per the ComputerInventoryService pattern.
+//
+//  API facts this file is built on (Jamf Pro OpenAPI 11.30.0):
+//    • /api/v3/computer-prestages pages via page/page-size with a
+//      { totalCount, results } envelope; prestage id is a STRING.
+//    • /api/v2/computer-prestages/scope returns
+//      { serialsByPrestageId: { SERIAL: prestageId } } — the schema says
+//      values are strings but Jamf's own example shows bare ints, so the
+//      decode accepts both.
+//    • Scope mutations (POST {id}/scope, POST {id}/scope/delete-multiple)
+//      take { serialNumbers, versionLock }. A 200 returns the scope WITH
+//      ITS FRESH versionLock (no re-read needed between chained writes);
+//      409 is an optimistic-lock conflict (re-read, retry); 400 means one
+//      or more serials are NOT VALID to Jamf — for a device just assigned
+//      in ABM that is the "not synced yet" state, and it is TERMINAL
+//      until Jamf's ~2-minute ADE sync runs. Never lock-retry a 400.
+//    • Inventory Preload supports RSQL (filter=serialNumber=="X");
+//      deviceType is the string "Computer" in bodies.
+//
+
+import Foundation
+import Combine
+
+// MARK: - Models
+
+struct JamfPreStage: Identifiable, Hashable {
+    let id: String
+    let displayName: String
+}
+
+enum PreStageError: LocalizedError {
+    case invalidURL
+    case invalidResponse
+    case httpError(Int, String)
+    /// Scope POST returned 400 — Jamf does not (yet) consider the serial
+    /// a valid ADE device. For a serial just assigned in ABM this clears
+    /// on its own once Jamf's ADE sync (roughly every two minutes) runs.
+    case serialNotEligible(String)
+    case conflictRetriesExhausted(String)
+    case prestageNotFound(String)
+    /// A move failed after the remove leg but the rollback restored the
+    /// previous scope — net effect: nothing changed.
+    case moveRolledBack(previous: String, underlying: String)
+    /// A move failed after the remove leg AND the rollback failed — the
+    /// serial currently belongs to NO PreStage and must be re-registered.
+    case leftUnscoped(previous: String, underlying: String)
+    /// The caller's stillAuthorized closure reported the grant revoked
+    /// mid-flow (eligibility retries can span minutes).
+    case authorizationRevoked
+
+    var errorDescription: String? {
+        switch self {
+        case .invalidURL:
+            return "Invalid Jamf Pro URL."
+        case .invalidResponse:
+            return "Invalid response from Jamf Pro."
+        case .httpError(let code, let message):
+            return "Jamf Pro request failed (\(code)): \(message)"
+        case .serialNotEligible(let serial):
+            return "Jamf Pro does not yet recognize serial \(serial) as an Automated Device Enrollment device. If it was just assigned to the MDM server in Apple Business Manager, Jamf's ADE sync (roughly every two minutes) has not picked it up yet — try again shortly."
+        case .conflictRetriesExhausted(let prestageId):
+            return "PreStage \(prestageId) kept changing while the update was being applied (optimistic-lock conflicts). Try again."
+        case .prestageNotFound(let name):
+            return "No PreStage named \(name) exists in Jamf Pro."
+        case .moveRolledBack(let previous, let underlying):
+            return "Assigning the new PreStage failed (\(underlying)). The device was restored to its previous PreStage (id \(previous)) — nothing has changed. Try again."
+        case .leftUnscoped(let previous, let underlying):
+            return "IMPORTANT: the device was removed from its previous PreStage (id \(previous)) but could not be added to the new one (\(underlying)), and restoring it also failed. The device currently belongs to NO PreStage — register it again before its next enrollment."
+        case .authorizationRevoked:
+            return "Your grant no longer permits this PreStage registration — it was revoked while the operation was waiting."
+        }
+    }
+}
+
+// MARK: - Service
+
+final class JamfPreStageService: ObservableObject {
+
+    static let shared = JamfPreStageService()
+    private init() {}
+
+    private var jamfURL: String {
+        MDMConfigurationManager.shared.configuration.jamfURL
+    }
+
+    private let maxConflictRetries = 3
+
+    // MARK: - Auth
+
+    /// Attribution: PreStage register/assign and Inventory Preload run on
+    /// the per-user credential (fail-closed) when the profile routes the
+    /// `prestage` scope to the operator; otherwise the shared master session.
+    private func getBearerToken() async throws -> String {
+        try await JamfTokenProvider.token(for: .prestage)
+    }
+
+    private func request(
+        _ method: String,
+        path: String,
+        body: Data? = nil,
+        timeout: TimeInterval = NetworkTuning.connectionTimeout
+    ) async throws -> (Data, HTTPURLResponse) {
+        guard let url = URL(string: "\(jamfURL)\(path)") else {
+            throw PreStageError.invalidURL
+        }
+        let token = try await getBearerToken()
+
+        var request = URLRequest(url: url)
+        request.httpMethod = method
+        request.timeoutInterval = timeout
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        if let body {
+            request.httpBody = body
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        }
+
+        let (data, response) = try await JamfTransport.data(for: request)
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw PreStageError.invalidResponse
+        }
+        return (data, httpResponse)
+    }
+
+    // MARK: - PreStages (v3)
+
+    /// Every computer PreStage, paged, sorted by display name.
+    func fetchPreStages() async throws -> [JamfPreStage] {
+        struct Page: Codable {
+            struct Result: Codable {
+                let id: String
+                let displayName: String?
+            }
+            let totalCount: Int
+            let results: [Result]
+        }
+
+        var prestages: [JamfPreStage] = []
+        var page = 0
+        let pageSize = 100
+
+        while true {
+            let (data, response) = try await request(
+                "GET",
+                path: "/api/v3/computer-prestages?page=\(page)&page-size=\(pageSize)",
+                timeout: NetworkTuning.requestTimeout
+            )
+            guard response.statusCode == 200 else {
+                throw PreStageError.httpError(response.statusCode,
+                                              String(data: data, encoding: .utf8) ?? "Unknown error")
+            }
+            let decoded = try JSONDecoder().decode(Page.self, from: data)
+            prestages.append(contentsOf: decoded.results.map {
+                JamfPreStage(id: $0.id, displayName: $0.displayName ?? $0.id)
+            })
+            page += 1
+            if decoded.results.isEmpty || page * pageSize >= decoded.totalCount { break }
+        }
+
+        return prestages.sorted {
+            $0.displayName.localizedCaseInsensitiveCompare($1.displayName) == .orderedAscending
+        }
+    }
+
+    // MARK: - Scope (v2)
+
+    /// serial → prestageId across every PreStage. Jamf's schema declares
+    /// the map values as strings but its own example shows ints — decode
+    /// both rather than betting on either.
+    func fetchAllScopes() async throws -> [String: String] {
+        struct ScopeMap: Decodable {
+            let serialsByPrestageId: [String: StringOrInt]
+        }
+        struct StringOrInt: Decodable {
+            let value: String
+            init(from decoder: Decoder) throws {
+                let container = try decoder.singleValueContainer()
+                if let s = try? container.decode(String.self) {
+                    value = s
+                } else if let i = try? container.decode(Int.self) {
+                    value = String(i)
+                } else {
+                    throw DecodingError.typeMismatch(
+                        String.self,
+                        .init(codingPath: decoder.codingPath,
+                              debugDescription: "prestage id neither string nor int")
+                    )
+                }
+            }
+        }
+
+        let (data, response) = try await request(
+            "GET", path: "/api/v2/computer-prestages/scope",
+            timeout: NetworkTuning.requestTimeout
+        )
+        guard response.statusCode == 200 else {
+            throw PreStageError.httpError(response.statusCode,
+                                          String(data: data, encoding: .utf8) ?? "Unknown error")
+        }
+        let decoded = try JSONDecoder().decode(ScopeMap.self, from: data)
+        return decoded.serialsByPrestageId.mapValues { $0.value }
+    }
+
+    /// The serial's current PreStage id, or nil when unscoped. Serials in
+    /// the scope map are uppercase; compare case-insensitively anyway.
+    func currentPreStageId(forSerial serial: String) async throws -> String? {
+        let normalized = serial.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
+        let scopes = try await fetchAllScopes()
+        if let direct = scopes[normalized] { return direct }
+        return scopes.first { $0.key.uppercased() == normalized }?.value
+    }
+
+    private struct ScopeResponse: Codable {
+        let versionLock: Int
+    }
+
+    private func currentVersionLock(prestageId: String) async throws -> Int {
+        let (data, response) = try await request(
+            "GET", path: "/api/v2/computer-prestages/\(prestageId)/scope"
+        )
+        guard response.statusCode == 200 else {
+            throw PreStageError.httpError(response.statusCode,
+                                          String(data: data, encoding: .utf8) ?? "Unknown error")
+        }
+        return try JSONDecoder().decode(ScopeResponse.self, from: data).versionLock
+    }
+
+    private enum ScopeMutation: String {
+        case add = "scope"
+        case remove = "scope/delete-multiple"
+    }
+
+    /// One scope mutation with optimistic-lock retries. 409 → re-read
+    /// versionLock and retry (bounded). 400 semantics differ by leg:
+    /// on ADD the serial is not (yet) a valid ADE device — TERMINAL,
+    /// never retried; on REMOVE it means the serial is already not in
+    /// that scope (raced with another admin) — the desired end state
+    /// holds, so it is treated as success.
+    private func mutateScope(
+        prestageId: String,
+        serial: String,
+        mutation: ScopeMutation
+    ) async throws {
+        struct Body: Encodable {
+            let serialNumbers: [String]
+            let versionLock: Int
+        }
+
+        var versionLock = try await currentVersionLock(prestageId: prestageId)
+
+        for attempt in 1...maxConflictRetries {
+            let body = try JSONEncoder().encode(Body(serialNumbers: [serial], versionLock: versionLock))
+            let (data, response) = try await request(
+                "POST",
+                path: "/api/v2/computer-prestages/\(prestageId)/\(mutation.rawValue)",
+                body: body
+            )
+
+            switch response.statusCode {
+            case 200...299:
+                return
+            case 400 where mutation == .remove:
+                AppLog.notice("ℹ️ JamfPreStageService: serial \(serial) already absent from PreStage \(prestageId) scope (400 on remove)")
+                return
+            case 400:
+                throw PreStageError.serialNotEligible(serial)
+            case 409:
+                AppLog.notice("⚠️ JamfPreStageService: versionLock conflict on PreStage \(prestageId) (attempt \(attempt))")
+                versionLock = try await currentVersionLock(prestageId: prestageId)
+                continue
+            default:
+                throw PreStageError.httpError(response.statusCode,
+                                              String(data: data, encoding: .utf8) ?? "Unknown error")
+            }
+        }
+        throw PreStageError.conflictRetriesExhausted(prestageId)
+    }
+
+    /// Assigns a serial to a PreStage scope, moving it out of its current
+    /// PreStage first when necessary (a serial lives in at most one
+    /// scope). Idempotent: already-in-target is a no-op success.
+    ///
+    /// A move is two mutations with a hazard between them: if the remove
+    /// commits and the add then fails, the serial is UNSCOPED. That state
+    /// is never allowed to masquerade as "nothing changed" — a rollback
+    /// (re-add to the previous scope) is attempted once, and if the
+    /// rollback also fails the thrown error names the exact state.
+    func assign(serial: String, toPreStage prestageId: String) async throws {
+        let normalized = serial.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
+
+        let current = try await currentPreStageId(forSerial: normalized)
+        if current == prestageId {
+            AppLog.notice("ℹ️ JamfPreStageService: serial \(normalized) already in PreStage \(prestageId)")
+            return
+        }
+        if let current {
+            try await mutateScope(prestageId: current, serial: normalized, mutation: .remove)
+            do {
+                try await mutateScope(prestageId: prestageId, serial: normalized, mutation: .add)
+            } catch let addError {
+                // Best-effort rollback so the serial never silently ends
+                // up unscoped.
+                do {
+                    try await mutateScope(prestageId: current, serial: normalized, mutation: .add)
+                } catch {
+                    AppLog.error("❌ JamfPreStageService: serial \(normalized) removed from PreStage \(current); add AND rollback failed — UNSCOPED")
+                    throw PreStageError.leftUnscoped(previous: current, underlying: addError.localizedDescription)
+                }
+                AppLog.notice("⚠️ JamfPreStageService: add to \(prestageId) failed; serial \(normalized) rolled back to PreStage \(current)")
+                throw PreStageError.moveRolledBack(previous: current, underlying: addError.localizedDescription)
+            }
+        } else {
+            try await mutateScope(prestageId: prestageId, serial: normalized, mutation: .add)
+        }
+    }
+
+    /// assign(serial:toPreStage:) with bounded retries over the ABM→Jamf
+    /// sync lag: a serial just assigned to the MDM server in ABM is not a
+    /// valid ADE device to Jamf until its ADE sync (roughly every two
+    /// minutes) runs, and the scope POST 400s until then. Retries ONLY
+    /// serialNotEligible; every other error propagates immediately.
+    /// Cancellation-aware — the caller may cancel between attempts.
+    ///
+    /// Defaults: 8 attempts × 25 s ≈ 3 minutes of patience, comfortably
+    /// past the documented ~2-minute sync interval.
+    func assignWhenEligible(
+        serial: String,
+        toPreStage prestageId: String,
+        maxAttempts: Int = 8,
+        interval: TimeInterval = 25,
+        stillAuthorized: @escaping () -> Bool = { true },
+        progress: @MainActor @escaping (String) -> Void
+    ) async throws {
+        let safeInterval = max(interval, 1)
+        var attempt = 0
+
+        while true {
+            // The window is minutes long — a grant revoked mid-wait must
+            // stop the NEXT attempt, not just the next invocation.
+            guard stillAuthorized() else {
+                throw PreStageError.authorizationRevoked
+            }
+            attempt += 1
+            do {
+                try await assign(serial: serial, toPreStage: prestageId)
+                return
+            } catch PreStageError.serialNotEligible {
+                guard attempt < maxAttempts else {
+                    throw PreStageError.serialNotEligible(serial)
+                }
+                await progress("Waiting for Jamf's ADE sync — attempt \(attempt)/\(maxAttempts), retrying in \(Int(safeInterval))s…")
+                try await Task.sleep(nanoseconds: UInt64(safeInterval * 1_000_000_000))
+                try Task.checkCancellation()
+            }
+        }
+    }
+
+    // MARK: - Inventory Preload (v2)
+
+    /// Creates or updates the Inventory Preload record for a serial with
+    /// the given asset tag (upsert — never a duplicate record). The update
+    /// path merges into the FULL existing record before PUTting: Jamf's
+    /// PUT is a full replace, so sending only the three known fields would
+    /// silently erase username/department/purchasing data an earlier flow
+    /// put on the record.
+    func upsertInventoryPreload(serial: String, assetTag: String) async throws {
+        let normalized = serial.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
+
+        // Strict percent-encoding: the serial lands inside an RSQL filter
+        // in the query string — anything beyond alphanumerics could inject
+        // query parameters or break the expression.
+        guard let encodedSerial = normalized.addingPercentEncoding(withAllowedCharacters: .alphanumerics) else {
+            throw PreStageError.invalidURL
+        }
+
+        let filter = "serialNumber%3D%3D%22\(encodedSerial)%22"
+        let (searchData, searchResponse) = try await request(
+            "GET",
+            path: "/api/v2/inventory-preload/records?page=0&page-size=1&filter=\(filter)"
+        )
+        guard searchResponse.statusCode == 200 else {
+            throw PreStageError.httpError(searchResponse.statusCode,
+                                          String(data: searchData, encoding: .utf8) ?? "Unknown error")
+        }
+        guard let pageJSON = try JSONSerialization.jsonObject(with: searchData) as? [String: Any],
+              let results = pageJSON["results"] as? [[String: Any]] else {
+            throw PreStageError.invalidResponse
+        }
+
+        let (data, response): (Data, HTTPURLResponse)
+        let updating: Bool
+        if var existing = results.first,
+           let recordId = existing["id"].flatMap({ $0 as? String ?? ($0 as? Int).map(String.init) }) {
+            updating = true
+            existing["serialNumber"] = normalized
+            existing["deviceType"] = "Computer"
+            existing["assetTag"] = assetTag
+            existing.removeValue(forKey: "id")
+            let body = try JSONSerialization.data(withJSONObject: existing)
+            (data, response) = try await request(
+                "PUT", path: "/api/v2/inventory-preload/records/\(recordId)", body: body
+            )
+        } else {
+            updating = false
+            let body = try JSONSerialization.data(withJSONObject: [
+                "serialNumber": normalized,
+                "deviceType": "Computer",
+                "assetTag": assetTag,
+            ])
+            (data, response) = try await request(
+                "POST", path: "/api/v2/inventory-preload/records", body: body
+            )
+        }
+        guard (200...299).contains(response.statusCode) else {
+            throw PreStageError.httpError(response.statusCode,
+                                          String(data: data, encoding: .utf8) ?? "Unknown error")
+        }
+        AppLog.notice("✅ JamfPreStageService: preload record \(updating ? "updated" : "created") for serial \(normalized) (assetTag \(assetTag))")
+    }
+
+    // MARK: - Bulk Preload (CSV import)
+
+    /// Every existing Inventory Preload serial, uppercased, for the bulk
+    /// import's skip-existing check.
+    func fetchAllPreloadSerials() async throws -> Set<String> {
+        struct Page: Codable {
+            struct Result: Codable { let serialNumber: String? }
+            let totalCount: Int
+            let results: [Result]
+        }
+
+        var serials: Set<String> = []
+        var page = 0
+        var fetched = 0
+        let pageSize = 200
+
+        while true {
+            let (data, response) = try await request(
+                "GET",
+                path: "/api/v2/inventory-preload/records?page=\(page)&page-size=\(pageSize)",
+                timeout: NetworkTuning.requestTimeout
+            )
+            guard response.statusCode == 200 else {
+                throw PreStageError.httpError(response.statusCode,
+                                              String(data: data, encoding: .utf8) ?? "Unknown error")
+            }
+            let decoded = try JSONDecoder().decode(Page.self, from: data)
+            for result in decoded.results {
+                if let serial = result.serialNumber, !serial.isEmpty {
+                    serials.insert(serial.uppercased())
+                }
+            }
+            // Terminate on the count actually RETURNED, not the requested
+            // page size — a server-side page cap would otherwise end the
+            // sweep early and misclassify existing records as new.
+            fetched += decoded.results.count
+            page += 1
+            if decoded.results.isEmpty || fetched >= decoded.totalCount { break }
+        }
+        AppLog.notice("ℹ️ JamfPreStageService: loaded \(serials.count) existing preload serial(s)")
+        return serials
+    }
+
+    /// Create-only record write for the bulk path (existence was already
+    /// checked against fetchAllPreloadSerials — never blind-upsert in a
+    /// loop, that would be one search request per row). `deviceType`
+    /// defaults to "Computer" (the only type the Pre-Stage tab targets)
+    /// but honors a per-row override parsed from the CSV.
+    func createPreloadRecord(serial: String, assetTag: String, deviceType: String = "Computer") async throws {
+        var payload: [String: String] = [
+            "serialNumber": serial,
+            "deviceType": deviceType,
+        ]
+        // An empty asset tag is omitted rather than written as "" — Jamf
+        // treats a present-but-empty field as an explicit clear.
+        if !assetTag.isEmpty { payload["assetTag"] = assetTag }
+        let body = try JSONSerialization.data(withJSONObject: payload)
+        let (data, response) = try await request(
+            "POST", path: "/api/v2/inventory-preload/records", body: body
+        )
+        guard (200...299).contains(response.statusCode) else {
+            throw PreStageError.httpError(response.statusCode,
+                                          String(data: data, encoding: .utf8) ?? "Unknown error")
+        }
+    }
+
+    // MARK: - Inventory Preload CSV (template + validation)
+
+    /// Jamf's authoritative Inventory Preload CSV template for THIS instance
+    /// (GET /api/v2/inventory-preload/csv-template). Fetching it live means
+    /// the header row always reflects the org's own extension-attribute
+    /// columns rather than a stale hardcoded list. Returns the raw CSV bytes.
+    func downloadCSVTemplate() async throws -> Data {
+        guard let url = URL(string: "\(jamfURL)/api/v2/inventory-preload/csv-template") else {
+            throw PreStageError.invalidURL
+        }
+        let token = try await getBearerToken()
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.timeoutInterval = NetworkTuning.connectionTimeout
+        // The template endpoint returns text/csv; asking for JSON makes Jamf
+        // hand back an error envelope instead of the file.
+        request.setValue("text/csv", forHTTPHeaderField: "Accept")
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+
+        let (data, response) = try await JamfTransport.data(for: request)
+        guard let http = response as? HTTPURLResponse else { throw PreStageError.invalidResponse }
+        guard (200...299).contains(http.statusCode) else {
+            throw PreStageError.httpError(http.statusCode,
+                                          String(data: data, encoding: .utf8) ?? "Unknown error")
+        }
+        return data
+    }
+
+    /// Outcome of a Jamf-side CSV validation.
+    struct CSVValidationResult {
+        let isValid: Bool
+        /// Jamf's problem detail when invalid (raw response body).
+        let detail: String?
+    }
+
+    /// Validates a preload CSV through Jamf BEFORE any records are written
+    /// (POST /api/v2/inventory-preload/csv-validate, multipart/form-data).
+    /// A 2xx means Jamf accepts the file; a 4xx carries the validation
+    /// problems in its body, which we surface verbatim so the operator can
+    /// fix the file. Network/auth failures throw.
+    func validateCSV(_ csv: Data, filename: String) async throws -> CSVValidationResult {
+        guard let url = URL(string: "\(jamfURL)/api/v2/inventory-preload/csv-validate") else {
+            throw PreStageError.invalidURL
+        }
+        let token = try await getBearerToken()
+
+        let boundary = "fleethub-\(UUID().uuidString)"
+        var body = Data()
+        let safeName = filename.isEmpty ? "upload.csv" : filename
+        body.append("--\(boundary)\r\n".data(using: .utf8)!)
+        body.append("Content-Disposition: form-data; name=\"file\"; filename=\"\(safeName)\"\r\n".data(using: .utf8)!)
+        body.append("Content-Type: text/csv\r\n\r\n".data(using: .utf8)!)
+        body.append(csv)
+        body.append("\r\n--\(boundary)--\r\n".data(using: .utf8)!)
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.timeoutInterval = NetworkTuning.requestTimeout
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        request.httpBody = body
+
+        let (data, response) = try await JamfTransport.data(for: request)
+        guard let http = response as? HTTPURLResponse else { throw PreStageError.invalidResponse }
+
+        if (200...299).contains(http.statusCode) {
+            return CSVValidationResult(isValid: true, detail: nil)
+        }
+        // 4xx = the file is malformed/invalid; hand Jamf's detail back to the
+        // UI. Anything else (5xx, auth) is an operational error → throw.
+        if (400...499).contains(http.statusCode) {
+            let detail = String(data: data, encoding: .utf8)?
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+            return CSVValidationResult(isValid: false, detail: detail?.isEmpty == false ? detail : nil)
+        }
+        throw PreStageError.httpError(http.statusCode,
+                                      String(data: data, encoding: .utf8) ?? "Unknown error")
+    }
+}
+
+// MARK: - CSV Preload Parsing
+
+/// Parses a preload CSV the way Device_Enrollment_Prep.sh did: columns
+/// located by NORMALIZED header name (case/space/punctuation-insensitive,
+/// so "Serial Number" / "SerialNumber" / "serial_number" all match),
+/// RFC 4180 quoting (embedded commas, "" escapes; embedded newlines are
+/// not supported), serials uppercased, a blank Asset Tag falling back to
+/// the Computer Name when it matches SH/CH + 6 digits, and first-wins
+/// in-file dedup by serial.
+enum CSVPreloadParser {
+
+    struct Row: Equatable {
+        let serialNumber: String
+        let assetTag: String
+        /// Jamf preload device type ("Computer" / "Mobile Device" /
+        /// "Unknown"). Defaults to "Computer" when the CSV omits the column.
+        var deviceType: String = "Computer"
+    }
+
+    /// Maps a raw Device Type cell to a canonical Jamf value, defaulting to
+    /// "Computer" (the Pre-Stage tab's target) for blank/unrecognized input.
+    private static func canonicalDeviceType(_ raw: String) -> String {
+        let v = raw.lowercased().filter { $0.isLetter }
+        if v.contains("mobile") { return "Mobile Device" }
+        if v.contains("unknown") { return "Unknown" }
+        return "Computer"
+    }
+
+    struct ParseResult {
+        let rows: [Row]
+        let totalDataRows: Int
+        let skippedNoSerial: Int
+        let skippedNoAssetTag: Int
+        let duplicatesInFile: Int
+    }
+
+    enum ParseError: LocalizedError {
+        case emptyFile
+        case missingSerialColumn
+
+        var errorDescription: String? {
+            switch self {
+            case .emptyFile:
+                return "The CSV file is empty."
+            case .missingSerialColumn:
+                return "The CSV has no Serial Number column. A header row with a Serial Number column is required."
+            }
+        }
+    }
+
+    /// Header key normalization: lowercase, alphanumerics only.
+    private static func normalize(_ header: String) -> String {
+        header.lowercased().filter { $0.isLetter || $0.isNumber }
+    }
+
+    /// SH###### / CH###### (the org's computer-name-as-asset-tag scheme).
+    private static func looksLikeAssetTag(_ value: String) -> Bool {
+        guard value.count == 8 else { return false }
+        guard value.hasPrefix("SH") || value.hasPrefix("CH") else { return false }
+        return value.dropFirst(2).allSatisfy { $0.isASCII && $0.isNumber }
+    }
+
+    /// Splits one CSV line per RFC 4180 (quotes, "" escapes).
+    static func fields(of line: String) -> [String] {
+        var fields: [String] = []
+        var current = ""
+        var inQuotes = false
+        var iterator = line.makeIterator()
+
+        while let ch = iterator.next() {
+            if inQuotes {
+                if ch == "\"" {
+                    // Peek: doubled quote is an escaped quote.
+                    if let next = iterator.next() {
+                        if next == "\"" {
+                            current.append("\"")
+                        } else {
+                            inQuotes = false
+                            if next == "," {
+                                fields.append(current)
+                                current = ""
+                            } else {
+                                current.append(next)
+                            }
+                        }
+                    } else {
+                        inQuotes = false
+                    }
+                } else {
+                    current.append(ch)
+                }
+            } else if ch == "\"" {
+                inQuotes = true
+            } else if ch == "," {
+                fields.append(current)
+                current = ""
+            } else {
+                current.append(ch)
+            }
+        }
+        fields.append(current)
+        return fields
+    }
+
+    static func parse(_ content: String) throws -> ParseResult {
+        let lines = content
+            .replacingOccurrences(of: "\r\n", with: "\n")
+            .replacingOccurrences(of: "\r", with: "\n")
+            .split(separator: "\n", omittingEmptySubsequences: false)
+            .map(String.init)
+
+        guard let headerLine = lines.first(where: { !$0.trimmingCharacters(in: .whitespaces).isEmpty }) else {
+            throw ParseError.emptyFile
+        }
+        let headerIndex = lines.firstIndex(of: headerLine) ?? 0
+
+        let headers = fields(of: headerLine).map(normalize)
+        guard let serialIdx = headers.firstIndex(of: "serialnumber") else {
+            throw ParseError.missingSerialColumn
+        }
+        let assetIdx = headers.firstIndex(of: "assettag")
+        let nameIdx = headers.firstIndex(of: "computername")
+        let deviceTypeIdx = headers.firstIndex(of: "devicetype")
+
+        var rows: [Row] = []
+        var seen: Set<String> = []
+        var total = 0
+        var noSerial = 0
+        var noAsset = 0
+        var dups = 0
+
+        for line in lines.dropFirst(headerIndex + 1) {
+            if line.trimmingCharacters(in: .whitespaces).isEmpty { continue }
+            total += 1
+
+            let cols = fields(of: line)
+            func col(_ index: Int?) -> String {
+                guard let index, index < cols.count else { return "" }
+                return cols[index].trimmingCharacters(in: .whitespacesAndNewlines)
+            }
+
+            let serial = col(serialIdx).uppercased()
+            guard !serial.isEmpty else { noSerial += 1; continue }
+
+            var asset = col(assetIdx)
+            if asset.isEmpty {
+                let computerName = col(nameIdx).uppercased()
+                if looksLikeAssetTag(computerName) {
+                    asset = computerName
+                }
+            }
+            guard !asset.isEmpty else { noAsset += 1; continue }
+
+            guard seen.insert(serial).inserted else { dups += 1; continue }
+            let deviceType = canonicalDeviceType(col(deviceTypeIdx))
+            rows.append(Row(serialNumber: serial, assetTag: asset, deviceType: deviceType))
+        }
+
+        return ParseResult(
+            rows: rows,
+            totalDataRows: total,
+            skippedNoSerial: noSerial,
+            skippedNoAssetTag: noAsset,
+            duplicatesInFile: dups
+        )
+    }
+}

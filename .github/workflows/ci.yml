@@ -1,0 +1,87 @@
+name: CI
+
+# macOS runners cost about ten times Linux ones, so the trigger and the early
+# exit below keep builds to what a change actually needs.
+on:
+  # PRs only. A push to main that arrived via PR was already built as that PR,
+  # so also building the merge commit doubled the spend for a near-duplicate
+  # result. Branch protection's required checks are evaluated on the PR, so
+  # nothing is lost.
+  pull_request:
+    branches: [main]
+  # Manual escape hatch: build any branch on demand without opening a PR.
+  workflow_dispatch:
+
+# The workflow only reads the repository.
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build (${{ matrix.scheme }})
+    runs-on: macos-15
+    strategy:
+      fail-fast: false
+      matrix:
+        scheme: [FleetHub, FleetHubMenuBar, FleetHubSetup]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          # Full history so the PR diff against the base branch is available.
+          fetch-depth: 0
+
+      # Deliberately NOT `paths-ignore` at the trigger level. These jobs are
+      # REQUIRED status checks on main; a check skipped by a path filter never
+      # reports at all, so a docs-only PR would sit un-mergeable forever waiting
+      # for a status that can never arrive. Instead the job always runs and
+      # always reports — it just skips the expensive build when nothing that
+      # feeds the build changed.
+      - name: Detect build-relevant changes
+        id: changes
+        run: |
+          set -euo pipefail
+          base="origin/${{ github.base_ref }}"
+          if ! git rev-parse --verify --quiet "$base" >/dev/null; then
+            echo "Base ref unavailable — building to be safe."
+            echo "build=true" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          files=$(git diff --name-only "$base"...HEAD)
+          echo "Changed files:"; echo "$files" | sed 's/^/  /'
+          # Paths that cannot affect the Xcode build. Verified: schemas/ and
+          # docs/ are not referenced by project.pbxproj and no .json/.md is
+          # bundled as a resource. Anything NOT matching this list forces a
+          # build, so the default on an unrecognized path is to build.
+          if echo "$files" | grep -qvE '^(docs/|schemas/|Deployment/.*\.mobileconfig$|[^/]*\.md$|\.github/[^/]*\.md$)'; then
+            echo "build=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "build=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Show toolchain
+        if: steps.changes.outputs.build == 'true'
+        run: |
+          xcodebuild -version
+          swift --version
+
+      - name: Build ${{ matrix.scheme }}
+        if: steps.changes.outputs.build == 'true'
+        run: |
+          set -o pipefail
+          xcodebuild build \
+            -project FleetHub.xcodeproj \
+            -scheme "${{ matrix.scheme }}" \
+            -destination 'platform=macOS' \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            DEVELOPMENT_TEAM="" \
+            -quiet
+
+      - name: Skipped (no build-relevant changes)
+        if: steps.changes.outputs.build != 'true'
+        run: echo "Only docs/schemas changed — build skipped, check reported green."

@@ -1,0 +1,85 @@
+{
+  "healthScorecard": {
+    "enabled": true,
+    "cards": [
+      {
+        "id": "checkedIn",
+        "enabled": true,
+        "siteIds": [
+          "SITE_A_ID",
+          "SITE_B_ID"
+        ],
+        "checkedInDays": 7
+      },
+      {
+        "id": "protected",
+        "enabled": true,
+        "platforms": [
+          "macOS"
+        ],
+        "siteIds": [
+          "SITE_A_ID"
+        ],
+        "requireMode": "all",
+        "requiredApps": [
+          {
+            "name": "YOUR-VPN-CLIENT"
+          },
+          {
+            "name": "YOUR-WEB-SECURITY-AGENT"
+          },
+          {
+            "name": "YOUR-VULNERABILITY-AGENT"
+          },
+          {
+            "name": "YOUR-EDR-AGENT"
+          },
+          {
+            "name": "JamfProtect"
+          }
+        ]
+      },
+      {
+        "id": "encrypted",
+        "enabled": true,
+        "siteIds": [
+          "SITE_A_ID"
+        ]
+      },
+      {
+        "id": "secured",
+        "enabled": true,
+        "platforms": [
+          "macOS"
+        ],
+        "siteIds": [
+          "SITE_A_ID"
+        ],
+        "checks": [
+          "firewall",
+          "sip",
+          "gatekeeper",
+          "managed",
+          "supervised",
+          "diskEncrypted",
+          "bootstrapToken",
+          "ddm"
+        ]
+      },
+      {
+        "id": "upToDate",
+        "enabled": true,
+        "siteIds": [
+          "SITE_A_ID",
+          "SITE_B_ID"
+        ],
+        "minimumOSVersions": {
+          "macOS": 26,
+          "iOS": 26,
+          "iPadOS": 26,
+          "visionOS": 2
+        }
+      }
+    ]
+  }
+}

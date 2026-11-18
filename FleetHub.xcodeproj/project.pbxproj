@@ -1,0 +1,1533 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		PKG_BF_SWIFTTERM /* SwiftTerm in Frameworks */ = {isa = PBXBuildFile; productRef = PKG_PD_SWIFTTERM /* SwiftTerm */; };
+		7EB171382F7960E100105721 /* ActionLogEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EB171372F7960E100105721 /* ActionLogEntry.swift */; };
+		7EB171392F7960E100105721 /* ActionLogEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EB171372F7960E100105721 /* ActionLogEntry.swift */; };
+		7EB1713B2F7960FA00105721 /* ActionLogService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EB1713A2F7960FA00105721 /* ActionLogService.swift */; };
+		7EB1713C2F7960FA00105721 /* ActionLogService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EB1713A2F7960FA00105721 /* ActionLogService.swift */; };
+		7EB1713F2F79628D00105721 /* LogsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EB1713E2F79628D00105721 /* LogsView.swift */; };
+		F001 /* FleetHubApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = S001 /* FleetHubApp.swift */; };
+		F002 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A001 /* Assets.xcassets */; };
+		F003 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = S003 /* AppSettings.swift */; };
+		F004 /* Computer.swift in Sources */ = {isa = PBXBuildFile; fileRef = S004 /* Computer.swift */; };
+		F005 /* MDMConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = S005 /* MDMConfiguration.swift */; };
+		F006 /* MobileDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = S006 /* MobileDevice.swift */; };
+		F007 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = S007 /* User.swift */; };
+		F008 /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = S008 /* AuthViewModel.swift */; };
+		F009 /* BiometricAuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = S009 /* BiometricAuthManager.swift */; };
+		F913 /* SecretStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = S913 /* SecretStore.swift */; };
+		F914 /* JamfTokenProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = S914 /* JamfTokenProvider.swift */; };
+		F9DD /* DDMStatusService.swift in Sources */ = {isa = PBXBuildFile; fileRef = S9DD /* DDMStatusService.swift */; };
+		F9CB /* ComplianceBenchmarkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = S9CB /* ComplianceBenchmarkService.swift */; };
+		F9JB /* JamfBackend.swift in Sources */ = {isa = PBXBuildFile; fileRef = S9JB /* JamfBackend.swift */; };
+		F915 /* CredentialsSettingsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = S915 /* CredentialsSettingsSection.swift */; };
+		F916 /* CredentialsOnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = S916 /* CredentialsOnboardingView.swift */; };
+		F010 /* KeychainManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = S010 /* KeychainManager.swift */; };
+		F011 /* MDMConfigurationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = S011 /* MDMConfigurationManager.swift */; };
+		F012 /* AbmAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = S012 /* AbmAPIService.swift */; };
+		F013 /* AnnouncementService.swift in Sources */ = {isa = PBXBuildFile; fileRef = S013 /* AnnouncementService.swift */; };
+		F014 /* ComputerInventoryCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = S014 /* ComputerInventoryCache.swift */; };
+		F015 /* ComputerInventoryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = S015 /* ComputerInventoryService.swift */; };
+		F016 /* ComputerSearchModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = S016 /* ComputerSearchModels.swift */; };
+		F017 /* ComputerSearchService.swift in Sources */ = {isa = PBXBuildFile; fileRef = S017 /* ComputerSearchService.swift */; };
+		F900 /* ComputerHistoryModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = S900 /* ComputerHistoryModels.swift */; };
+		F901 /* ComputerHistoryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = S901 /* ComputerHistoryService.swift */; };
+		F251 /* HealthEvaluator.swift in Sources */ = {isa = PBXBuildFile; fileRef = S251 /* HealthEvaluator.swift */; };
+		S253 /* ScopeIDInspector.swift in Sources */ = {isa = PBXBuildFile; fileRef = S254 /* ScopeIDInspector.swift */; };
+		F018 /* HealthMetricsCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = S018 /* HealthMetricsCalculator.swift */; };
+		F019 /* JamfAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = S019 /* JamfAPIService.swift */; };
+		F250 /* EntraGraphService.swift in Sources */ = {isa = PBXBuildFile; fileRef = S250 /* EntraGraphService.swift */; };
+		CBD1433AC8D2FAE90C46A1AC /* EntraAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9120615953C07FD8906E118D /* EntraAuthService.swift */; };
+		F020 /* MobileDeviceInventoryCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = S020 /* MobileDeviceInventoryCache.swift */; };
+		F021 /* MobileDeviceInventoryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = S021 /* MobileDeviceInventoryService.swift */; };
+		F022 /* MobileDeviceModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = S022 /* MobileDeviceModels.swift */; };
+		F023 /* UnifiedSearchResult+ModelIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = S023 /* UnifiedSearchResult+ModelIdentifier.swift */; };
+		F024 /* UnifiedSearchService.swift in Sources */ = {isa = PBXBuildFile; fileRef = S024 /* UnifiedSearchService.swift */; };
+		F025 /* DeviceIconProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = S025 /* DeviceIconProvider.swift */; };
+		F026 /* MockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = S026 /* MockData.swift */; };
+		F9DM /* DemoMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = S9DM /* DemoMode.swift */; };
+		F027 /* BiometricPromptView.swift in Sources */ = {isa = PBXBuildFile; fileRef = S027 /* BiometricPromptView.swift */; };
+		F028 /* BiometricSetupPromptView.swift in Sources */ = {isa = PBXBuildFile; fileRef = S028 /* BiometricSetupPromptView.swift */; };
+		F029 /* FeatureRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = S029 /* FeatureRow.swift */; };
+		F030 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = S030 /* LoginView.swift */; };
+		F031 /* SSOButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = S031 /* SSOButton.swift */; };
+		F032 /* ScaleButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = S032 /* ScaleButtonStyle.swift */; };
+		F033 /* WelcomeContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = S033 /* WelcomeContentView.swift */; };
+		F034 /* WelcomeLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = S034 /* WelcomeLoginView.swift */; };
+		F035 /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = S035 /* WelcomeView.swift */; };
+		F036 /* PlaceholderViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = S036 /* PlaceholderViews.swift */; };
+		F037 /* SidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = S037 /* SidebarView.swift */; };
+		F9TN /* TopNavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = S9TN /* TopNavigationBar.swift */; };
+		F038 /* ComputerResultCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = S038 /* ComputerResultCard.swift */; };
+		F039 /* DashboardContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = S039 /* DashboardContentView.swift */; };
+		F9CO /* ComplianceOverviewCards.swift in Sources */ = {isa = PBXBuildFile; fileRef = S9CO /* ComplianceOverviewCards.swift */; };
+		F040 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = S040 /* DashboardView.swift */; };
+		F041 /* DeviceHealthSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = S041 /* DeviceHealthSection.swift */; };
+		F042 /* DeviceListRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = S042 /* DeviceListRow.swift */; };
+		F043 /* DeviceListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = S043 /* DeviceListView.swift */; };
+		F044 /* DeviceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = S044 /* DeviceView.swift */; };
+		F902 /* DeviceHistorySectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = S902 /* DeviceHistorySectionView.swift */; };
+		F910 /* MyDevicesService.swift in Sources */ = {isa = PBXBuildFile; fileRef = S910 /* MyDevicesService.swift */; };
+		F911 /* LocalDeviceIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = S911 /* LocalDeviceIdentity.swift */; };
+		LOG_F001 /* AppLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = LOG_S001 /* AppLog.swift */; };
+		LOG_F002 /* AppLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = LOG_S001 /* AppLog.swift */; };
+		LOG_F003 /* AppLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = LOG_S001 /* AppLog.swift */; };
+		F912 /* MyDevicesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = S912 /* MyDevicesView.swift */; };
+		F045 /* HealthFilteredDeviceListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = S045 /* HealthFilteredDeviceListView.swift */; };
+		FABM1 /* DevicesHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SABM1 /* DevicesHomeView.swift */; };
+		F9SV /* DevicesBrowserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = S9SV /* DevicesBrowserView.swift */; };
+		FABM2 /* ABMLookupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SABM2 /* ABMLookupView.swift */; };
+		FABM3 /* ABMAssignmentSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = SABM3 /* ABMAssignmentSheet.swift */; };
+		FPS1 /* PreStageAssignmentSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = SPS1 /* PreStageAssignmentSheet.swift */; };
+		FABM4 /* PreStageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SABM4 /* PreStageView.swift */; };
+		FABM5 /* JamfPreStageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = SABM5 /* JamfPreStageService.swift */; };
+		FSITE1 /* JamfSiteService.swift in Sources */ = {isa = PBXBuildFile; fileRef = SSITE1 /* JamfSiteService.swift */; };
+		FSMS1 /* SiteMoveSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = SSMS1 /* SiteMoveSheet.swift */; };
+		FABM6 /* ActionBranding.swift in Sources */ = {isa = PBXBuildFile; fileRef = SABM6 /* ActionBranding.swift */; };
+		F046 /* MobileDeviceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = S046 /* MobileDeviceView.swift */; };
+		F047 /* AnnouncementsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = S047 /* AnnouncementsView.swift */; };
+		F200 /* AnnouncementMarkdownView.swift in Sources */ = {isa = PBXBuildFile; fileRef = S200 /* AnnouncementMarkdownView.swift */; };
+		F048 /* ReportsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = S048 /* ReportsView.swift */; };
+		FREXP01 /* ReportsExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = SREXP01 /* ReportsExport.swift */; };
+		FRSCEXP1 /* HealthScorecardExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = SRSCEXP1 /* HealthScorecardExport.swift */; };
+		F049 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = S049 /* SettingsView.swift */; };
+		F050 /* EnrollmentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = S050 /* EnrollmentsView.swift */; };
+		F051 /* AnimatedBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = S051 /* AnimatedBackgroundView.swift */; };
+		F052 /* HealthMetricType.swift in Sources */ = {isa = PBXBuildFile; fileRef = S052 /* HealthMetricType.swift */; };
+		F053 /* HealthMetricView.swift in Sources */ = {isa = PBXBuildFile; fileRef = S053 /* HealthMetricView.swift */; };
+		F054 /* HealthScorecardCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = S054 /* HealthScorecardCard.swift */; };
+		F055 /* InventoryLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = S055 /* InventoryLoadingView.swift */; };
+		F056 /* ThemeColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = S056 /* ThemeColors.swift */; };
+		F060 /* DeviceListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = S060 /* DeviceListItem.swift */; };
+		F061 /* PlatformType.swift in Sources */ = {isa = PBXBuildFile; fileRef = S061 /* PlatformType.swift */; };
+		F062 /* DeepLinkRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = S062 /* DeepLinkRouter.swift */; };
+		F070 /* AccessConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = S070 /* AccessConfiguration.swift */; };
+		F071 /* CoreConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = S071 /* CoreConfiguration.swift */; };
+		F073 /* FeaturesConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = S073 /* FeaturesConfiguration.swift */; };
+		F074 /* ManagedDomainLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = S074 /* ManagedDomainLoader.swift */; };
+		F075 /* UserInterfaceConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = S075 /* UserInterfaceConfiguration.swift */; };
+		F076 /* DeviceAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = S076 /* DeviceAction.swift */; };
+		F077 /* DeviceActionPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = S077 /* DeviceActionPolicy.swift */; };
+		ED9A21F5B86BA74FA8CA56A1 /* UserSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 757A43D21357918DDBF8CC37 /* UserSession.swift */; };
+		A1C0DE0000000000000CAP02 /* UserCapabilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C0DE0000000000000CAP01 /* UserCapabilities.swift */; };
+		F078 /* NetworkTuning.swift in Sources */ = {isa = PBXBuildFile; fileRef = S078 /* NetworkTuning.swift */; };
+		F079 /* Branding.swift in Sources */ = {isa = PBXBuildFile; fileRef = S079 /* Branding.swift */; };
+		F090 /* ProfileAvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = S090 /* ProfileAvatarView.swift */; };
+		MB_F001 /* FleetHubMenuBarApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = MB_S001 /* FleetHubMenuBarApp.swift */; };
+		MB_F002 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A001 /* Assets.xcassets */; };
+		MB_F003 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = S003 /* AppSettings.swift */; };
+		MB_F004 /* Computer.swift in Sources */ = {isa = PBXBuildFile; fileRef = S004 /* Computer.swift */; };
+		MB_F005 /* MDMConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = S005 /* MDMConfiguration.swift */; };
+		MB_F006 /* MobileDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = S006 /* MobileDevice.swift */; };
+		MB_F007 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = S007 /* User.swift */; };
+		MB_F913 /* SecretStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = S913 /* SecretStore.swift */; };
+		MB_F914 /* JamfTokenProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = S914 /* JamfTokenProvider.swift */; };
+		MB_F9JB /* JamfBackend.swift in Sources */ = {isa = PBXBuildFile; fileRef = S9JB /* JamfBackend.swift */; };
+		MB_F010 /* KeychainManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = S010 /* KeychainManager.swift */; };
+		MB_F011 /* MDMConfigurationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = S011 /* MDMConfigurationManager.swift */; };
+		MB_F014 /* ComputerInventoryCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = S014 /* ComputerInventoryCache.swift */; };
+		MB_F015 /* ComputerInventoryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = S015 /* ComputerInventoryService.swift */; };
+		MB_F016 /* ComputerSearchModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = S016 /* ComputerSearchModels.swift */; };
+		MB_F017 /* ComputerSearchService.swift in Sources */ = {isa = PBXBuildFile; fileRef = S017 /* ComputerSearchService.swift */; };
+		MB_F900 /* ComputerHistoryModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = S900 /* ComputerHistoryModels.swift */; };
+		MB_F901 /* ComputerHistoryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = S901 /* ComputerHistoryService.swift */; };
+		MB_F019 /* JamfAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = S019 /* JamfAPIService.swift */; };
+		MB_F020 /* MobileDeviceInventoryCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = S020 /* MobileDeviceInventoryCache.swift */; };
+		MB_F021 /* MobileDeviceInventoryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = S021 /* MobileDeviceInventoryService.swift */; };
+		MB_F022 /* MobileDeviceModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = S022 /* MobileDeviceModels.swift */; };
+		MB_F023 /* UnifiedSearchResult+ModelIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = S023 /* UnifiedSearchResult+ModelIdentifier.swift */; };
+		MB_F024 /* UnifiedSearchService.swift in Sources */ = {isa = PBXBuildFile; fileRef = S024 /* UnifiedSearchService.swift */; };
+		MB_F025 /* DeviceIconProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = S025 /* DeviceIconProvider.swift */; };
+		MB_F056 /* ThemeColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = S056 /* ThemeColors.swift */; };
+		MB_F060 /* DeviceListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = S060 /* DeviceListItem.swift */; };
+		MB_F061 /* PlatformType.swift in Sources */ = {isa = PBXBuildFile; fileRef = S061 /* PlatformType.swift */; };
+		MB_F070 /* AccessConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = S070 /* AccessConfiguration.swift */; };
+		MB_F071 /* CoreConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = S071 /* CoreConfiguration.swift */; };
+		MB_F073 /* FeaturesConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = S073 /* FeaturesConfiguration.swift */; };
+		MB_F074 /* ManagedDomainLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = S074 /* ManagedDomainLoader.swift */; };
+		MB_F075 /* UserInterfaceConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = S075 /* UserInterfaceConfiguration.swift */; };
+		MB_F076 /* DeviceAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = S076 /* DeviceAction.swift */; };
+		MB_F077 /* DeviceActionPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = S077 /* DeviceActionPolicy.swift */; };
+		D9B1D69830BE7EE7314C4566 /* UserSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 757A43D21357918DDBF8CC37 /* UserSession.swift */; };
+		A1C0DE0000000000000CAP03 /* UserCapabilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C0DE0000000000000CAP01 /* UserCapabilities.swift */; };
+		MB_F078 /* NetworkTuning.swift in Sources */ = {isa = PBXBuildFile; fileRef = S078 /* NetworkTuning.swift */; };
+		MB_F079 /* Branding.swift in Sources */ = {isa = PBXBuildFile; fileRef = S079 /* Branding.swift */; };
+		CLF1 /* CleanupModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = CLR1 /* CleanupModels.swift */; };
+		CLF2 /* JamfCleanupClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CLR2 /* JamfCleanupClient.swift */; };
+		CLF3 /* JamfProtectClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CLR3 /* JamfProtectClient.swift */; };
+		CLF4 /* CleanupSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = CLR4 /* CleanupSettings.swift */; };
+		CLF5 /* CleanupViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CLR5 /* CleanupViewModel.swift */; };
+		CLF6 /* CleanupTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = CLR6 /* CleanupTheme.swift */; };
+		CLF7 /* CleanupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CLR7 /* CleanupView.swift */; };
+		CLF8 /* CleanupDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CLR8 /* CleanupDashboardView.swift */; };
+		CLF9 /* StaleDeviceListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CLR9 /* StaleDeviceListView.swift */; };
+		CLF10 /* CleanupActionsSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CLR10 /* CleanupActionsSheet.swift */; };
+		CLF11 /* ProtectDeviceListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CLR11 /* ProtectDeviceListView.swift */; };
+		CLF13 /* CleanupReportModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = CLR13 /* CleanupReportModels.swift */; };
+		CLF14 /* CleanupReportPDF.swift in Sources */ = {isa = PBXBuildFile; fileRef = CLR14 /* CleanupReportPDF.swift */; };
+		CLF15 /* CleanupExportMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = CLR15 /* CleanupExportMenu.swift */; };
+		FSHV01 /* DetailCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = SSHV01 /* DetailCard.swift */; };
+		FSHV02 /* DetailRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = SSHV02 /* DetailRow.swift */; };
+		FSHV03 /* EmptyStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SSHV03 /* EmptyStateView.swift */; };
+		FSHV04 /* FilterToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = SSHV04 /* FilterToggle.swift */; };
+		FSHV05 /* PaginatedListState.swift in Sources */ = {isa = PBXBuildFile; fileRef = SSHV05 /* PaginatedListState.swift */; };
+		FSHV06 /* PaginationControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = SSHV06 /* PaginationControls.swift */; };
+		FSHV07 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = SSHV07 /* SearchBar.swift */; };
+		FSHV08 /* SectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = SSHV08 /* SectionHeader.swift */; };
+		FSHV09 /* StatusBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = SSHV09 /* StatusBadge.swift */; };
+		FDVX01 /* DeviceActionOverlays.swift in Sources */ = {isa = PBXBuildFile; fileRef = SDVX01 /* DeviceActionOverlays.swift */; };
+		FDVX02 /* DeviceActionsMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = SDVX02 /* DeviceActionsMenu.swift */; };
+		FDVX03 /* DeviceCommandExecutor.swift in Sources */ = {isa = PBXBuildFile; fileRef = SDVX03 /* DeviceCommandExecutor.swift */; };
+		FDVX04 /* DeviceDetailSectionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SDVX04 /* DeviceDetailSectionsView.swift */; };
+		FDVX05 /* DeviceFormatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = SDVX05 /* DeviceFormatting.swift */; };
+		FDVX06 /* DeviceInventoryTabsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SDVX06 /* DeviceInventoryTabsView.swift */; };
+		FDVX07 /* DeviceLogsSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SDVX07 /* DeviceLogsSectionView.swift */; };
+		F9CV /* DeviceComplianceViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = S9CV /* DeviceComplianceViews.swift */; };
+		FDVX08 /* DeviceOverviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SDVX08 /* DeviceOverviewView.swift */; };
+		FDVX09 /* DeviceSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = SDVX09 /* DeviceSection.swift */; };
+		SU_F001 /* FleetHubSetupApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = SU_S001 /* FleetHubSetupApp.swift */; };
+		SU_F002 /* SetupModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = SU_S002 /* SetupModel.swift */; };
+		SU_F003 /* SetupTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = SU_S003 /* SetupTheme.swift */; };
+		SU_F004 /* SetupOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = SU_S004 /* SetupOutput.swift */; };
+		SU_F005 /* SetupConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = SU_S005 /* SetupConnection.swift */; };
+		SU_F006 /* SetupConnectSteps.swift in Sources */ = {isa = PBXBuildFile; fileRef = SU_S006 /* SetupConnectSteps.swift */; };
+		SU_F007 /* SetupConfigureStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = SU_S007 /* SetupConfigureStep.swift */; };
+		SU_F008 /* SetupFinishSteps.swift in Sources */ = {isa = PBXBuildFile; fileRef = SU_S008 /* SetupFinishSteps.swift */; };
+		SU_FJ01 /* FleetHub_Core_SCHEMA.json in Resources */ = {isa = PBXBuildFile; fileRef = SU_J01 /* FleetHub_Core_SCHEMA.json */; };
+		SU_FJ02 /* FleetHub_Access_SCHEMA.json in Resources */ = {isa = PBXBuildFile; fileRef = SU_J02 /* FleetHub_Access_SCHEMA.json */; };
+		SU_FJ03 /* FleetHub_Features_SCHEMA.json in Resources */ = {isa = PBXBuildFile; fileRef = SU_J03 /* FleetHub_Features_SCHEMA.json */; };
+		SU_FJ04 /* FleetHub_UI_SCHEMA.json in Resources */ = {isa = PBXBuildFile; fileRef = SU_J04 /* FleetHub_UI_SCHEMA.json */; };
+		SU_FA01 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A001 /* Assets.xcassets */; };
+		SU_F009 /* SetupEnvironmentStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = SU_S009 /* SetupEnvironmentStep.swift */; };
+		SU_F010 /* SetupBrandingPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = SU_S010 /* SetupBrandingPreview.swift */; };
+		F9CI /* CredentialImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = S9CI /* CredentialImporter.swift */; };
+		MB_F9CI /* CredentialImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = S9CI /* CredentialImporter.swift */; };
+		SU_FSH1 /* Import-FleetHub-Credentials.sh in Resources */ = {isa = PBXBuildFile; fileRef = SU_SH01 /* Import-FleetHub-Credentials.sh */; };
+		SSH_F001 /* SSHSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = SSH_S001 /* SSHSession.swift */; };
+		SSH_F002 /* SSHTerminalWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = SSH_S002 /* SSHTerminalWindow.swift */; };
+		ST_F001 /* SortableHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = ST_S001 /* SortableHeader.swift */; };
+		ST_F002 /* ModelFilterMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = ST_S002 /* ModelFilterMenu.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		7EB171372F7960E100105721 /* ActionLogEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionLogEntry.swift; sourceTree = "<group>"; };
+		7EB1713A2F7960FA00105721 /* ActionLogService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionLogService.swift; sourceTree = "<group>"; };
+		7EB1713E2F79628D00105721 /* LogsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogsView.swift; sourceTree = "<group>"; };
+		A001 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		MB_E001 /* FleetHubMenuBar.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = FleetHubMenuBar.entitlements; sourceTree = "<group>"; };
+		MB_P001 /* FleetHubMenuBar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FleetHubMenuBar.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		MB_S001 /* FleetHubMenuBarApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FleetHubMenuBarApp.swift; sourceTree = "<group>"; };
+		P001 /* FleetHub.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FleetHub.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		S001 /* FleetHubApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FleetHubApp.swift; sourceTree = "<group>"; };
+		S003 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
+		S004 /* Computer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Computer.swift; sourceTree = "<group>"; };
+		S005 /* MDMConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MDMConfiguration.swift; sourceTree = "<group>"; };
+		S006 /* MobileDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MobileDevice.swift; sourceTree = "<group>"; };
+		S007 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		S008 /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
+		S009 /* BiometricAuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricAuthManager.swift; sourceTree = "<group>"; };
+		S913 /* SecretStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecretStore.swift; sourceTree = "<group>"; };
+		S914 /* JamfTokenProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JamfTokenProvider.swift; sourceTree = "<group>"; };
+		S9DD /* DDMStatusService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DDMStatusService.swift; sourceTree = "<group>"; };
+		S9CB /* ComplianceBenchmarkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComplianceBenchmarkService.swift; sourceTree = "<group>"; };
+		S9JB /* JamfBackend.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JamfBackend.swift; sourceTree = "<group>"; };
+		S915 /* CredentialsSettingsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialsSettingsSection.swift; sourceTree = "<group>"; };
+		S916 /* CredentialsOnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialsOnboardingView.swift; sourceTree = "<group>"; };
+		S010 /* KeychainManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainManager.swift; sourceTree = "<group>"; };
+		S011 /* MDMConfigurationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MDMConfigurationManager.swift; sourceTree = "<group>"; };
+		S012 /* AbmAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AbmAPIService.swift; sourceTree = "<group>"; };
+		S013 /* AnnouncementService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnouncementService.swift; sourceTree = "<group>"; };
+		S014 /* ComputerInventoryCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComputerInventoryCache.swift; sourceTree = "<group>"; };
+		S015 /* ComputerInventoryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComputerInventoryService.swift; sourceTree = "<group>"; };
+		S016 /* ComputerSearchModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComputerSearchModels.swift; sourceTree = "<group>"; };
+		S017 /* ComputerSearchService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComputerSearchService.swift; sourceTree = "<group>"; };
+		S900 /* ComputerHistoryModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComputerHistoryModels.swift; sourceTree = "<group>"; };
+		S901 /* ComputerHistoryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComputerHistoryService.swift; sourceTree = "<group>"; };
+		S251 /* HealthEvaluator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthEvaluator.swift; sourceTree = "<group>"; };
+		S254 /* ScopeIDInspector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScopeIDInspector.swift; sourceTree = "<group>"; };
+		S018 /* HealthMetricsCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthMetricsCalculator.swift; sourceTree = "<group>"; };
+		S019 /* JamfAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JamfAPIService.swift; sourceTree = "<group>"; };
+		S250 /* EntraGraphService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntraGraphService.swift; sourceTree = "<group>"; };
+		9120615953C07FD8906E118D /* EntraAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntraAuthService.swift; sourceTree = "<group>"; };
+		S020 /* MobileDeviceInventoryCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MobileDeviceInventoryCache.swift; sourceTree = "<group>"; };
+		S021 /* MobileDeviceInventoryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MobileDeviceInventoryService.swift; sourceTree = "<group>"; };
+		S022 /* MobileDeviceModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MobileDeviceModels.swift; sourceTree = "<group>"; };
+		S023 /* UnifiedSearchResult+ModelIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UnifiedSearchResult+ModelIdentifier.swift"; sourceTree = "<group>"; };
+		S024 /* UnifiedSearchService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnifiedSearchService.swift; sourceTree = "<group>"; };
+		S025 /* DeviceIconProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceIconProvider.swift; sourceTree = "<group>"; };
+		S026 /* MockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockData.swift; sourceTree = "<group>"; };
+		S9DM /* DemoMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoMode.swift; sourceTree = "<group>"; };
+		S027 /* BiometricPromptView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricPromptView.swift; sourceTree = "<group>"; };
+		S028 /* BiometricSetupPromptView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricSetupPromptView.swift; sourceTree = "<group>"; };
+		S029 /* FeatureRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureRow.swift; sourceTree = "<group>"; };
+		S030 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		S031 /* SSOButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSOButton.swift; sourceTree = "<group>"; };
+		S032 /* ScaleButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaleButtonStyle.swift; sourceTree = "<group>"; };
+		S033 /* WelcomeContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeContentView.swift; sourceTree = "<group>"; };
+		S034 /* WelcomeLoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeLoginView.swift; sourceTree = "<group>"; };
+		S035 /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
+		S036 /* PlaceholderViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceholderViews.swift; sourceTree = "<group>"; };
+		S037 /* SidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarView.swift; sourceTree = "<group>"; };
+		S9TN /* TopNavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopNavigationBar.swift; sourceTree = "<group>"; };
+		S038 /* ComputerResultCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComputerResultCard.swift; sourceTree = "<group>"; };
+		S039 /* DashboardContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardContentView.swift; sourceTree = "<group>"; };
+		S9CO /* ComplianceOverviewCards.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComplianceOverviewCards.swift; sourceTree = "<group>"; };
+		S040 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
+		S041 /* DeviceHealthSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceHealthSection.swift; sourceTree = "<group>"; };
+		S042 /* DeviceListRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceListRow.swift; sourceTree = "<group>"; };
+		S043 /* DeviceListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceListView.swift; sourceTree = "<group>"; };
+		S044 /* DeviceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceView.swift; sourceTree = "<group>"; };
+		S902 /* DeviceHistorySectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceHistorySectionView.swift; sourceTree = "<group>"; };
+		S910 /* MyDevicesService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyDevicesService.swift; sourceTree = "<group>"; };
+		S911 /* LocalDeviceIdentity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalDeviceIdentity.swift; sourceTree = "<group>"; };
+		LOG_S001 /* AppLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLog.swift; sourceTree = "<group>"; };
+		S912 /* MyDevicesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyDevicesView.swift; sourceTree = "<group>"; };
+		S045 /* HealthFilteredDeviceListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthFilteredDeviceListView.swift; sourceTree = "<group>"; };
+		SABM1 /* DevicesHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicesHomeView.swift; sourceTree = "<group>"; };
+		S9SV /* DevicesBrowserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicesBrowserView.swift; sourceTree = "<group>"; };
+		SABM2 /* ABMLookupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ABMLookupView.swift; sourceTree = "<group>"; };
+		SABM3 /* ABMAssignmentSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ABMAssignmentSheet.swift; sourceTree = "<group>"; };
+		SPS1 /* PreStageAssignmentSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreStageAssignmentSheet.swift; sourceTree = "<group>"; };
+		SSMS1 /* SiteMoveSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SiteMoveSheet.swift; sourceTree = "<group>"; };
+		SABM4 /* PreStageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreStageView.swift; sourceTree = "<group>"; };
+		SABM5 /* JamfPreStageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JamfPreStageService.swift; sourceTree = "<group>"; };
+		SSITE1 /* JamfSiteService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JamfSiteService.swift; sourceTree = "<group>"; };
+		SABM6 /* ActionBranding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionBranding.swift; sourceTree = "<group>"; };
+		S046 /* MobileDeviceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MobileDeviceView.swift; sourceTree = "<group>"; };
+		S047 /* AnnouncementsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnouncementsView.swift; sourceTree = "<group>"; };
+		S200 /* AnnouncementMarkdownView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnouncementMarkdownView.swift; sourceTree = "<group>"; };
+		S048 /* ReportsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportsView.swift; sourceTree = "<group>"; };
+		SREXP01 /* ReportsExport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportsExport.swift; sourceTree = "<group>"; };
+		SRSCEXP1 /* HealthScorecardExport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthScorecardExport.swift; sourceTree = "<group>"; };
+		S049 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		S050 /* EnrollmentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnrollmentsView.swift; sourceTree = "<group>"; };
+		S051 /* AnimatedBackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedBackgroundView.swift; sourceTree = "<group>"; };
+		S052 /* HealthMetricType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthMetricType.swift; sourceTree = "<group>"; };
+		S053 /* HealthMetricView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthMetricView.swift; sourceTree = "<group>"; };
+		S054 /* HealthScorecardCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthScorecardCard.swift; sourceTree = "<group>"; };
+		S055 /* InventoryLoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryLoadingView.swift; sourceTree = "<group>"; };
+		S056 /* ThemeColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeColors.swift; sourceTree = "<group>"; };
+		S060 /* DeviceListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceListItem.swift; sourceTree = "<group>"; };
+		S061 /* PlatformType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlatformType.swift; sourceTree = "<group>"; };
+		S062 /* DeepLinkRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkRouter.swift; sourceTree = "<group>"; };
+		S070 /* AccessConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessConfiguration.swift; sourceTree = "<group>"; };
+		S071 /* CoreConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreConfiguration.swift; sourceTree = "<group>"; };
+		S073 /* FeaturesConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeaturesConfiguration.swift; sourceTree = "<group>"; };
+		S074 /* ManagedDomainLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedDomainLoader.swift; sourceTree = "<group>"; };
+		S075 /* UserInterfaceConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInterfaceConfiguration.swift; sourceTree = "<group>"; };
+		S076 /* DeviceAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceAction.swift; sourceTree = "<group>"; };
+		S077 /* DeviceActionPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceActionPolicy.swift; sourceTree = "<group>"; };
+		757A43D21357918DDBF8CC37 /* UserSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSession.swift; sourceTree = "<group>"; };
+		A1C0DE0000000000000CAP01 /* UserCapabilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCapabilities.swift; sourceTree = "<group>"; };
+		S078 /* NetworkTuning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkTuning.swift; sourceTree = "<group>"; };
+		S079 /* Branding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Branding.swift; sourceTree = "<group>"; };
+		S090 /* ProfileAvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileAvatarView.swift; sourceTree = "<group>"; };
+		CLR1 /* CleanupModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CleanupModels.swift; sourceTree = "<group>"; };
+		CLR2 /* JamfCleanupClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JamfCleanupClient.swift; sourceTree = "<group>"; };
+		CLR3 /* JamfProtectClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JamfProtectClient.swift; sourceTree = "<group>"; };
+		CLR4 /* CleanupSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CleanupSettings.swift; sourceTree = "<group>"; };
+		CLR5 /* CleanupViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CleanupViewModel.swift; sourceTree = "<group>"; };
+		CLR6 /* CleanupTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CleanupTheme.swift; sourceTree = "<group>"; };
+		CLR7 /* CleanupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CleanupView.swift; sourceTree = "<group>"; };
+		CLR8 /* CleanupDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CleanupDashboardView.swift; sourceTree = "<group>"; };
+		CLR9 /* StaleDeviceListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaleDeviceListView.swift; sourceTree = "<group>"; };
+		CLR10 /* CleanupActionsSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CleanupActionsSheet.swift; sourceTree = "<group>"; };
+		CLR11 /* ProtectDeviceListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtectDeviceListView.swift; sourceTree = "<group>"; };
+		CLR13 /* CleanupReportModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CleanupReportModels.swift; sourceTree = "<group>"; };
+		CLR14 /* CleanupReportPDF.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CleanupReportPDF.swift; sourceTree = "<group>"; };
+		CLR15 /* CleanupExportMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CleanupExportMenu.swift; sourceTree = "<group>"; };
+		SSHV01 /* DetailCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailCard.swift; sourceTree = "<group>"; };
+		SSHV02 /* DetailRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailRow.swift; sourceTree = "<group>"; };
+		SSHV03 /* EmptyStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyStateView.swift; sourceTree = "<group>"; };
+		SSHV04 /* FilterToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterToggle.swift; sourceTree = "<group>"; };
+		SSHV05 /* PaginatedListState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaginatedListState.swift; sourceTree = "<group>"; };
+		SSHV06 /* PaginationControls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaginationControls.swift; sourceTree = "<group>"; };
+		SSHV07 /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
+		SSHV08 /* SectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionHeader.swift; sourceTree = "<group>"; };
+		SSHV09 /* StatusBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBadge.swift; sourceTree = "<group>"; };
+		SDVX01 /* DeviceActionOverlays.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceActionOverlays.swift; sourceTree = "<group>"; };
+		SDVX02 /* DeviceActionsMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceActionsMenu.swift; sourceTree = "<group>"; };
+		SDVX03 /* DeviceCommandExecutor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceCommandExecutor.swift; sourceTree = "<group>"; };
+		SDVX04 /* DeviceDetailSectionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceDetailSectionsView.swift; sourceTree = "<group>"; };
+		SDVX05 /* DeviceFormatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceFormatting.swift; sourceTree = "<group>"; };
+		SDVX06 /* DeviceInventoryTabsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceInventoryTabsView.swift; sourceTree = "<group>"; };
+		SDVX07 /* DeviceLogsSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceLogsSectionView.swift; sourceTree = "<group>"; };
+		S9CV /* DeviceComplianceViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceComplianceViews.swift; sourceTree = "<group>"; };
+		SDVX08 /* DeviceOverviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceOverviewView.swift; sourceTree = "<group>"; };
+		SDVX09 /* DeviceSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceSection.swift; sourceTree = "<group>"; };
+		SU_S001 /* FleetHubSetupApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FleetHubSetupApp.swift; path = FleetHubSetup/FleetHubSetupApp.swift; sourceTree = SOURCE_ROOT; };
+		SU_S002 /* SetupModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SetupModel.swift; path = FleetHubSetup/SetupModel.swift; sourceTree = SOURCE_ROOT; };
+		SU_S003 /* SetupTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SetupTheme.swift; path = FleetHubSetup/SetupTheme.swift; sourceTree = SOURCE_ROOT; };
+		SU_S004 /* SetupOutput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SetupOutput.swift; path = FleetHubSetup/SetupOutput.swift; sourceTree = SOURCE_ROOT; };
+		SU_S005 /* SetupConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SetupConnection.swift; path = FleetHubSetup/SetupConnection.swift; sourceTree = SOURCE_ROOT; };
+		SU_S006 /* SetupConnectSteps.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SetupConnectSteps.swift; path = FleetHubSetup/SetupConnectSteps.swift; sourceTree = SOURCE_ROOT; };
+		SU_S007 /* SetupConfigureStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SetupConfigureStep.swift; path = FleetHubSetup/SetupConfigureStep.swift; sourceTree = SOURCE_ROOT; };
+		SU_S008 /* SetupFinishSteps.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SetupFinishSteps.swift; path = FleetHubSetup/SetupFinishSteps.swift; sourceTree = SOURCE_ROOT; };
+		SU_J01 /* FleetHub_Core_SCHEMA.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = FleetHub_Core_SCHEMA.json; path = schemas/FleetHub_Core_SCHEMA.json; sourceTree = SOURCE_ROOT; };
+		SU_J02 /* FleetHub_Access_SCHEMA.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = FleetHub_Access_SCHEMA.json; path = schemas/FleetHub_Access_SCHEMA.json; sourceTree = SOURCE_ROOT; };
+		SU_J03 /* FleetHub_Features_SCHEMA.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = FleetHub_Features_SCHEMA.json; path = schemas/FleetHub_Features_SCHEMA.json; sourceTree = SOURCE_ROOT; };
+		SU_J04 /* FleetHub_UI_SCHEMA.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = FleetHub_UI_SCHEMA.json; path = schemas/FleetHub_UI_SCHEMA.json; sourceTree = SOURCE_ROOT; };
+		SU_E001 /* FleetHubSetup.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = FleetHubSetup.entitlements; sourceTree = "<group>"; };
+		SU_P001 /* FleetHubSetup.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FleetHubSetup.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		SU_S009 /* SetupEnvironmentStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SetupEnvironmentStep.swift; path = FleetHubSetup/SetupEnvironmentStep.swift; sourceTree = SOURCE_ROOT; };
+		SU_S010 /* SetupBrandingPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SetupBrandingPreview.swift; path = FleetHubSetup/SetupBrandingPreview.swift; sourceTree = SOURCE_ROOT; };
+		S9CI /* CredentialImporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CredentialImporter.swift; path = FleetHub/Managers/CredentialImporter.swift; sourceTree = SOURCE_ROOT; };
+		SU_SH01 /* Import-FleetHub-Credentials.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = "Import-FleetHub-Credentials.sh"; path = "Deployment/Import-FleetHub-Credentials.sh"; sourceTree = SOURCE_ROOT; };
+		SSH_S001 /* SSHSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SSHSession.swift; path = FleetHub/Services/SSHSession.swift; sourceTree = SOURCE_ROOT; };
+		SSH_S002 /* SSHTerminalWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SSHTerminalWindow.swift; path = FleetHub/Views/Device/SSHTerminalWindow.swift; sourceTree = SOURCE_ROOT; };
+		ST_S001 /* SortableHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SortableHeader.swift; path = FleetHub/Views/Shared/SortableHeader.swift; sourceTree = SOURCE_ROOT; };
+		ST_S002 /* ModelFilterMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ModelFilterMenu.swift; path = FleetHub/Views/Shared/ModelFilterMenu.swift; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		FRMWK001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				PKG_BF_SWIFTTERM /* SwiftTerm in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		MB_FRMWK001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		SU_FRMWK001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		7EB1713D2F79626000105721 /* Logs */ = {
+			isa = PBXGroup;
+			children = (
+				7EB1713E2F79628D00105721 /* LogsView.swift */,
+			);
+			path = Logs;
+			sourceTree = "<group>";
+		};
+		GRP001 /* FleetHub */ = {
+			isa = PBXGroup;
+			children = (
+				S001 /* FleetHubApp.swift */,
+				GRP003 /* Models */,
+				GRP004 /* ViewModels */,
+				GRP005 /* Managers */,
+				GRP006 /* Services */,
+				GRP007 /* Utilities */,
+				GRP008 /* Data */,
+				GRP009 /* Views */,
+				MB_GRP001 /* MenuBarApp */,
+				A001 /* Assets.xcassets */,
+				CLGRP /* Cleanup */,
+			);
+			path = FleetHub;
+			sourceTree = "<group>";
+		};
+		GRP002 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				P001 /* FleetHub.app */,
+				MB_P001 /* FleetHubMenuBar.app */,
+				SU_P001 /* FleetHubSetup.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		GRP003 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				S003 /* AppSettings.swift */,
+				S004 /* Computer.swift */,
+				S005 /* MDMConfiguration.swift */,
+				S076 /* DeviceAction.swift */,
+				S077 /* DeviceActionPolicy.swift */,
+				757A43D21357918DDBF8CC37 /* UserSession.swift */,
+				A1C0DE0000000000000CAP01 /* UserCapabilities.swift */,
+				S006 /* MobileDevice.swift */,
+				S007 /* User.swift */,
+				S060 /* DeviceListItem.swift */,
+				S061 /* PlatformType.swift */,
+				7EB171372F7960E100105721 /* ActionLogEntry.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		GRP004 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				S008 /* AuthViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		GRP005 /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				S913 /* SecretStore.swift */,
+				S009 /* BiometricAuthManager.swift */,
+				S010 /* KeychainManager.swift */,
+				S011 /* MDMConfigurationManager.swift */,
+				GRP019 /* Configuration */,
+			);
+			path = Managers;
+			sourceTree = "<group>";
+		};
+		GRP019 /* Configuration */ = {
+			isa = PBXGroup;
+			children = (
+				S070 /* AccessConfiguration.swift */,
+				S071 /* CoreConfiguration.swift */,
+				S073 /* FeaturesConfiguration.swift */,
+				S074 /* ManagedDomainLoader.swift */,
+				S075 /* UserInterfaceConfiguration.swift */,
+			);
+			path = Configuration;
+			sourceTree = "<group>";
+		};
+		GRP006 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				S914 /* JamfTokenProvider.swift */,
+				S9DD /* DDMStatusService.swift */,
+				S9CB /* ComplianceBenchmarkService.swift */,
+				S9JB /* JamfBackend.swift */,
+				S012 /* AbmAPIService.swift */,
+				S078 /* NetworkTuning.swift */,
+				S013 /* AnnouncementService.swift */,
+				S014 /* ComputerInventoryCache.swift */,
+				S015 /* ComputerInventoryService.swift */,
+				SABM5 /* JamfPreStageService.swift */,
+				SSITE1 /* JamfSiteService.swift */,
+				S016 /* ComputerSearchModels.swift */,
+				S017 /* ComputerSearchService.swift */,
+				S900 /* ComputerHistoryModels.swift */,
+				S901 /* ComputerHistoryService.swift */,
+				S910 /* MyDevicesService.swift */,
+				S018 /* HealthMetricsCalculator.swift */,
+				S251 /* HealthEvaluator.swift */,
+				S019 /* JamfAPIService.swift */,
+				S250 /* EntraGraphService.swift */,
+				9120615953C07FD8906E118D /* EntraAuthService.swift */,
+				S020 /* MobileDeviceInventoryCache.swift */,
+				S021 /* MobileDeviceInventoryService.swift */,
+				S022 /* MobileDeviceModels.swift */,
+				S023 /* UnifiedSearchResult+ModelIdentifier.swift */,
+				S024 /* UnifiedSearchService.swift */,
+				S062 /* DeepLinkRouter.swift */,
+				7EB1713A2F7960FA00105721 /* ActionLogService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		GRP007 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				S025 /* DeviceIconProvider.swift */,
+				SABM6 /* ActionBranding.swift */,
+				S911 /* LocalDeviceIdentity.swift */,
+				LOG_S001 /* AppLog.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		GRP008 /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				S026 /* MockData.swift */,
+				S9DM /* DemoMode.swift */,
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
+		GRP009 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				GRP010 /* Authentication */,
+				GRP011 /* Sidebar */,
+				GRP012 /* Dashboard */,
+				GRP013 /* Device */,
+				GRP_MYDEV /* MyDevices */,
+				GRP014 /* Announcement */,
+				GRP015 /* Reports */,
+				GRP016 /* Settings */,
+				GRP017 /* Enrollments */,
+				GRP018 /* Components */,
+				7EB1713D2F79626000105721 /* Logs */,
+				GRP_SHARED /* Shared */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		GRP010 /* Authentication */ = {
+			isa = PBXGroup;
+			children = (
+				S916 /* CredentialsOnboardingView.swift */,
+				S027 /* BiometricPromptView.swift */,
+				S028 /* BiometricSetupPromptView.swift */,
+				S029 /* FeatureRow.swift */,
+				S030 /* LoginView.swift */,
+				S031 /* SSOButton.swift */,
+				S032 /* ScaleButtonStyle.swift */,
+				S033 /* WelcomeContentView.swift */,
+				S034 /* WelcomeLoginView.swift */,
+				S035 /* WelcomeView.swift */,
+			);
+			path = Authentication;
+			sourceTree = "<group>";
+		};
+		GRP011 /* Sidebar */ = {
+			isa = PBXGroup;
+			children = (
+				S036 /* PlaceholderViews.swift */,
+				S037 /* SidebarView.swift */,
+				S9TN /* TopNavigationBar.swift */,
+			);
+			path = Sidebar;
+			sourceTree = "<group>";
+		};
+		GRP012 /* Dashboard */ = {
+			isa = PBXGroup;
+			children = (
+				S038 /* ComputerResultCard.swift */,
+				S039 /* DashboardContentView.swift */,
+				S9CO /* ComplianceOverviewCards.swift */,
+				S040 /* DashboardView.swift */,
+			);
+			path = Dashboard;
+			sourceTree = "<group>";
+		};
+		GRP_MYDEV /* MyDevices */ = {
+			isa = PBXGroup;
+			children = (
+				S912 /* MyDevicesView.swift */,
+			);
+			path = MyDevices;
+			sourceTree = "<group>";
+		};
+		GRP013 /* Device */ = {
+			isa = PBXGroup;
+			children = (
+				S041 /* DeviceHealthSection.swift */,
+				S042 /* DeviceListRow.swift */,
+				S043 /* DeviceListView.swift */,
+				S044 /* DeviceView.swift */,
+				S902 /* DeviceHistorySectionView.swift */,
+				S045 /* HealthFilteredDeviceListView.swift */,
+				SABM1 /* DevicesHomeView.swift */,
+				S9SV /* DevicesBrowserView.swift */,
+				SABM2 /* ABMLookupView.swift */,
+				SABM3 /* ABMAssignmentSheet.swift */,
+				SPS1 /* PreStageAssignmentSheet.swift */,
+				SSMS1 /* SiteMoveSheet.swift */,
+				SABM4 /* PreStageView.swift */,
+				S046 /* MobileDeviceView.swift */,
+				SDVX01 /* DeviceActionOverlays.swift */,
+				SDVX02 /* DeviceActionsMenu.swift */,
+				SDVX03 /* DeviceCommandExecutor.swift */,
+				SDVX04 /* DeviceDetailSectionsView.swift */,
+				SDVX05 /* DeviceFormatting.swift */,
+				SDVX06 /* DeviceInventoryTabsView.swift */,
+				SDVX07 /* DeviceLogsSectionView.swift */,
+				S9CV /* DeviceComplianceViews.swift */,
+				SDVX08 /* DeviceOverviewView.swift */,
+				SDVX09 /* DeviceSection.swift */,
+			);
+			path = Device;
+			sourceTree = "<group>";
+		};
+		GRP014 /* Announcement */ = {
+			isa = PBXGroup;
+			children = (
+				S047 /* AnnouncementsView.swift */,
+				S200 /* AnnouncementMarkdownView.swift */,
+			);
+			path = Announcement;
+			sourceTree = "<group>";
+		};
+		GRP015 /* Reports */ = {
+			isa = PBXGroup;
+			children = (
+				S048 /* ReportsView.swift */,
+				SREXP01 /* ReportsExport.swift */,
+				SRSCEXP1 /* HealthScorecardExport.swift */,
+			);
+			path = Reports;
+			sourceTree = "<group>";
+		};
+		GRP016 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				S915 /* CredentialsSettingsSection.swift */,
+				S049 /* SettingsView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		GRP017 /* Enrollments */ = {
+			isa = PBXGroup;
+			children = (
+				S050 /* EnrollmentsView.swift */,
+			);
+			path = Enrollments;
+			sourceTree = "<group>";
+		};
+		GRP018 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				S051 /* AnimatedBackgroundView.swift */,
+				S052 /* HealthMetricType.swift */,
+				S254 /* ScopeIDInspector.swift */,
+				S053 /* HealthMetricView.swift */,
+				S054 /* HealthScorecardCard.swift */,
+				S055 /* InventoryLoadingView.swift */,
+				S056 /* ThemeColors.swift */,
+				S079 /* Branding.swift */,
+				S090 /* ProfileAvatarView.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		MB_GRP001 /* MenuBarApp */ = {
+			isa = PBXGroup;
+			children = (
+				MB_S001 /* FleetHubMenuBarApp.swift */,
+				MB_E001 /* FleetHubMenuBar.entitlements */,
+			);
+			path = MenuBarApp;
+			sourceTree = "<group>";
+		};
+		ROOT001 = {
+			isa = PBXGroup;
+			children = (
+				GRP001 /* FleetHub */,
+				GRP002 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		CLGRP /* Cleanup */ = {
+			isa = PBXGroup;
+			children = (
+				CLGRP_M /* Models */,
+				CLGRP_S /* Services */,
+				CLGRP_VM /* ViewModels */,
+				CLGRP_V /* Views */,
+			);
+			path = Cleanup;
+			sourceTree = "<group>";
+		};
+		CLGRP_M /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				CLR1 /* CleanupModels.swift */,
+				CLR13 /* CleanupReportModels.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		CLGRP_S /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				CLR2 /* JamfCleanupClient.swift */,
+				CLR3 /* JamfProtectClient.swift */,
+				CLR4 /* CleanupSettings.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		CLGRP_VM /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				CLR5 /* CleanupViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		CLGRP_V /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				CLR6 /* CleanupTheme.swift */,
+				CLR7 /* CleanupView.swift */,
+				CLR8 /* CleanupDashboardView.swift */,
+				CLR9 /* StaleDeviceListView.swift */,
+				CLR10 /* CleanupActionsSheet.swift */,
+				CLR11 /* ProtectDeviceListView.swift */,
+				CLR14 /* CleanupReportPDF.swift */,
+				CLR15 /* CleanupExportMenu.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		GRP_SHARED /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				SSHV01 /* DetailCard.swift */,
+				SSHV02 /* DetailRow.swift */,
+				SSHV03 /* EmptyStateView.swift */,
+				SSHV04 /* FilterToggle.swift */,
+				SSHV05 /* PaginatedListState.swift */,
+				SSHV06 /* PaginationControls.swift */,
+				SSHV07 /* SearchBar.swift */,
+				SSHV08 /* SectionHeader.swift */,
+				SSHV09 /* StatusBadge.swift */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		SU_GRP001 /* FleetHubSetup */ = {
+			isa = PBXGroup;
+			children = (
+				SU_S001 /* FleetHubSetupApp.swift */,
+				SU_S010 /* SetupBrandingPreview.swift */,
+				SU_S009 /* SetupEnvironmentStep.swift */,
+				SU_S002 /* SetupModel.swift */,
+				SU_S003 /* SetupTheme.swift */,
+				SU_S004 /* SetupOutput.swift */,
+				SU_S005 /* SetupConnection.swift */,
+				SU_S006 /* SetupConnectSteps.swift */,
+				SU_S007 /* SetupConfigureStep.swift */,
+				SU_S008 /* SetupFinishSteps.swift */,
+				SU_E001 /* FleetHubSetup.entitlements */,
+			);
+			name = FleetHubSetup;
+			path = FleetHubSetup;
+			sourceTree = SOURCE_ROOT;
+		};
+		SU_GRP002 /* schemas */ = {
+			isa = PBXGroup;
+			children = (
+				SU_J01 /* FleetHub_Core_SCHEMA.json */,
+				SU_J02 /* FleetHub_Access_SCHEMA.json */,
+				SU_J03 /* FleetHub_Features_SCHEMA.json */,
+				SU_J04 /* FleetHub_UI_SCHEMA.json */,
+			);
+			name = schemas;
+			path = schemas;
+			sourceTree = SOURCE_ROOT;
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		MB_TGT001 /* FleetHubMenuBar */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = MB_CFG003 /* Build configuration list for PBXNativeTarget "FleetHubMenuBar" */;
+			buildPhases = (
+				MB_SRC001PH /* Sources */,
+				MB_FRMWK001 /* Frameworks */,
+				MB_RES001 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = FleetHubMenuBar;
+			productName = FleetHubMenuBar;
+			productReference = MB_P001 /* FleetHubMenuBar.app */;
+			productType = "com.apple.product-type.application";
+		};
+		TGT001 /* FleetHub */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CFG003 /* Build configuration list for PBXNativeTarget "FleetHub" */;
+			buildPhases = (
+				SRC001PH /* Sources */,
+				FRMWK001 /* Frameworks */,
+				RES001 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			packageProductDependencies = (
+				PKG_PD_SWIFTTERM /* SwiftTerm */,
+			);
+			name = FleetHub;
+			productName = FleetHub;
+			productReference = P001 /* FleetHub.app */;
+			productType = "com.apple.product-type.application";
+		};
+		SU_TGT001 /* FleetHubSetup */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = SU_CFG003 /* Build configuration list for PBXNativeTarget "FleetHubSetup" */;
+			buildPhases = (
+				SU_SRC001PH /* Sources */,
+				SU_FRMWK001 /* Frameworks */,
+				SU_RES001 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = FleetHubSetup;
+			productName = FleetHubSetup;
+			productReference = SU_P001 /* FleetHubSetup.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		PRJ001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					MB_TGT001 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+					SU_TGT001 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+					TGT001 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+				};
+			};
+			buildConfigurationList = CFG001 /* Build configuration list for PBXProject "FleetHub" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = ROOT001;
+			packageReferences = (
+				PKG_REF_SWIFTTERM /* XCRemoteSwiftPackageReference "SwiftTerm" */,
+			);
+			productRefGroup = GRP002 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				TGT001 /* FleetHub */,
+				MB_TGT001 /* FleetHubMenuBar */,
+				SU_TGT001 /* FleetHubSetup */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		MB_RES001 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				MB_F002 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		RES001 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F002 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		SU_RES001 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				SU_FJ01 /* FleetHub_Core_SCHEMA.json in Resources */,
+				SU_FJ02 /* FleetHub_Access_SCHEMA.json in Resources */,
+				SU_FJ03 /* FleetHub_Features_SCHEMA.json in Resources */,
+				SU_FJ04 /* FleetHub_UI_SCHEMA.json in Resources */,
+				SU_FA01 /* Assets.xcassets in Resources */,
+				SU_FSH1 /* Import-FleetHub-Credentials.sh in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		MB_SRC001PH /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				MB_F001 /* FleetHubMenuBarApp.swift in Sources */,
+				LOG_F002 /* AppLog.swift in Sources */,
+				MB_F003 /* AppSettings.swift in Sources */,
+				7EB1713C2F7960FA00105721 /* ActionLogService.swift in Sources */,
+				MB_F004 /* Computer.swift in Sources */,
+				MB_F005 /* MDMConfiguration.swift in Sources */,
+				MB_F006 /* MobileDevice.swift in Sources */,
+				MB_F007 /* User.swift in Sources */,
+				MB_F913 /* SecretStore.swift in Sources */,
+				MB_F9CI /* CredentialImporter.swift in Sources */,
+				MB_F914 /* JamfTokenProvider.swift in Sources */,
+				MB_F9JB /* JamfBackend.swift in Sources */,
+				MB_F010 /* KeychainManager.swift in Sources */,
+				MB_F011 /* MDMConfigurationManager.swift in Sources */,
+				MB_F070 /* AccessConfiguration.swift in Sources */,
+				MB_F071 /* CoreConfiguration.swift in Sources */,
+				MB_F073 /* FeaturesConfiguration.swift in Sources */,
+				MB_F074 /* ManagedDomainLoader.swift in Sources */,
+				MB_F075 /* UserInterfaceConfiguration.swift in Sources */,
+				MB_F076 /* DeviceAction.swift in Sources */,
+				MB_F077 /* DeviceActionPolicy.swift in Sources */,
+				D9B1D69830BE7EE7314C4566 /* UserSession.swift in Sources */,
+				A1C0DE0000000000000CAP03 /* UserCapabilities.swift in Sources */,
+				MB_F078 /* NetworkTuning.swift in Sources */,
+				MB_F079 /* Branding.swift in Sources */,
+				MB_F014 /* ComputerInventoryCache.swift in Sources */,
+				MB_F015 /* ComputerInventoryService.swift in Sources */,
+				MB_F016 /* ComputerSearchModels.swift in Sources */,
+				MB_F017 /* ComputerSearchService.swift in Sources */,
+				MB_F900 /* ComputerHistoryModels.swift in Sources */,
+				MB_F901 /* ComputerHistoryService.swift in Sources */,
+				MB_F019 /* JamfAPIService.swift in Sources */,
+				MB_F020 /* MobileDeviceInventoryCache.swift in Sources */,
+				MB_F021 /* MobileDeviceInventoryService.swift in Sources */,
+				MB_F022 /* MobileDeviceModels.swift in Sources */,
+				MB_F023 /* UnifiedSearchResult+ModelIdentifier.swift in Sources */,
+				7EB171392F7960E100105721 /* ActionLogEntry.swift in Sources */,
+				MB_F024 /* UnifiedSearchService.swift in Sources */,
+				MB_F025 /* DeviceIconProvider.swift in Sources */,
+				MB_F056 /* ThemeColors.swift in Sources */,
+				MB_F060 /* DeviceListItem.swift in Sources */,
+				MB_F061 /* PlatformType.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		SRC001PH /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CLF1 /* CleanupModels.swift in Sources */,
+				LOG_F001 /* AppLog.swift in Sources */,
+				CLF2 /* JamfCleanupClient.swift in Sources */,
+				CLF3 /* JamfProtectClient.swift in Sources */,
+				CLF4 /* CleanupSettings.swift in Sources */,
+				CLF5 /* CleanupViewModel.swift in Sources */,
+				CLF6 /* CleanupTheme.swift in Sources */,
+				CLF7 /* CleanupView.swift in Sources */,
+				CLF8 /* CleanupDashboardView.swift in Sources */,
+				CLF9 /* StaleDeviceListView.swift in Sources */,
+				CLF10 /* CleanupActionsSheet.swift in Sources */,
+				CLF11 /* ProtectDeviceListView.swift in Sources */,
+				CLF13 /* CleanupReportModels.swift in Sources */,
+				CLF14 /* CleanupReportPDF.swift in Sources */,
+				CLF15 /* CleanupExportMenu.swift in Sources */,
+				F001 /* FleetHubApp.swift in Sources */,
+				F003 /* AppSettings.swift in Sources */,
+				7EB1713B2F7960FA00105721 /* ActionLogService.swift in Sources */,
+				F004 /* Computer.swift in Sources */,
+				F005 /* MDMConfiguration.swift in Sources */,
+				F006 /* MobileDevice.swift in Sources */,
+				F007 /* User.swift in Sources */,
+				F008 /* AuthViewModel.swift in Sources */,
+				F009 /* BiometricAuthManager.swift in Sources */,
+				F913 /* SecretStore.swift in Sources */,
+				SSH_F001 /* SSHSession.swift in Sources */,
+				SSH_F002 /* SSHTerminalWindow.swift in Sources */,
+				ST_F001 /* SortableHeader.swift in Sources */,
+				ST_F002 /* ModelFilterMenu.swift in Sources */,
+				F9CI /* CredentialImporter.swift in Sources */,
+				F914 /* JamfTokenProvider.swift in Sources */,
+				F9DD /* DDMStatusService.swift in Sources */,
+				F9CB /* ComplianceBenchmarkService.swift in Sources */,
+				F9JB /* JamfBackend.swift in Sources */,
+				F915 /* CredentialsSettingsSection.swift in Sources */,
+				F916 /* CredentialsOnboardingView.swift in Sources */,
+				F010 /* KeychainManager.swift in Sources */,
+				F011 /* MDMConfigurationManager.swift in Sources */,
+				F070 /* AccessConfiguration.swift in Sources */,
+				F071 /* CoreConfiguration.swift in Sources */,
+				F073 /* FeaturesConfiguration.swift in Sources */,
+				F074 /* ManagedDomainLoader.swift in Sources */,
+				F075 /* UserInterfaceConfiguration.swift in Sources */,
+				F076 /* DeviceAction.swift in Sources */,
+				F077 /* DeviceActionPolicy.swift in Sources */,
+				ED9A21F5B86BA74FA8CA56A1 /* UserSession.swift in Sources */,
+				A1C0DE0000000000000CAP02 /* UserCapabilities.swift in Sources */,
+				F078 /* NetworkTuning.swift in Sources */,
+				F079 /* Branding.swift in Sources */,
+				F090 /* ProfileAvatarView.swift in Sources */,
+				F012 /* AbmAPIService.swift in Sources */,
+				F013 /* AnnouncementService.swift in Sources */,
+				F014 /* ComputerInventoryCache.swift in Sources */,
+				F015 /* ComputerInventoryService.swift in Sources */,
+				F016 /* ComputerSearchModels.swift in Sources */,
+				F017 /* ComputerSearchService.swift in Sources */,
+				F900 /* ComputerHistoryModels.swift in Sources */,
+				F901 /* ComputerHistoryService.swift in Sources */,
+				F018 /* HealthMetricsCalculator.swift in Sources */,
+				S253 /* ScopeIDInspector.swift in Sources */,
+				F251 /* HealthEvaluator.swift in Sources */,
+				F019 /* JamfAPIService.swift in Sources */,
+				F250 /* EntraGraphService.swift in Sources */,
+				CBD1433AC8D2FAE90C46A1AC /* EntraAuthService.swift in Sources */,
+				F020 /* MobileDeviceInventoryCache.swift in Sources */,
+				F021 /* MobileDeviceInventoryService.swift in Sources */,
+				F022 /* MobileDeviceModels.swift in Sources */,
+				F023 /* UnifiedSearchResult+ModelIdentifier.swift in Sources */,
+				F024 /* UnifiedSearchService.swift in Sources */,
+				F025 /* DeviceIconProvider.swift in Sources */,
+				F026 /* MockData.swift in Sources */,
+				F9DM /* DemoMode.swift in Sources */,
+				F027 /* BiometricPromptView.swift in Sources */,
+				F028 /* BiometricSetupPromptView.swift in Sources */,
+				F029 /* FeatureRow.swift in Sources */,
+				F030 /* LoginView.swift in Sources */,
+				F031 /* SSOButton.swift in Sources */,
+				F032 /* ScaleButtonStyle.swift in Sources */,
+				F033 /* WelcomeContentView.swift in Sources */,
+				F034 /* WelcomeLoginView.swift in Sources */,
+				7EB1713F2F79628D00105721 /* LogsView.swift in Sources */,
+				F035 /* WelcomeView.swift in Sources */,
+				F036 /* PlaceholderViews.swift in Sources */,
+				F037 /* SidebarView.swift in Sources */,
+				F9TN /* TopNavigationBar.swift in Sources */,
+				F038 /* ComputerResultCard.swift in Sources */,
+				F039 /* DashboardContentView.swift in Sources */,
+				F9CO /* ComplianceOverviewCards.swift in Sources */,
+				F040 /* DashboardView.swift in Sources */,
+				F041 /* DeviceHealthSection.swift in Sources */,
+				F042 /* DeviceListRow.swift in Sources */,
+				F043 /* DeviceListView.swift in Sources */,
+				F044 /* DeviceView.swift in Sources */,
+				FDVX09 /* DeviceSection.swift in Sources */,
+				FDVX08 /* DeviceOverviewView.swift in Sources */,
+				FDVX07 /* DeviceLogsSectionView.swift in Sources */,
+				F9CV /* DeviceComplianceViews.swift in Sources */,
+				FDVX06 /* DeviceInventoryTabsView.swift in Sources */,
+				FDVX05 /* DeviceFormatting.swift in Sources */,
+				FDVX04 /* DeviceDetailSectionsView.swift in Sources */,
+				FDVX03 /* DeviceCommandExecutor.swift in Sources */,
+				FDVX02 /* DeviceActionsMenu.swift in Sources */,
+				FDVX01 /* DeviceActionOverlays.swift in Sources */,
+				FSHV09 /* StatusBadge.swift in Sources */,
+				FSHV08 /* SectionHeader.swift in Sources */,
+				FSHV07 /* SearchBar.swift in Sources */,
+				FSHV06 /* PaginationControls.swift in Sources */,
+				FSHV05 /* PaginatedListState.swift in Sources */,
+				FSHV04 /* FilterToggle.swift in Sources */,
+				FSHV03 /* EmptyStateView.swift in Sources */,
+				FSHV02 /* DetailRow.swift in Sources */,
+				FSHV01 /* DetailCard.swift in Sources */,
+				F902 /* DeviceHistorySectionView.swift in Sources */,
+				F910 /* MyDevicesService.swift in Sources */,
+				F911 /* LocalDeviceIdentity.swift in Sources */,
+				F912 /* MyDevicesView.swift in Sources */,
+				F045 /* HealthFilteredDeviceListView.swift in Sources */,
+				FABM1 /* DevicesHomeView.swift in Sources */,
+				F9SV /* DevicesBrowserView.swift in Sources */,
+				FABM2 /* ABMLookupView.swift in Sources */,
+				FABM3 /* ABMAssignmentSheet.swift in Sources */,
+				FPS1 /* PreStageAssignmentSheet.swift in Sources */,
+				FSMS1 /* SiteMoveSheet.swift in Sources */,
+				FABM4 /* PreStageView.swift in Sources */,
+				FABM5 /* JamfPreStageService.swift in Sources */,
+				FSITE1 /* JamfSiteService.swift in Sources */,
+				FABM6 /* ActionBranding.swift in Sources */,
+				F046 /* MobileDeviceView.swift in Sources */,
+				F047 /* AnnouncementsView.swift in Sources */,
+				F200 /* AnnouncementMarkdownView.swift in Sources */,
+				F048 /* ReportsView.swift in Sources */,
+				FREXP01 /* ReportsExport.swift in Sources */,
+				FRSCEXP1 /* HealthScorecardExport.swift in Sources */,
+				F049 /* SettingsView.swift in Sources */,
+				7EB171382F7960E100105721 /* ActionLogEntry.swift in Sources */,
+				F050 /* EnrollmentsView.swift in Sources */,
+				F051 /* AnimatedBackgroundView.swift in Sources */,
+				F052 /* HealthMetricType.swift in Sources */,
+				F053 /* HealthMetricView.swift in Sources */,
+				F054 /* HealthScorecardCard.swift in Sources */,
+				F055 /* InventoryLoadingView.swift in Sources */,
+				F056 /* ThemeColors.swift in Sources */,
+				F060 /* DeviceListItem.swift in Sources */,
+				F061 /* PlatformType.swift in Sources */,
+				F062 /* DeepLinkRouter.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		SU_SRC001PH /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				SU_F001 /* FleetHubSetupApp.swift in Sources */,
+				LOG_F003 /* AppLog.swift in Sources */,
+				SU_F010 /* SetupBrandingPreview.swift in Sources */,
+				SU_F009 /* SetupEnvironmentStep.swift in Sources */,
+				SU_F002 /* SetupModel.swift in Sources */,
+				SU_F003 /* SetupTheme.swift in Sources */,
+				SU_F004 /* SetupOutput.swift in Sources */,
+				SU_F005 /* SetupConnection.swift in Sources */,
+				SU_F006 /* SetupConnectSteps.swift in Sources */,
+				SU_F007 /* SetupConfigureStep.swift in Sources */,
+				SU_F008 /* SetupFinishSteps.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		CFG_DEBUG /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		CFG_RELEASE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		CFG_TGT_DEBUG /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = FleetHub/FleetHub.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 194;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = FleetHub/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.herojoneslabs.fleethub;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		CFG_TGT_RELEASE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = FleetHub/FleetHub.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 194;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = FleetHub/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.herojoneslabs.fleethub;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		MB_CFG_TGT_DEBUG /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = FleetHub/MenuBarApp/FleetHubMenuBar.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 194;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.business";
+				INFOPLIST_KEY_LSUIElement = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.herojoneslabs.fleethub.menubar;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		MB_CFG_TGT_RELEASE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = FleetHub/MenuBarApp/FleetHubMenuBar.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 194;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.business";
+				INFOPLIST_KEY_LSUIElement = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.herojoneslabs.fleethub.menubar;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		SU_CFG_TGT_DEBUG /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = SetupAppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = FleetHubSetup/FleetHubSetup.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 194;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_CFBundleDisplayName = "FleetHub Setup";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.herojoneslabs.fleethub.setup;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		SU_CFG_TGT_RELEASE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = SetupAppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = FleetHubSetup/FleetHubSetup.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 194;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_CFBundleDisplayName = "FleetHub Setup";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.herojoneslabs.fleethub.setup;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		CFG001 /* Build configuration list for PBXProject "FleetHub" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CFG_DEBUG /* Debug */,
+				CFG_RELEASE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CFG003 /* Build configuration list for PBXNativeTarget "FleetHub" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CFG_TGT_DEBUG /* Debug */,
+				CFG_TGT_RELEASE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		MB_CFG003 /* Build configuration list for PBXNativeTarget "FleetHubMenuBar" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				MB_CFG_TGT_DEBUG /* Debug */,
+				MB_CFG_TGT_RELEASE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		SU_CFG003 /* Build configuration list for PBXNativeTarget "FleetHubSetup" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				SU_CFG_TGT_DEBUG /* Debug */,
+				SU_CFG_TGT_RELEASE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		PKG_REF_SWIFTTERM /* XCRemoteSwiftPackageReference "SwiftTerm" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/migueldeicaza/SwiftTerm";
+			requirement = {
+				kind = exactVersion;
+				version = 1.18.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		PKG_PD_SWIFTTERM /* SwiftTerm */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = PKG_REF_SWIFTTERM /* XCRemoteSwiftPackageReference "SwiftTerm" */;
+			productName = SwiftTerm;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = PRJ001 /* Project object */;
+}

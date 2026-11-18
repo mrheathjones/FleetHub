@@ -1,0 +1,46 @@
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Xcode — user-specific state
+xcuserdata/
+*.xcuserstate
+*.xcscmblueprint
+*.xccheckout
+
+# Xcode — build output
+build/
+DerivedData/
+*.moved-aside
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Swift Package Manager
+.build/
+.swiftpm/
+
+# Misc archives / cruft
+*.zip
+
+# Secrets (never commit real credentials/keys)
+*.p8
+*.pem
+*.mobileprovision
+*.cer
+.env
+.env.*
+
+# Distribution packages
+dist/
+
+# Local-only development journal (never commit)
+docs/Journal.md
+
+# Machine-local deployment overrides (org/machine-specific values)
+Deployment/build-pkg.local.sh
+
+# Maintainer-only helpers that depend on one person's folders
+scripts/fleethub-mirror.sh
+scripts/fleethub-repo.sh

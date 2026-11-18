@@ -1,0 +1,237 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "com.herojoneslabs.fleethub.ui",
+  "title": "FleetHub - Branding & UX",
+  "description": "Branding and user-experience settings for FleetHub. Preference domain: com.herojoneslabs.fleethub.ui \u2014 deploy as its own Jamf Pro Application & Custom Settings profile, scoped to all Macs running FleetHub (no secrets, safe to scope broadly). The override lists here are cosmetic only \u2014 all gating is role-based in the access domain. Values take effect at app relaunch.",
+  "type": "object",
+  "properties": {
+    "configurationVersion": {
+      "type": "string",
+      "title": "Configuration Version",
+      "description": "Schema/profile version stamp (informational \u2014 the loader logs it, nothing else reads it).",
+      "default": "3.0"
+    },
+    "userInterface": {
+      "type": "object",
+      "title": "User Interface",
+      "description": "Branding and top-level UI visibility switches.",
+      "properties": {
+        "appTitle": {
+          "type": "string",
+          "title": "App Title",
+          "description": "Primary app title shown in branding surfaces.",
+          "default": "FleetHub"
+        },
+        "appSubtitle": {
+          "type": "string",
+          "title": "App Subtitle",
+          "description": "Secondary title shown under the app title.",
+          "default": "Console"
+        },
+        "supportURL": {
+          "type": "string",
+          "title": "Support URL",
+          "description": "Help/support link surfaced in the app (e.g. on the login screen). Leave empty to hide. e.g. https://support.yourcompany.com",
+          "default": ""
+        },
+        "companyName": {
+          "type": "string",
+          "title": "Company Name",
+          "description": "Organization name used in branding surfaces. Leave empty for none.",
+          "default": ""
+        },
+        "logoURL": {
+          "type": "string",
+          "title": "Logo URL",
+          "description": "HTTPS URL to a custom organization logo image. Leave empty to use the built-in branding.",
+          "default": ""
+        },
+        "accentColor": {
+          "type": "string",
+          "title": "Accent Color (hex)",
+          "description": "Accent color as a 6-digit hex value, e.g. #007AFF.",
+          "pattern": "^#[0-9A-Fa-f]{6}$",
+          "default": "#007AFF"
+        },
+        "defaultColorScheme": {
+          "type": "string",
+          "title": "Default Color Scheme",
+          "description": "Preferred appearance for the app. 'system' follows the macOS appearance.",
+          "enum": [
+            "system",
+            "light",
+            "dark"
+          ],
+          "default": "system"
+        },
+        "tagline": {
+          "type": "string",
+          "title": "Tagline",
+          "description": "Marketing tagline under the wordmark on the welcome screen. Empty = built-in copy.",
+          "default": ""
+        },
+        "footerText": {
+          "type": "string",
+          "title": "Footer Text",
+          "description": "Footer/copyright line on the Settings About card. Empty = composed from the product name and current year.",
+          "default": ""
+        },
+        "documentationURL": {
+          "type": "string",
+          "title": "Documentation URL",
+          "description": "Destination for the About card's Documentation link and the welcome screen's Learn More button. Empty = those affordances are hidden.",
+          "default": ""
+        },
+        "feedbackURL": {
+          "type": "string",
+          "title": "Feedback URL",
+          "description": "Destination for the About card's Report an Issue link. Empty = the row is hidden.",
+          "default": ""
+        }
+      }
+    },
+    "sidebarItems": {
+      "type": "array",
+      "title": "Sidebar Item Overrides (optional)",
+      "description": "Optional label/icon overrides for sidebar rows \u2014 cosmetic only. Row presence and order come from the access domain's role modules. Blank field = built-in value; unknown ids are skipped. (`title` is accepted as an alias for `displayName`.)",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Row ID",
+            "description": "Which sidebar row this override applies to. Pick a known route id.",
+            "enum": [
+              "dashboard",
+              "devices",
+              "myDevices",
+              "announcements",
+              "logs",
+              "reports",
+              "cleanup",
+              "settings"
+            ]
+          },
+          "displayName": {
+            "type": "string",
+            "title": "Display Name",
+            "description": "Label to show for this row. Blank = the app's built-in label.",
+            "default": ""
+          },
+          "icon": {
+            "type": "string",
+            "title": "Icon (SF Symbol)",
+            "description": "Free-form SF Symbol name for this row (e.g. gearshape). Blank = the app's built-in icon.",
+            "default": ""
+          }
+        },
+        "additionalProperties": false
+      },
+      "default": []
+    },
+    "deviceTabs": {
+      "type": "array",
+      "title": "Devices-Tab Label Overrides (optional)",
+      "description": "Optional label renames for tabs inside the Devices module \u2014 cosmetic only, no icon override. Tab presence comes from the access domain's role deviceTabs. An id absent here keeps its built-in title.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Tab ID",
+            "description": "Which Devices tab this rename applies to.",
+            "enum": [
+              "devices",
+              "abmLookup",
+              "prestage"
+            ]
+          },
+          "displayName": {
+            "type": "string",
+            "title": "Display Name",
+            "description": "Label to show for this tab. Blank = the tab's built-in title.",
+            "default": ""
+          }
+        },
+        "additionalProperties": false
+      },
+      "default": []
+    },
+    "deviceActionLabels": {
+      "type": "array",
+      "title": "Device-Action Label Overrides (optional)",
+      "description": "Optional label/icon overrides for the device Actions menu \u2014 cosmetic only. Action availability is gated by the access domain roles; this list never makes an action appear. Blank field = built-in. Confirmation-dialog safety copy is never overridable.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Action ID",
+            "description": "Which device action this override applies to.",
+            "enum": [
+              "enableBluetooth",
+              "disableBluetooth",
+              "enableRemoteDesktop",
+              "disableRemoteDesktop",
+              "screenShare",
+              "ssh",
+              "restart",
+              "restartSilent",
+              "shutdown",
+              "wipe",
+              "returnToService",
+              "viewLocalAdminPassword",
+              "viewFileVaultKey",
+              "unlockUserAccount",
+              "sendBlankPush",
+              "abmAssign",
+              "abmUnassign",
+              "assignPreStage"
+            ]
+          },
+          "displayName": {
+            "type": "string",
+            "title": "Display Name",
+            "description": "Menu label to show for this action. Blank = the action's built-in label.",
+            "default": ""
+          },
+          "icon": {
+            "type": "string",
+            "title": "Icon (SF Symbol)",
+            "description": "Free-form SF Symbol name for this action (e.g. bolt.fill). Blank = the action's built-in icon.",
+            "default": ""
+          }
+        },
+        "additionalProperties": false
+      },
+      "default": []
+    },
+    "healthCardLabels": {
+      "type": "array",
+      "title": "Health Scorecard Card Labels (optional)",
+      "description": "Optional display-name overrides for Environment Health Scorecard cards - cosmetic only. Which cards exist and what each measures comes from the features domain's healthScorecard.cards. Blank field = built-in name; unknown ids are skipped.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Card ID",
+            "description": "Which scorecard card this override applies to.",
+            "enum": [
+              "checkedIn",
+              "protected",
+              "encrypted",
+              "secured",
+              "upToDate"
+            ]
+          },
+          "displayName": {
+            "type": "string",
+            "title": "Display Name",
+            "description": "Blank = the card's built-in name."
+          }
+        }
+      }
+    }
+  }
+}

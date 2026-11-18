@@ -1,0 +1,13 @@
+FleetHub
+Copyright 2026 mrheathjones
+
+This product is licensed under the Apache License, Version 2.0 (see LICENSE).
+
+Third-party software
+--------------------
+
+SwiftTerm (https://github.com/migueldeicaza/SwiftTerm)
+Copyright (c) Miguel de Icaza and contributors.
+Licensed under the MIT License. FleetHub links SwiftTerm for the terminal
+shown in its SSH window. The full license text is in the SwiftTerm
+repository.

@@ -1,0 +1,919 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "com.herojoneslabs.fleethub.features",
+  "title": "FleetHub - Features",
+  "description": "Feature-module and tuning configuration for FleetHub. Preference domain: com.herojoneslabs.fleethub.features \u2014 deploy as its own Jamf Pro Application & Custom Settings profile, scoped to all Macs running FleetHub (no secrets, safe to scope broadly). Values take effect at app relaunch.",
+  "type": "object",
+  "properties": {
+    "configurationVersion": {
+      "type": "string",
+      "title": "Configuration Version",
+      "description": "Schema/profile version stamp (informational \u2014 the loader logs it, nothing else reads it).",
+      "default": "3.0"
+    },
+    "userExperience": {
+      "type": "object",
+      "title": "User Experience",
+      "description": "Visibility switches for top-level app areas. Moved here from the ui domain \u2014 a ui profile still delivering these keys is honored until you re-push, but features wins when both are present. These only hide an area a role already grants; they never reveal one it withholds.",
+      "properties": {
+        "showAnnouncements": {
+          "type": "boolean",
+          "title": "Show Announcements",
+          "description": "Show the Announcements area in the app.",
+          "default": true
+        },
+        "showSettings": {
+          "type": "boolean",
+          "title": "Show Settings",
+          "description": "Show the Settings area in the app.",
+          "default": true
+        }
+      }
+    },
+    "localAdministration": {
+      "type": "object",
+      "title": "Local Administration",
+      "description": "Local administrator account used by the LAPS password lookup in the device view. Moved here from the core domain \u2014 a core profile still delivering this block is honored until you re-push, but features wins when both are present.",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "title": "Enabled",
+          "description": "Enable the LAPS password lookup.",
+          "default": true
+        },
+        "username": {
+          "type": "string",
+          "title": "Local Admin Username",
+          "description": "Short name of the managed local administrator account whose LAPS password FleetHub looks up.",
+          "default": "macadmin"
+        }
+      }
+    },
+    "cleanup": {
+      "type": "object",
+      "title": "Cleanup (Stale Device) Settings",
+      "description": "Tunables for the Cleanup module \u2014 this block grants nothing. Which roles see the module and which sub-actions they may run stay in the access domain. Moved here from access \u2014 an access profile still delivering this block is honored until you re-push, but features wins when both are present.",
+      "properties": {
+        "staleDays": {
+          "type": "integer",
+          "title": "Stale Threshold (days)",
+          "description": "Days without check-in before a device counts as stale. Users can change this in-app. Delivered as an integer; a string value is also tolerated.",
+          "default": 90
+        },
+        "defaultStaticGroupID": {
+          "type": "string",
+          "title": "Default Static Group ID",
+          "description": "Jamf static group ID pre-selected for Cleanup runs. Delivered as a string; parsed to an integer downstream.",
+          "default": ""
+        },
+        "defaultSiteID": {
+          "type": "string",
+          "title": "Default Site ID",
+          "description": "Jamf site ID pre-selected for Cleanup runs. Delivered as a string; parsed to an integer downstream.",
+          "default": ""
+        }
+      }
+    },
+    "computers": {
+      "type": "object",
+      "title": "Computers",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "title": "Enabled",
+          "default": true
+        },
+        "fetchInventory": {
+          "type": "boolean",
+          "title": "Fetch Inventory",
+          "default": true
+        },
+        "showDashboardCard": {
+          "type": "boolean",
+          "title": "Show Dashboard Card",
+          "default": true
+        },
+        "enableReports": {
+          "type": "boolean",
+          "title": "Enable Reports",
+          "default": true
+        },
+        "inventoryRefreshInterval": {
+          "type": "integer",
+          "title": "Inventory Refresh Interval (min)",
+          "default": 15
+        },
+        "inventorySections": {
+          "type": "array",
+          "title": "Inventory Sections",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "GENERAL",
+            "HARDWARE",
+            "OPERATING_SYSTEM",
+            "USER_AND_LOCATION",
+            "DISK_ENCRYPTION",
+            "SECURITY",
+            "APPLICATIONS",
+            "SOFTWARE_UPDATES",
+            "PURCHASING",
+            "GROUP_MEMBERSHIPS"
+          ],
+          "description": "Inventory sections fetched and rendered by the detail views. Removing a section blanks the matching UI. Empty list = default list."
+        },
+        "showDeviceHistory": {
+          "type": "boolean",
+          "title": "Show Device History",
+          "default": false,
+          "description": "Surface the per-device History section (Jamf Policy Logs + MDM command history from the Classic computerhistory endpoint). Default off."
+        },
+        "screenShareAutoSignIn": {
+          "type": "boolean",
+          "title": "Screen Share: Sign In Automatically",
+          "default": false,
+          "description": "When on, the Screen Share button signs in for the operator: the app looks up the device's Jamf management account and its current LAPS password with the operator's own Jamf API client and passes them to the built-in Screen Sharing app, so no credential prompt appears. Requires the operator's role to grant BOTH the screenShare and viewLocalAdminPassword computer actions, and the Jamf API role to hold View Local Admin Password; otherwise Screen Share opens with the normal prompt. Jamf records the password view against the operator and rotates the password afterwards per your LAPS settings. Default off."
+        },
+        "vpnIPExtensionAttributeID": {
+          "type": "integer",
+          "title": "VPN IP Extension Attribute ID",
+          "description": "If your org collects each Mac's VPN IP address in a Jamf Extension Attribute, enter that attribute's numeric ID (shown in the address bar when you open it in Jamf Pro). The device page then shows the VPN address with a VPN badge whenever the device reports one, and Screen Share and SSH connect to it. Needs EXTENSION_ATTRIBUTES in computers.inventorySections. Leave unset or 0 if you do not collect it. Takes precedence over the older core-domain jamfPro.vpnIPExtensionAttribute keys."
+        },
+        "sshPort": {
+          "type": "integer",
+          "title": "SSH: Port",
+          "default": 22,
+          "description": "TCP port the SSH device action connects to. The action itself is granted per role with the ssh computer action in the access profile."
+        },
+        "sshPasswordRotationMinutes": {
+          "type": "integer",
+          "title": "SSH: Password Rotation (minutes)",
+          "default": 60,
+          "description": "Minutes after the management account's LAPS password is used until Jamf rotates it. Match Jamf Pro's Local Admin Password setting 'Password Rotation Time'. The SSH window counts down to it. When the operator's Jamf API role holds View Local Admin Password Audit History, the app uses the rotation time Jamf reports instead."
+        },
+        "historyPageSize": {
+          "type": "integer",
+          "title": "History Page Size",
+          "default": 25,
+          "description": "Rows shown per page in the device History section (Policy Logs / Management History). Minimum 1."
+        }
+      }
+    },
+    "mobileDevices": {
+      "type": "object",
+      "title": "Mobile Devices",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "title": "Enabled",
+          "default": true
+        },
+        "fetchInventory": {
+          "type": "boolean",
+          "title": "Fetch Inventory",
+          "default": true
+        },
+        "showDashboardCards": {
+          "type": "object",
+          "title": "Show Dashboard Cards",
+          "properties": {
+            "iOS": {
+              "type": "boolean",
+              "default": true
+            },
+            "iPadOS": {
+              "type": "boolean",
+              "default": true
+            },
+            "visionOS": {
+              "type": "boolean",
+              "default": true
+            }
+          }
+        },
+        "enableReports": {
+          "type": "boolean",
+          "title": "Enable Reports",
+          "default": true
+        },
+        "inventoryRefreshInterval": {
+          "type": "integer",
+          "title": "Inventory Refresh Interval (min)",
+          "default": 15
+        },
+        "inventorySections": {
+          "type": "array",
+          "title": "Inventory Sections",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "GENERAL",
+            "HARDWARE",
+            "USER_AND_LOCATION",
+            "SECURITY",
+            "NETWORK",
+            "PURCHASING",
+            "APPLICATIONS",
+            "CERTIFICATES",
+            "PROFILES",
+            "GROUPS",
+            "EXTENSION_ATTRIBUTES"
+          ],
+          "description": "Inventory sections fetched and rendered by the detail views. Removing a section blanks the matching UI. Empty list = default list."
+        }
+      }
+    },
+    "myDevices": {
+      "type": "object",
+      "title": "My Devices",
+      "description": "The read-only 'My Devices' module: how the signed-in identity is matched to a Jamf assigned user, and whether the local-Mac fallback is offered. Which roles can SEE the module is set in the access domain (roles[].modules = myDevices). API role privileges: Read Computers, Read Mobile Devices, and Read Users for the accurate identity match.",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "title": "Enabled",
+          "description": "Machine-layer switch for the whole module. Off hides the sidebar row even for roles that grant it.",
+          "default": true
+        },
+        "resolveDirectoryUsers": {
+          "type": "boolean",
+          "title": "Resolve Jamf User Records",
+          "description": "Ask Jamf which user records carry the signed-in email address (/api/v1/users) and search inventory for every username they hold. This is the accurate match in tenants where the inventory username is a directory short name. Needs the Read Users privilege; a denial is non-fatal and falls back to the switches below.",
+          "default": true
+        },
+        "matchEmail": {
+          "type": "boolean",
+          "title": "Match on Assigned Email",
+          "description": "Match inventory records whose assigned-user email equals the signed-in address.",
+          "default": true
+        },
+        "matchUsernameFromEmail": {
+          "type": "boolean",
+          "title": "Match Username = Sign-in Address",
+          "description": "Match inventory records whose assigned username is the full sign-in address (tenants that enroll with the UPN as the username).",
+          "default": true
+        },
+        "matchUsernameLocalPart": {
+          "type": "boolean",
+          "title": "Match Username = Address Local Part",
+          "description": "Also try the part before the @ as a username. OFF by default: it matches nothing in short-name tenants and is the one candidate that could match a different person's device where mailboxes are shared.",
+          "default": false
+        },
+        "matchRealName": {
+          "type": "boolean",
+          "title": "Match on Real Name",
+          "description": "Match the assigned user's real name against the signed-in display name. OFF by default \u2014 display names are not unique and Jamf's formatting ('Doe, Jane A.') rarely equals the token's.",
+          "default": false
+        },
+        "showLocalDeviceFallback": {
+          "type": "boolean",
+          "title": "Fall Back to This Mac",
+          "description": "When nothing is assigned to the signed-in user, show the Mac FleetHub is running on (matched by serial), clearly labelled as this Mac rather than as an assignment.",
+          "default": true
+        },
+        "maxDevices": {
+          "type": "integer",
+          "title": "Maximum Devices",
+          "description": "Cap on devices shown, so a mis-scoped match (e.g. a shared lab account) cannot pull in the fleet. Minimum 1.",
+          "default": 50
+        }
+      }
+    },
+    "healthScorecard": {
+      "type": "object",
+      "title": "Health Scorecard",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "title": "Enable Health Scorecard",
+          "default": true
+        },
+        "cards": {
+          "type": "array",
+          "title": "Scorecard Cards",
+          "description": "One entry per scorecard card. Each card measures ONE population (its site/group ids) against ONE standard. To hold two populations to different standards, use two cards. A card omitted here is not rendered.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "title": "Card",
+                "enum": [
+                  "checkedIn",
+                  "protected",
+                  "encrypted",
+                  "secured",
+                  "upToDate"
+                ]
+              },
+              "enabled": {
+                "type": "boolean",
+                "title": "Enabled",
+                "default": true
+              },
+              "thresholds": {
+                "type": "object",
+                "title": "Colour Thresholds",
+                "properties": {
+                  "critical": {
+                    "type": "integer",
+                    "default": 50
+                  },
+                  "warning": {
+                    "type": "integer",
+                    "default": 80
+                  }
+                }
+              },
+              "platforms": {
+                "type": "array",
+                "title": "Platforms",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "macOS",
+                    "iOS",
+                    "iPadOS",
+                    "visionOS"
+                  ]
+                }
+              },
+              "except": {
+                "type": "array",
+                "title": "Except",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "site",
+                        "computerGroup",
+                        "mobileGroup"
+                      ],
+                      "title": "Type"
+                    },
+                    "id": {
+                      "type": "string",
+                      "title": "Jamf ID"
+                    },
+                    "comment": {
+                      "type": "string",
+                      "title": "Comment"
+                    }
+                  }
+                },
+                "description": "Carve-out applied before targeting \u2014 for \"this site but not that group inside it\". The Exclude \u2026 IDs lists below do the same thing as plain id lists and are easier to fill in; both are honoured."
+              },
+              "unmatchedVerdict": {
+                "type": "string",
+                "title": "Verdict For Untargeted Devices",
+                "enum": [
+                  "excluded",
+                  "unknown"
+                ],
+                "default": "excluded",
+                "description": "excluded removes untargeted devices from the card entirely. unknown keeps them visible as unevaluated, turning the card into a coverage audit."
+              },
+              "allDevices": {
+                "type": "boolean",
+                "title": "All Devices",
+                "default": false,
+                "description": "Measure every device, ignoring sites and groups. Must be stated explicitly \u2014 an empty target list means measure NOTHING, never everything."
+              },
+              "siteIds": {
+                "type": "array",
+                "title": "Jamf Site IDs",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Jamf site IDs this card measures - not names, because a site renamed in Jamf keeps its id. Find them via Scope IDs on the FleetHub dashboard. A card with no site or group ids measures nothing and shows a setup state."
+              },
+              "computerGroupIds": {
+                "type": "array",
+                "title": "Computer Group IDs",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Static or smart computer group ids. Separate from mobile group ids: they are different Jamf id namespaces."
+              },
+              "mobileGroupIds": {
+                "type": "array",
+                "title": "Mobile Device Group IDs",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "excludeSiteIds": {
+                "type": "array",
+                "title": "Exclude Jamf Site IDs",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Jamf site IDs whose devices are left out of this card entirely: they count neither as passing nor failing, and are absent from the percentage, the fleet score and the drill-down lists. Exclusion wins over inclusion, so All Devices plus one id here means everything except that site. Example: exclude the sites that are not required to be encrypted from the Encrypted card."
+              },
+              "excludeComputerGroupIds": {
+                "type": "array",
+                "title": "Exclude Computer Group IDs",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Static or smart computer group ids whose Macs are left out of this card entirely. Needs GROUP_MEMBERSHIPS in computers.inventorySections; without it the card reports that it cannot evaluate rather than silently scoring the excluded Macs."
+              },
+              "excludeMobileGroupIds": {
+                "type": "array",
+                "title": "Exclude Mobile Device Group IDs",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Mobile device group ids whose devices are left out of this card entirely. A separate id namespace from computer groups."
+              },
+              "requiredApps": {
+                "type": "array",
+                "title": "Required Applications",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "title": "Application Name"
+                    },
+                    "matchMode": {
+                      "type": "string",
+                      "title": "Match Mode",
+                      "enum": [
+                        "exact",
+                        "substring"
+                      ],
+                      "default": "exact",
+                      "description": "exact matches \"Name\" or \"Name.app\". substring also matches things like \"Name Uninstaller.app\" \u2014 use only when the installed name varies."
+                    }
+                  }
+                },
+                "description": "Used by the protected card. Every listed app is required unless Require Mode is 'any'."
+              },
+              "requireMode": {
+                "type": "string",
+                "title": "Require Mode",
+                "enum": [
+                  "all",
+                  "any"
+                ],
+                "default": "all"
+              },
+              "checks": {
+                "type": "array",
+                "title": "Security Checks",
+                "description": "Used by the secured card.",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "firewall",
+                    "sip",
+                    "gatekeeper",
+                    "managed",
+                    "supervised",
+                    "diskEncrypted",
+                    "bootstrapToken",
+                    "ddm"
+                  ]
+                }
+              },
+              "checkedInDays": {
+                "type": "integer",
+                "title": "Check-In Window (days)",
+                "default": 7,
+                "description": "Used by the checkedIn card."
+              },
+              "minimumOSVersions": {
+                "type": "object",
+                "title": "Minimum OS Versions",
+                "description": "Used by the upToDate card.",
+                "properties": {
+                  "macOS": {
+                    "type": "integer",
+                    "default": 26
+                  },
+                  "iOS": {
+                    "type": "integer",
+                    "default": 26
+                  },
+                  "iPadOS": {
+                    "type": "integer",
+                    "default": 26
+                  },
+                  "visionOS": {
+                    "type": "integer",
+                    "default": 2
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "deviceHealth": {
+      "type": "object",
+      "title": "Device Health",
+      "properties": {
+        "metrics": {
+          "type": "array",
+          "title": "Device Health Metrics",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "title": "Metric ID"
+              },
+              "enabled": {
+                "type": "boolean",
+                "title": "Enabled",
+                "default": true
+              },
+              "displayName": {
+                "type": "string",
+                "title": "Display Name"
+              },
+              "category": {
+                "type": "string",
+                "title": "Category",
+                "enum": [
+                  "management",
+                  "security",
+                  "status",
+                  "compliance"
+                ]
+              },
+              "platforms": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "title": "Platforms"
+              }
+            }
+          },
+          "default": [
+            {
+              "id": "managementStatus",
+              "enabled": true,
+              "displayName": "",
+              "category": "management",
+              "platforms": [
+                "macOS",
+                "iOS",
+                "iPadOS",
+                "visionOS"
+              ]
+            },
+            {
+              "id": "supervisionStatus",
+              "enabled": true,
+              "displayName": "",
+              "category": "management",
+              "platforms": [
+                "macOS",
+                "iOS",
+                "iPadOS",
+                "visionOS"
+              ]
+            },
+            {
+              "id": "mdmCapability",
+              "enabled": true,
+              "displayName": "",
+              "category": "management",
+              "platforms": [
+                "macOS"
+              ]
+            },
+            {
+              "id": "userApprovedMDM",
+              "enabled": true,
+              "displayName": "",
+              "category": "management",
+              "platforms": [
+                "macOS"
+              ]
+            },
+            {
+              "id": "bootstrapToken",
+              "enabled": true,
+              "displayName": "",
+              "category": "management",
+              "platforms": [
+                "macOS"
+              ]
+            },
+            {
+              "id": "fileVault",
+              "enabled": true,
+              "displayName": "",
+              "category": "security",
+              "platforms": [
+                "macOS"
+              ]
+            },
+            {
+              "id": "firewall",
+              "enabled": true,
+              "displayName": "",
+              "category": "security",
+              "platforms": [
+                "macOS"
+              ]
+            },
+            {
+              "id": "gatekeeper",
+              "enabled": true,
+              "displayName": "",
+              "category": "security",
+              "platforms": [
+                "macOS"
+              ]
+            },
+            {
+              "id": "sip",
+              "enabled": true,
+              "displayName": "",
+              "category": "security",
+              "platforms": [
+                "macOS"
+              ]
+            },
+            {
+              "id": "secureToken",
+              "enabled": true,
+              "displayName": "",
+              "category": "security",
+              "platforms": [
+                "macOS"
+              ]
+            },
+            {
+              "id": "recoveryLock",
+              "enabled": true,
+              "displayName": "",
+              "category": "security",
+              "platforms": [
+                "macOS"
+              ]
+            },
+            {
+              "id": "activationLock",
+              "enabled": true,
+              "displayName": "",
+              "category": "security",
+              "platforms": [
+                "macOS",
+                "iOS",
+                "iPadOS",
+                "visionOS"
+              ]
+            },
+            {
+              "id": "remoteDesktop",
+              "enabled": true,
+              "displayName": "",
+              "category": "status",
+              "platforms": [
+                "macOS"
+              ]
+            },
+            {
+              "id": "softwareUpdate",
+              "enabled": true,
+              "displayName": "",
+              "category": "compliance",
+              "platforms": [
+                "macOS",
+                "iOS",
+                "iPadOS",
+                "visionOS"
+              ]
+            },
+            {
+              "id": "lastCheckIn",
+              "enabled": true,
+              "displayName": "",
+              "category": "status",
+              "platforms": [
+                "macOS",
+                "iOS",
+                "iPadOS",
+                "visionOS"
+              ]
+            },
+            {
+              "id": "appleCare",
+              "enabled": true,
+              "displayName": "",
+              "category": "status",
+              "platforms": [
+                "macOS",
+                "iOS",
+                "iPadOS",
+                "visionOS"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "reports": {
+      "type": "object",
+      "title": "Reports",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "title": "Enabled",
+          "default": true
+        },
+        "availableReports": {
+          "type": "array",
+          "title": "Available Reports",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "title": "Report ID"
+              },
+              "enabled": {
+                "type": "boolean",
+                "title": "Enabled",
+                "default": true
+              },
+              "displayName": {
+                "type": "string",
+                "title": "Display Name"
+              },
+              "category": {
+                "type": "string",
+                "title": "Category"
+              },
+              "platforms": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "title": "Platforms"
+              },
+              "exportFormats": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "title": "Export Formats"
+              }
+            }
+          },
+          "default": [
+            {
+              "id": "deviceInventory",
+              "enabled": true,
+              "displayName": "",
+              "category": "inventory",
+              "platforms": [
+                "macOS",
+                "iOS",
+                "iPadOS",
+                "visionOS"
+              ],
+              "exportFormats": [
+                "csv",
+                "json"
+              ]
+            },
+            {
+              "id": "securityCompliance",
+              "enabled": true,
+              "displayName": "",
+              "category": "security",
+              "platforms": [
+                "macOS"
+              ],
+              "exportFormats": [
+                "csv",
+                "json"
+              ]
+            },
+            {
+              "id": "softwareUpdates",
+              "enabled": true,
+              "displayName": "",
+              "category": "compliance",
+              "platforms": [
+                "macOS",
+                "iOS",
+                "iPadOS",
+                "visionOS"
+              ],
+              "exportFormats": [
+                "csv",
+                "json"
+              ]
+            },
+            {
+              "id": "applicationInventory",
+              "enabled": true,
+              "displayName": "",
+              "category": "inventory",
+              "platforms": [
+                "macOS",
+                "iOS",
+                "iPadOS"
+              ],
+              "exportFormats": [
+                "csv",
+                "json"
+              ]
+            },
+            {
+              "id": "appleCareStatus",
+              "enabled": true,
+              "displayName": "",
+              "category": "management",
+              "platforms": [
+                "macOS",
+                "iOS",
+                "iPadOS",
+                "visionOS"
+              ],
+              "exportFormats": [
+                "csv",
+                "json"
+              ]
+            },
+            {
+              "id": "certificateExpiration",
+              "enabled": true,
+              "displayName": "",
+              "category": "security",
+              "platforms": [
+                "macOS",
+                "iOS",
+                "iPadOS"
+              ],
+              "exportFormats": [
+                "csv",
+                "json"
+              ]
+            },
+            {
+              "id": "fileVaultStatus",
+              "enabled": true,
+              "displayName": "",
+              "category": "security",
+              "platforms": [
+                "macOS"
+              ],
+              "exportFormats": [
+                "csv",
+                "json"
+              ]
+            },
+            {
+              "id": "configurationProfiles",
+              "enabled": true,
+              "displayName": "",
+              "category": "management",
+              "platforms": [
+                "macOS",
+                "iOS",
+                "iPadOS",
+                "visionOS"
+              ],
+              "exportFormats": [
+                "csv",
+                "json"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "actionLog": {
+      "type": "object",
+      "title": "Action Log Retention",
+      "description": "Retention policy for the local MDM-action audit trail (~/Library/Application Support/FleetHub/Logs). Applied at app launch and on every new entry.",
+      "properties": {
+        "retentionDays": {
+          "type": "integer",
+          "title": "Retention (days)",
+          "description": "Entries older than this are pruned. 0 = keep forever.",
+          "default": 365
+        },
+        "maxEntries": {
+          "type": "integer",
+          "title": "Maximum Entries",
+          "description": "Hard cap on entry count (oldest pruned first). 0 = unlimited.",
+          "default": 10000
+        }
+      }
+    }
+  }
+}
