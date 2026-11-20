@@ -56,7 +56,7 @@ enum ManagedDomainLoader {
         "appleBusinessManager", "jamfProtect", "entra", "signIn", "authentication"
     ]
     static let accessKeys = [
-        "configurationVersion", "role", "roles"
+        "configurationVersion", "role", "roles", "siteScoping"
     ]
     static let featuresKeys = [
         "configurationVersion", "computers", "mobileDevices",

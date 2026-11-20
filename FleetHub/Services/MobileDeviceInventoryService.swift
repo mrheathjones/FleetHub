@@ -147,12 +147,11 @@ final class MobileDeviceInventoryService: ObservableObject {
                 }
             }
             
-            devices = allDevices
-            totalCount = reportedTotal
-            updatePlatformCounts()
-            
-            // Update cache
+            // The cache applies the site scope; publish what it kept.
             cache.updateCache(devices: allDevices, totalCount: reportedTotal)
+            devices = cache.devices
+            totalCount = cache.totalCount
+            updatePlatformCounts()
             
             if truncated {
                 errorMessage = "Mobile device inventory truncated: stopped after \(Self.maxPages) pages (\(allDevices.count) of \(reportedTotal) devices). Jamf Pro is reporting more devices than the sweep could fetch."

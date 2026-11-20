@@ -101,6 +101,13 @@ struct DevicesBrowserView: View {
         .onChange(of: staleDays) { _, _ in recomputeVisible() }
         .onChange(of: computerCache.totalCount) { _, _ in rebuildItems() }
         .onChange(of: mobileCache.totalCount) { _, _ in rebuildItems() }
+        .onReceive(SiteScopeManager.shared.$revision.dropFirst()) { _ in
+            // The site scope changed: close any open device (it may be
+            // outside the new scope) and rebuild from the re-filtered cache.
+            if !navigationPath.isEmpty { navigationPath = NavigationPath() }
+            page = 1
+            rebuildItems()
+        }
         .onChange(of: navigationPath.count) { _, newValue in
             // A pushed detail view hides the module's tab strip.
             withAnimation(.easeInOut(duration: 0.2)) {

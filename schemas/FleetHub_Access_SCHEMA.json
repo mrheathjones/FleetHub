@@ -19,6 +19,12 @@
         "FleetHub.Support"
       ]
     },
+    "siteScoping": {
+      "type": "boolean",
+      "title": "Limit Devices By Site",
+      "description": "Turn on for organizations that use Jamf Pro sites. When true, each person sees and acts on only the devices in the sites their roles list under Visible Sites; a role that lists none sees no devices (fail-closed), so fill in Visible Sites on every role before turning this on. When false or absent, nobody is limited by site and Visible Sites is ignored. This limit is applied by FleetHub, not by Jamf Pro: a Jamf API client cannot be restricted to a site, so each person's own API credential can still read every device.",
+      "default": false
+    },
     "roles": {
       "type": "array",
       "title": "Role Definitions (capability sets)",
@@ -156,6 +162,16 @@
             "type": "array",
             "title": "Allowed Sites (Move to Site action)",
             "description": "Jamf Pro site IDs this role may move a device INTO with the moveToSite action — gates BOTH the computer and mobile-device Move to Site flows. Each entry must be a site ID (the numeric id, NOT the display name — sites get renamed, ids do not); the reserved literal `all` grants every site Jamf returns. The picker always shows the site's display name. Absent or empty = the moveToSite action is hidden even when listed in computerActions or mobileDeviceActions (fail-closed). Unioned across matched roles. Typical admin role: [\"all\"]; support role: a curated list like [\"12\",\"17\",\"23\"].",
+            "items": {
+              "type": "string",
+              "title": "Site ID (or `all`)"
+            },
+            "default": []
+          },
+          "visibleSites": {
+            "type": "array",
+            "title": "Visible Sites (which sites' devices this role sees)",
+            "description": "Jamf Pro site IDs whose devices this role may see and act on. Read only when Limit Devices By Site is on. Each entry must be a site ID (the numeric id, not the display name); the reserved literal `all` shows every device, including devices in no site. Use `-1` to include devices that belong to no site. Absent or empty = this role's holders see no devices while the limit is on (fail-closed). Unioned across matched roles. Separate from Allowed Sites, which only decides where a device may be moved. Typical admin role: [\"all\"]; site technician: [\"12\"].",
             "items": {
               "type": "string",
               "title": "Site ID (or `all`)"

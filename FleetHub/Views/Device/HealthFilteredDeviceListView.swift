@@ -531,6 +531,7 @@ struct HealthFilteredDeviceListView: View {
         }
         
         let device = try JSONDecoder().decode(MobileDevice.self, from: data)
+        guard SiteScopeStore.includes(device) else { throw SiteScopeStore.outOfScopeError }
         return device
     }
     

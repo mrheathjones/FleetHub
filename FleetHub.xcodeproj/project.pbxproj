@@ -119,6 +119,8 @@
 		F077 /* DeviceActionPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = S077 /* DeviceActionPolicy.swift */; };
 		ED9A21F5B86BA74FA8CA56A1 /* UserSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 757A43D21357918DDBF8CC37 /* UserSession.swift */; };
 		A1C0DE0000000000000CAP02 /* UserCapabilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C0DE0000000000000CAP01 /* UserCapabilities.swift */; };
+		SSCOPE_F001 /* SiteScope.swift in Sources */ = {isa = PBXBuildFile; fileRef = SSCOPE_S001 /* SiteScope.swift */; };
+		SSCOPE_F003 /* SiteScopeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = SSCOPE_S002 /* SiteScopeManager.swift */; };
 		F078 /* NetworkTuning.swift in Sources */ = {isa = PBXBuildFile; fileRef = S078 /* NetworkTuning.swift */; };
 		F079 /* Branding.swift in Sources */ = {isa = PBXBuildFile; fileRef = S079 /* Branding.swift */; };
 		F090 /* ProfileAvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = S090 /* ProfileAvatarView.swift */; };
@@ -159,6 +161,7 @@
 		MB_F077 /* DeviceActionPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = S077 /* DeviceActionPolicy.swift */; };
 		D9B1D69830BE7EE7314C4566 /* UserSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 757A43D21357918DDBF8CC37 /* UserSession.swift */; };
 		A1C0DE0000000000000CAP03 /* UserCapabilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C0DE0000000000000CAP01 /* UserCapabilities.swift */; };
+		SSCOPE_F002 /* SiteScope.swift in Sources */ = {isa = PBXBuildFile; fileRef = SSCOPE_S001 /* SiteScope.swift */; };
 		MB_F078 /* NetworkTuning.swift in Sources */ = {isa = PBXBuildFile; fileRef = S078 /* NetworkTuning.swift */; };
 		MB_F079 /* Branding.swift in Sources */ = {isa = PBXBuildFile; fileRef = S079 /* Branding.swift */; };
 		CLF1 /* CleanupModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = CLR1 /* CleanupModels.swift */; };
@@ -353,6 +356,8 @@
 		S077 /* DeviceActionPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceActionPolicy.swift; sourceTree = "<group>"; };
 		757A43D21357918DDBF8CC37 /* UserSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSession.swift; sourceTree = "<group>"; };
 		A1C0DE0000000000000CAP01 /* UserCapabilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCapabilities.swift; sourceTree = "<group>"; };
+		SSCOPE_S001 /* SiteScope.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SiteScope.swift; sourceTree = "<group>"; };
+		SSCOPE_S002 /* SiteScopeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SiteScopeManager.swift; sourceTree = "<group>"; };
 		S078 /* NetworkTuning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkTuning.swift; sourceTree = "<group>"; };
 		S079 /* Branding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Branding.swift; sourceTree = "<group>"; };
 		S090 /* ProfileAvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileAvatarView.swift; sourceTree = "<group>"; };
@@ -485,6 +490,7 @@
 				S077 /* DeviceActionPolicy.swift */,
 				757A43D21357918DDBF8CC37 /* UserSession.swift */,
 				A1C0DE0000000000000CAP01 /* UserCapabilities.swift */,
+				SSCOPE_S001 /* SiteScope.swift */,
 				S006 /* MobileDevice.swift */,
 				S007 /* User.swift */,
 				S060 /* DeviceListItem.swift */,
@@ -540,6 +546,7 @@
 				S015 /* ComputerInventoryService.swift */,
 				SABM5 /* JamfPreStageService.swift */,
 				SSITE1 /* JamfSiteService.swift */,
+				SSCOPE_S002 /* SiteScopeManager.swift */,
 				S016 /* ComputerSearchModels.swift */,
 				S017 /* ComputerSearchService.swift */,
 				S900 /* ComputerHistoryModels.swift */,
@@ -1010,6 +1017,7 @@
 				MB_F077 /* DeviceActionPolicy.swift in Sources */,
 				D9B1D69830BE7EE7314C4566 /* UserSession.swift in Sources */,
 				A1C0DE0000000000000CAP03 /* UserCapabilities.swift in Sources */,
+				SSCOPE_F002 /* SiteScope.swift in Sources */,
 				MB_F078 /* NetworkTuning.swift in Sources */,
 				MB_F079 /* Branding.swift in Sources */,
 				MB_F014 /* ComputerInventoryCache.swift in Sources */,
@@ -1084,6 +1092,8 @@
 				F077 /* DeviceActionPolicy.swift in Sources */,
 				ED9A21F5B86BA74FA8CA56A1 /* UserSession.swift in Sources */,
 				A1C0DE0000000000000CAP02 /* UserCapabilities.swift in Sources */,
+				SSCOPE_F001 /* SiteScope.swift in Sources */,
+				SSCOPE_F003 /* SiteScopeManager.swift in Sources */,
 				F078 /* NetworkTuning.swift in Sources */,
 				F079 /* Branding.swift in Sources */,
 				F090 /* ProfileAvatarView.swift in Sources */,
@@ -1341,7 +1351,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 196;
+				CURRENT_PROJECT_VERSION = 201;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -1369,7 +1379,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 196;
+				CURRENT_PROJECT_VERSION = 201;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -1397,7 +1407,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 196;
+				CURRENT_PROJECT_VERSION = 201;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -1427,7 +1437,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 196;
+				CURRENT_PROJECT_VERSION = 201;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -1457,7 +1467,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 196;
+				CURRENT_PROJECT_VERSION = 201;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -1487,7 +1497,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 196;
+				CURRENT_PROJECT_VERSION = 201;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;

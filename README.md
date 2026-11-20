@@ -24,6 +24,8 @@ action is logged.
 - **Reports:** a Health Scorecard and a report builder with saved reports and export.
 - **Cleanup:** find stale devices and act on them in bulk, in Jamf Pro and Jamf Protect.
 - **My Devices:** a read-only view of the signed-in person's own devices.
+- **Sites:** optionally limit each role to the devices in its Jamf Pro sites, with a site
+  switcher for people who look after more than one. FleetHub applies this limit, not Jamf Pro.
 - **Logs:** who did what, to which device, and whether it worked.
 
 ![A device page with health checks, details and the Actions panel](docs/images/device.jpg)

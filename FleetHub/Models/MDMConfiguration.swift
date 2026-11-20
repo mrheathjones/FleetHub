@@ -120,6 +120,9 @@ struct MDMConfiguration: Codable {
     /// `orderedRoleDefinitions`. Resolve capabilities through
     /// `capabilities(forRoleNames:)`, never by hand.
     let roleDefinitions: [String: [AccessConfiguration.RoleDefinition]]
+    /// The access domain's `siteScoping` switch: when true, people see only
+    /// the devices in their roles' `visibleSites`. False when absent.
+    let siteScopingEnabled: Bool
     /// Stale threshold (days without check-in) used by Cleanup.
     let cleanupStaleDays: Int
     let cleanupDefaultStaticGroupID: String?
@@ -544,6 +547,7 @@ struct MDMConfiguration: Codable {
         abmDefaultDeviceType: String? = nil,
         role: String? = nil,
         roles: [AccessConfiguration.RoleDefinition] = [],
+        siteScopingEnabled: Bool = false,
         cleanupStaleDays: Int = 90,
         cleanupDefaultStaticGroupID: String? = nil,
         cleanupDefaultSiteID: String? = nil,
@@ -593,6 +597,7 @@ struct MDMConfiguration: Codable {
         // array and its name index cannot drift apart at any call site.
         self.orderedRoleDefinitions = roles
         self.roleDefinitions = MDMConfiguration.roleIndex(from: roles)
+        self.siteScopingEnabled = siteScopingEnabled
         self.cleanupStaleDays = cleanupStaleDays
         self.cleanupDefaultStaticGroupID = cleanupDefaultStaticGroupID
         self.cleanupDefaultSiteID = cleanupDefaultSiteID
@@ -714,6 +719,7 @@ struct MDMConfiguration: Codable {
             // Passed as the DELIVERED ARRAY, not a pre-built index: profile
             // order is load-bearing (module order = sidebar order).
             roles: access?.effectiveRoles ?? [],
+            siteScopingEnabled: access?.effectiveSiteScoping ?? false,
             cleanupStaleDays: resolvedCleanup.effectiveStaleDays,
             cleanupDefaultStaticGroupID: resolvedCleanup.defaultStaticGroupID,
             cleanupDefaultSiteID: resolvedCleanup.defaultSiteID,

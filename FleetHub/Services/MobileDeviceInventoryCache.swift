@@ -19,8 +19,13 @@ final class MobileDeviceInventoryCache: ObservableObject {
     
     // MARK: - Published Properties
     
+    /// The devices in the site scope in force (see ComputerInventoryCache).
     @Published private(set) var devices: [MobileDeviceInventoryItem] = []
     @Published private(set) var totalCount: Int = 0
+
+    /// Everything Jamf returned, before the site scope is applied.
+    private var allDevices: [MobileDeviceInventoryItem] = []
+    private var reportedTotal = 0
     @Published private(set) var lastFetchDate: Date?
     @Published private(set) var isCacheValid: Bool = false
     
@@ -37,25 +42,44 @@ final class MobileDeviceInventoryCache: ObservableObject {
     
     /// Check if we have valid cached data for this session
     var hasCachedData: Bool {
-        return isCacheValid && !devices.isEmpty
+        return isCacheValid && !allDevices.isEmpty
     }
     
     /// Update cache with new data
     func updateCache(devices: [MobileDeviceInventoryItem], totalCount: Int) {
-        self.devices = devices
-        self.totalCount = totalCount
+        allDevices = devices
+        reportedTotal = totalCount
+        publishScoped()
         self.lastFetchDate = Date()
         self.isCacheValid = true
         
-        // Update platform counts
-        updatePlatformCounts()
-        
-        AppLog.notice("✅ MobileDeviceInventoryCache: Updated cache with \(devices.count) devices (iOS: \(iOSCount), iPadOS: \(iPadOSCount), visionOS: \(visionOSCount))")
+        AppLog.notice("✅ MobileDeviceInventoryCache: Updated cache with \(devices.count) devices, \(self.devices.count) in the site scope (iOS: \(iOSCount), iPadOS: \(iPadOSCount), visionOS: \(visionOSCount))")
     }
     
+    /// Re-filters the inventory after the site scope changed.
+    func reapplyScope() {
+        guard !allDevices.isEmpty else { return }
+        publishScoped()
+    }
+
+    private func publishScoped() {
+        let scope = SiteScopeStore.current
+        if scope.isRestricted {
+            let scoped = allDevices.filter { scope.includes(siteID: $0.general?.siteId) }
+            totalCount = scoped.count
+            devices = scoped
+        } else {
+            totalCount = reportedTotal
+            devices = allDevices
+        }
+        updatePlatformCounts()
+    }
+
     /// Clear the cache (called on logout or manual refresh)
     func clearCache() {
         devices = []
+        allDevices = []
+        reportedTotal = 0
         totalCount = 0
         iOSCount = 0
         iPadOSCount = 0

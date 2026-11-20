@@ -85,6 +85,12 @@ struct UserCapabilities: Equatable {
     /// a role's scope. Empty means moveToSite is hidden even when granted.
     let allowedSites: Set<String>
 
+    /// Jamf site IDs whose devices the user may see, plus the reserved
+    /// literal `all`. Read only when the access domain turns site scoping
+    /// on — see `SiteScope.permitted(enabled:capabilities:)`. Empty means no
+    /// devices at all while scoping is on.
+    let visibleSites: Set<String>
+
     /// Whether the prestage-on-assign step is offered after abmAssign. OR'd
     /// across roles.
     let allowPrestageOnAssign: Bool
@@ -112,6 +118,7 @@ struct UserCapabilities: Equatable {
         allowedMdmServers: Set<String> = [],
         allowedPrestages: Set<String> = [],
         allowedSites: Set<String> = [],
+        visibleSites: Set<String> = [],
         allowPrestageOnAssign: Bool = false,
         returnToServiceOptions: AccessConfiguration.ReturnToServiceOptions = .empty,
         allowExport: Bool,
@@ -141,6 +148,7 @@ struct UserCapabilities: Equatable {
         self.allowedMdmServers = allowedMdmServers
         self.allowedPrestages = allowedPrestages
         self.allowedSites = allowedSites
+        self.visibleSites = visibleSites
         self.allowPrestageOnAssign = allowPrestageOnAssign
         self.returnToServiceOptions = returnToServiceOptions
         self.allowExport = allowExport
@@ -174,6 +182,7 @@ struct UserCapabilities: Equatable {
             && lhs.allowedMdmServers == rhs.allowedMdmServers
             && lhs.allowedPrestages == rhs.allowedPrestages
             && lhs.allowedSites == rhs.allowedSites
+            && lhs.visibleSites == rhs.visibleSites
             && lhs.allowPrestageOnAssign == rhs.allowPrestageOnAssign
             && lhs.returnToServiceOptions == rhs.returnToServiceOptions
             && lhs.allowExport == rhs.allowExport
@@ -209,6 +218,7 @@ struct UserCapabilities: Equatable {
         var allowedMdmServers: Set<String> = []
         var allowedPrestages: Set<String> = []
         var allowedSites: Set<String> = []
+        var visibleSites: Set<String> = []
         var allowPrestageOnAssign = false
         var allowExport = false
         var allowScorecardDiagnostics = false
@@ -244,6 +254,9 @@ struct UserCapabilities: Equatable {
             // moveToSite still contributes its allowedSites to a user who
             // holds moveToSite via some other role.
             allowedSites.formUnion(definition.effectiveAllowedSites)
+            // Same plain union: a person holding two site roles sees both
+            // sites.
+            visibleSites.formUnion(definition.effectiveVisibleSites)
             allowPrestageOnAssign = allowPrestageOnAssign || definition.effectiveAllowPrestageOnAssign
             allowExport = allowExport || definition.effectiveAllowExport
             allowScorecardDiagnostics = allowScorecardDiagnostics
@@ -266,6 +279,7 @@ struct UserCapabilities: Equatable {
             allowedMdmServers: allowedMdmServers,
             allowedPrestages: allowedPrestages,
             allowedSites: allowedSites,
+            visibleSites: visibleSites,
             allowPrestageOnAssign: allowPrestageOnAssign,
             returnToServiceOptions: rtsGrantingRoleSeen
                 ? AccessConfiguration.ReturnToServiceOptions(
@@ -352,4 +366,9 @@ struct UserCapabilities: Equatable {
     /// Whether moveToSite has anywhere to go at all — the emptiness check that
     /// makes the action fail closed rather than opening an empty picker.
     var hasAnyAllowedSite: Bool { !allowedSites.isEmpty }
+
+    /// Whether `visibleSites` carries the `all` sentinel.
+    var seesAllSites: Bool {
+        AccessConfiguration.ABMAllowList.containsSentinel(visibleSites)
+    }
 }

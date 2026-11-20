@@ -3392,7 +3392,9 @@ struct ReportResultsView: View {
                 NSLocalizedDescriptionKey: JamfErrorFormatter.message(status: httpResponse.statusCode, body: data, fallbackAction: "load the device record")
             ])
         }
-        return try JSONDecoder().decode(MobileDevice.self, from: data)
+        let device = try JSONDecoder().decode(MobileDevice.self, from: data)
+        guard SiteScopeStore.includes(device) else { throw SiteScopeStore.outOfScopeError }
+        return device
     }
 }
 

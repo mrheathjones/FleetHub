@@ -219,6 +219,17 @@
 			<key>role</key>
 			<string>FleetHub.Support</string>
 
+			<!-- SITE SCOPING (optional, off by default). Set true for an
+			     organization that uses Jamf Pro sites: each person then
+			     sees only the devices in the sites their roles list under
+			     "visibleSites" (site IDs, "all", or "-1" for devices in
+			     no site). A role with no visibleSites sees NO devices
+			     while this is on, so fill it in on every role first.
+			     FleetHub applies this limit, not Jamf Pro: a Jamf API
+			     client cannot be restricted to a site. -->
+			<key>siteScoping</key>
+			<false/>
+
 			<!-- ROLE DEFINITIONS — the capability source of truth.
 			     An ARRAY of role objects, each naming itself in "name".
 			     Every name below is one YOU choose; the app ships none.
@@ -271,6 +282,12 @@
 					     API clients. Omit to use core jamfPro.requiredRoleName. -->
 					<key>jamfApiRoleName</key>
 					<string>FleetHub Admin</string>
+					<!-- Read only while siteScoping is true. Replace "all"
+					     with Jamf site IDs to limit this role to those sites. -->
+					<key>visibleSites</key>
+					<array>
+						<string>all</string>
+					</array>
 					<key>modules</key>
 					<array>
 						<string>dashboard</string>
@@ -329,6 +346,12 @@
 					     API clients. Omit to use core jamfPro.requiredRoleName. -->
 					<key>jamfApiRoleName</key>
 					<string>FleetHub Support</string>
+					<!-- Read only while siteScoping is true. Replace "all"
+					     with Jamf site IDs to limit this role to those sites. -->
+					<key>visibleSites</key>
+					<array>
+						<string>all</string>
+					</array>
 					<key>modules</key>
 					<array>
 						<string>dashboard</string>
@@ -378,6 +401,12 @@
 					     API clients. Omit to use core jamfPro.requiredRoleName. -->
 					<key>jamfApiRoleName</key>
 					<string>FleetHub User</string>
+					<!-- Read only while siteScoping is true. Replace "all"
+					     with Jamf site IDs to limit this role to those sites. -->
+					<key>visibleSites</key>
+					<array>
+						<string>all</string>
+					</array>
 					<key>modules</key>
 					<array>
 						<string>myDevice</string>

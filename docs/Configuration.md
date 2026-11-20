@@ -107,6 +107,7 @@ roles = (
     mobileDeviceActions = [ ids ];   // same, mobile side
     cleanupActions      = [ ids ];   // cleanup sub-actions
     allowExport         = <bool>;    // every export surface (Reports, Cleanup, Logs)
+    visibleSites        = [ ids ];   // Jamf site ids this role sees (site scoping only)
   },
   // ...more role objects
 )
@@ -127,6 +128,7 @@ roles = (
 | `mobileDeviceActions` | array of string | no mobile actions | the `deviceActions.mobileDevice.actions[].id` set — forward-looking, no mobile actions menu exists yet |
 | `cleanupActions` | array of string | no cleanup actions | `unmanage`, `addToGroup`, `moveToSite`, `deleteFromProtect`, `deleteRecord` |
 | `allowExport` | bool | `false` | — (a single switch over **every** export surface — see below) |
+| `visibleSites` | array of string | no devices **while `siteScoping` is on**; ignored otherwise | Jamf site IDs, `all`, or `-1` for devices in no site — see *Site scoping* below |
 
 **`allowExport` is app-wide, not Reports-only.** It gates every path that moves data out of
 the app, and each control is simply **not rendered** without it:
@@ -272,6 +274,75 @@ allow-list grants that no matched role lists likewise stays hidden and blocked.
 role-driven only.** (The `cleanup` block in the access domain is *tunables only*:
 `staleDays`, `defaultStaticGroupID`, `defaultSiteID`. It grants nothing.)
 
+#### Site scoping — limiting people to their Jamf sites
+
+For organizations that use Jamf Pro **sites** (common in education, where site admins and
+site technicians look after one school). Site scoping is **off by default**; an organization
+that does not use sites changes nothing.
+
+Two keys in the access domain turn it on:
+
+| Key | Where | Type | Absent = | Meaning |
+|---|---|---|---|---|
+| `siteScoping` | top level of the access domain | bool | `false` | Turns site scoping on for everyone. |
+| `visibleSites` | each role | array of string | **no devices** while scoping is on | Jamf site **IDs** whose devices the role may see and act on. `all` = every device. `-1` = devices in no site. |
+
+```
+siteScoping = 1;
+roles = (
+  { name = "FleetHub.Admin";     visibleSites = ( all );       /* ... */ },
+  { name = "FleetHub.EastTech";  visibleSites = ( 12 );        /* ... */ },
+  { name = "FleetHub.Regional";  visibleSites = ( 12, 17 );    /* ... */ },
+)
+```
+
+With scoping on, a person sees only the devices in their roles' sites, in every part of the
+app that lists or opens a device:
+
+- **Overview:** device counts, health checks, OS versions, hardware and stale devices.
+- **Devices, Reports and the Health Scorecard:** lists, filters and exports.
+- **Search:** in the main window and the menu bar search.
+- **Opening a device:** from a list, a search, My Devices or a link. A device outside the
+  person's sites reads as not found.
+- **Cleanup:** stale Macs, the totals they are measured against, and Jamf Protect records
+  (matched to in-scope Macs by serial number).
+- **My Devices:** a person's own device shows only when it is in one of their sites.
+
+Someone whose roles list more than one site, or `all`, gets a **site switcher** in the top
+bar. It narrows the whole app to one site, and the choice is remembered. Someone with one
+site sees that site's name there.
+
+Rules:
+
+- **IDs, not names.** Sites get renamed; an ID does not change. Find a site's ID in the
+  address of its page in Jamf Pro's Sites settings (the number after `id=`).
+- **Union across roles.** A person holding two site roles sees both sites.
+- **Fail-closed.** With `siteScoping` on, a role with no `visibleSites` sees no devices.
+  Fill in `visibleSites` on every role before turning the switch on. A malformed
+  `siteScoping` value is read as on.
+- **`visibleSites` is not `allowedSites`.** `allowedSites` only decides where Move to Site may
+  send a device. A site technician who should not move devices out of their site needs
+  `allowedSites` limited (or `moveToSite` not granted) as well.
+- **Site names** in the switcher come from Jamf (needs the **Read Sites** privilege) or, without
+  it, from the computer inventory. A site with no name available is shown as "Site 12".
+
+> **This limit is applied by FleetHub, not by Jamf Pro.** A Jamf Pro API role grants
+> privileges only; an API client cannot be restricted to a site. Each person's own API
+> client can therefore still read every device in Jamf Pro. Site scoping decides what
+> FleetHub shows, searches and acts on. It keeps people working in their own sites; it is not
+> a security boundary against someone who takes their API credential out of the Keychain and
+> calls Jamf Pro directly. If you need Jamf Pro itself to enforce the boundary, FleetHub
+> cannot provide that.
+
+What site scoping does not cover:
+
+- **Apple Business Manager and PreStage data.** These are not tied to sites in Jamf. Keep
+  using `allowedMdmServers` and `allowedPrestages`, or leave those tabs out of site roles.
+- **Compliance Benchmarks on the Overview.** Jamf reports these for the whole fleet only, so
+  the card is hidden while the view is limited to sites. A device's own benchmark results
+  still show on its page.
+- **Logs.** The action log is this Mac's record of what was done here; it is not filtered.
+
 #### Fail-closed rules
 
 - **No `roles` block → no capabilities.** Nothing is defaulted on, ever.
@@ -282,6 +353,7 @@ role-driven only.** (The `cleanup` block in the access domain is *tunables only*
   must not hard-lock an org out of its own app. An empty app is diagnosable from the
   inside; a refused sign-in on every Mac is not.
 - Unknown ids inside a role's lists are ignored, not fatal — forward compatibility.
+- **`siteScoping` on and a role with no `visibleSites` → no devices** for that role's holders.
 - There is deliberately **no default** for `roles`, and none for `role`. A default would be
   a hardcoded capability, which is exactly what this model removes.
 

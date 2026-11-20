@@ -118,6 +118,8 @@ struct TopNavigationBar: View {
 
     private var trailingControls: some View {
         HStack(spacing: 8) {
+            SiteSwitcher()
+
             if let entry = announcementsEntry {
                 BarIconButton(
                     icon: entry.icon,
@@ -224,6 +226,85 @@ struct TopNavigationBar: View {
         }
         .padding(16)
         .frame(minWidth: 220, alignment: .leading)
+    }
+}
+
+// MARK: - Site Switcher
+
+/// Shows which Jamf sites' devices are on screen and, when the person may
+/// see more than one, lets them narrow the whole app to a single site.
+/// Drawn only while the access profile turns site scoping on.
+private struct SiteSwitcher: View {
+    @ObservedObject private var scope = SiteScopeManager.shared
+
+    var body: some View {
+        if scope.isSwitcherOffered {
+            Menu {
+                Button {
+                    scope.select(nil)
+                } label: {
+                    row(scope.permitted.isRestricted ? "All My Sites" : "All Sites",
+                        isOn: scope.activeSelection == nil)
+                }
+                Divider()
+                ForEach(scope.choices) { choice in
+                    Button {
+                        scope.select(choice.id)
+                    } label: {
+                        row(choice.name, isOn: scope.activeSelection == choice.id)
+                    }
+                }
+            } label: {
+                chip(showsChevron: true)
+            }
+            .menuStyle(.borderlessButton)
+            .menuIndicator(.hidden)
+            .fixedSize()
+            .help("Choose Which Site's Devices to Show")
+            .accessibilityLabel("Site: \(scope.selectionTitle)")
+        } else if scope.isEnabled, scope.permitted.isRestricted {
+            // One site, or none: nothing to switch, but say what is shown.
+            chip(showsChevron: false)
+                .help("You See Devices in This Site Only")
+                .accessibilityLabel("Site: \(title)")
+        }
+    }
+
+    private var title: String {
+        if scope.permitted.siteIDs.isEmpty { return "No Sites" }
+        return scope.choices.first?.name ?? scope.selectionTitle
+    }
+
+    @ViewBuilder
+    private func row(_ name: String, isOn: Bool) -> some View {
+        if isOn {
+            Label(name, systemImage: "checkmark")
+        } else {
+            Text(name)
+        }
+    }
+
+    private func chip(showsChevron: Bool) -> some View {
+        HStack(spacing: 6) {
+            Image(systemName: "building.2")
+                .font(.system(size: 12, weight: .medium))
+            Text(showsChevron ? scope.selectionTitle : title)
+                .font(.system(size: 13, weight: .medium))
+                .lineLimit(1)
+                .fixedSize()
+            if showsChevron {
+                Image(systemName: "chevron.down")
+                    .font(.system(size: 9, weight: .semibold))
+            }
+        }
+        .foregroundStyle(FleetHubTheme.control)
+        .padding(.horizontal, 11)
+        .frame(height: 36)
+        .background(
+            RoundedRectangle(cornerRadius: FleetHubTheme.controlRadius, style: .continuous)
+                .stroke(FleetHubTheme.border, lineWidth: 1)
+        )
+        .contentShape(Rectangle())
     }
 }
 

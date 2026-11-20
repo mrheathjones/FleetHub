@@ -118,6 +118,10 @@ struct FleetHubApp: App {
         // Menu bar search: on by default, unless the user or the
         // organization's profile turned it off.
         MenuBarCompanion.shared.applyPolicy()
+
+        // Site scoping: starts following the signed-in person's roles
+        // before any inventory is loaded.
+        _ = SiteScopeManager.shared
     }
     
     var body: some Scene {
