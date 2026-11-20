@@ -181,6 +181,20 @@
           "default": true,
           "description": "With nobody logged in at the Mac there is nobody to ask. true (default) opens the session; false refuses it."
         },
+        "screenSharePromptExemptSiteIds": {
+          "type": "array",
+          "title": "Screen Share Prompt: Never Ask in These Sites",
+          "description": "Jamf site IDs (the numeric id, not the name) whose Macs are never prompted, for kiosks, signage and other Macs with nobody at them. Use -1 for Macs in no site. Empty = no site is exempt.",
+          "items": { "type": "string", "title": "Site ID" },
+          "default": []
+        },
+        "screenSharePromptExemptComputerGroupIds": {
+          "type": "array",
+          "title": "Screen Share Prompt: Never Ask in These Computer Groups",
+          "description": "Jamf computer group IDs (smart or static; the numeric id shown in the address bar when you open the group) whose members are never prompted. Empty = no group is exempt. A Mac whose groups cannot be read is prompted.",
+          "items": { "type": "string", "title": "Computer Group ID" },
+          "default": []
+        },
         "vpnIPExtensionAttributeID": {
           "type": "integer",
           "title": "VPN IP Extension Attribute ID",

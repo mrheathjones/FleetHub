@@ -479,6 +479,9 @@ final class SetupModel: ObservableObject {
     @Published var screenSharePromptIconPath = ""
     @Published var screenSharePromptTimeoutSeconds = 60
     @Published var screenSharePromptAllowWhenNoUser = true
+    /// Sites and computer groups whose Macs are never prompted (kiosks).
+    @Published var screenSharePromptExemptSiteIDs: [String] = []
+    @Published var screenSharePromptExemptComputerGroupIDs: [String] = []
     /// Numeric id of the extension attribute holding the VPN IP; blank = not collected.
     @Published var vpnIPExtensionAttributeID = ""
     /// Minutes Jamf waits after a LAPS password is viewed before rotating it.
@@ -722,6 +725,10 @@ final class SetupModel: ObservableObject {
             if !trimmed(screenSharePromptIconPath).isEmpty { computers["screenSharePromptIconPath"] = trimmed(screenSharePromptIconPath) }
             if screenSharePromptTimeoutSeconds != 60 { computers["screenSharePromptTimeoutSeconds"] = screenSharePromptTimeoutSeconds }
             if !screenSharePromptAllowWhenNoUser { computers["screenSharePromptAllowWhenNoUser"] = false }
+            if !screenSharePromptExemptSiteIDs.isEmpty { computers["screenSharePromptExemptSiteIds"] = screenSharePromptExemptSiteIDs }
+            if !screenSharePromptExemptComputerGroupIDs.isEmpty {
+                computers["screenSharePromptExemptComputerGroupIds"] = screenSharePromptExemptComputerGroupIDs
+            }
         }
         if let id = Int(trimmed(vpnIPExtensionAttributeID)), id > 0 { computers["vpnIPExtensionAttributeID"] = id }
         if sshPasswordRotationMinutes != 60 { computers["sshPasswordRotationMinutes"] = sshPasswordRotationMinutes }
@@ -1083,6 +1090,8 @@ extension SetupModel {
         var screenSharePromptIconPath: String?
         var screenSharePromptTimeoutSeconds: Int?
         var screenSharePromptAllowWhenNoUser: Bool?
+        var screenSharePromptExemptSiteIDs: [String]?
+        var screenSharePromptExemptComputerGroupIDs: [String]?
         var sshPasswordRotationMinutes: Int?
         var vpnIPExtensionAttributeID: String?
         var myDevicesEnabled: Bool?
@@ -1144,6 +1153,8 @@ extension SetupModel {
             screenSharePromptIconPath: screenSharePromptIconPath,
             screenSharePromptTimeoutSeconds: screenSharePromptTimeoutSeconds,
             screenSharePromptAllowWhenNoUser: screenSharePromptAllowWhenNoUser,
+            screenSharePromptExemptSiteIDs: screenSharePromptExemptSiteIDs,
+            screenSharePromptExemptComputerGroupIDs: screenSharePromptExemptComputerGroupIDs,
             sshPasswordRotationMinutes: sshPasswordRotationMinutes,
             vpnIPExtensionAttributeID: vpnIPExtensionAttributeID,
             myDevicesEnabled: myDevicesEnabled,
@@ -1204,6 +1215,8 @@ extension SetupModel {
         if let value = saved.screenSharePromptIconPath { screenSharePromptIconPath = value }
         if let value = saved.screenSharePromptTimeoutSeconds { screenSharePromptTimeoutSeconds = value }
         if let value = saved.screenSharePromptAllowWhenNoUser { screenSharePromptAllowWhenNoUser = value }
+        if let value = saved.screenSharePromptExemptSiteIDs { screenSharePromptExemptSiteIDs = value }
+        if let value = saved.screenSharePromptExemptComputerGroupIDs { screenSharePromptExemptComputerGroupIDs = value }
         if let value = saved.sshPasswordRotationMinutes { sshPasswordRotationMinutes = value }
         if let value = saved.vpnIPExtensionAttributeID { vpnIPExtensionAttributeID = value }
         if let value = saved.myDevicesEnabled { myDevicesEnabled = value }

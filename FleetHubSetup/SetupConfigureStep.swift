@@ -638,6 +638,17 @@ struct SetupFeaturesForm: View {
                 SetupToggleRow(title: "Connect When Nobody Is Logged In",
                                detail: "With nobody at the Mac there is nobody to ask. On opens the session; off refuses it.",
                                isOn: $model.screenSharePromptAllowWhenNoUser)
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Never Ask on These Macs")
+                        .font(.system(size: 12, weight: .semibold)).foregroundStyle(SetupTheme.control)
+                    Text("Kiosks, signage and other Macs with nobody at them. Screen Share opens on these without the prompt, for every role. Enter Jamf Pro IDs, not names.")
+                        .font(.system(size: 12)).foregroundStyle(SetupTheme.muted)
+                        .fixedSize(horizontal: false, vertical: true)
+                    SetupListEditor(values: $model.screenSharePromptExemptComputerGroupIDs,
+                                    placeholder: "Computer group ID, for example 42", addLabel: "Add Computer Group")
+                    SetupListEditor(values: $model.screenSharePromptExemptSiteIDs,
+                                    placeholder: "Site ID, for example 3 (-1 for Macs in no site)", addLabel: "Add Site")
+                }
             }
             SetupField(label: "VPN IP Extension Attribute ID", text: $model.vpnIPExtensionAttributeID, placeholder: "Optional, for example 42",
                        help: "If you collect each Mac's VPN IP address in a Jamf extension attribute, enter that attribute's numeric ID. Find it in the address bar when you open the attribute in Jamf Pro (…id=42). FleetHub then shows the VPN address with a VPN badge on the device page, and Screen Share and SSH connect to it. Leave blank if you do not collect it.")

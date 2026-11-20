@@ -755,7 +755,15 @@ final class DeviceCommandExecutor {
         // the operator's roles exempts them. Read fresh here, so a profile
         // or role change applies to the very next session.
         let promptSettings = MDMConfigurationManager.shared.configuration.features?.effectiveComputers
+        let promptExemptDevice = promptSettings?.isExemptFromScreenSharePrompt(
+            siteID: computer.general?.site?.id,
+            groupIDs: (computer.groupMemberships ?? []).compactMap(\.groupId)) ?? false
+        if promptSettings?.effectiveScreenSharePrompt == true, promptExemptDevice {
+            // Recorded, so the log shows why nobody was asked.
+            logSSH("Screen Share Approval Skipped (Exempt Site or Group)", address: targetIP, success: true)
+        }
         if promptSettings?.effectiveScreenSharePrompt == true,
+           !promptExemptDevice,
            !UserSession.shared.capabilities.screenShareWithoutPrompt {
             let task = Task { await requestScreenShareApproval(address: targetIP, viaVPN: hasVPN) }
             screenShareApprovalTask = task

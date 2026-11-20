@@ -293,6 +293,8 @@ Jamf API client, so what they need is set up in Jamf Pro and on the managed Macs
 | `computers.screenSharePromptTitle`, `…Message`, `…IconPath` | The prompt's wording and image. In the message, `{technician}` and `{device}` are filled in. The icon path is a path on the Mac being supported. |
 | `computers.screenSharePromptTimeoutSeconds` | Seconds to answer; no answer is a Deny. Default 60 (10 to 300). |
 | `computers.screenSharePromptAllowWhenNoUser` | With nobody logged in, `true` (default) opens the session and `false` refuses it. |
+| `computers.screenSharePromptExemptComputerGroupIds` | Jamf computer group IDs (smart or static) whose Macs are never prompted. |
+| `computers.screenSharePromptExemptSiteIds` | Jamf site IDs whose Macs are never prompted. `-1` = Macs in no site. |
 
 ### Access profile
 
@@ -342,6 +344,12 @@ Choosing what shows the prompt (`screenSharePromptMethod`):
 | `fleethubPrompt` | A FleetHub-branded window with a countdown. | The **FleetHub Prompt** package (`FleetHubPrompt-<version>.pkg`), installed with a Jamf policy. It installs to `/Library/Application Support/FleetHub/` and does nothing until FleetHub starts it. |
 | `swiftDialog` | A swiftDialog window with your title, message and icon. | swiftDialog at `/usr/local/bin/dialog`. |
 | `jamfHelper` | A plain Jamf window with your title, message and icon. | Nothing: it is part of the Jamf framework. |
+
+Macs that are never prompted. Kiosks, signage and other Macs with nobody at them cannot
+answer. List their Jamf computer group in `screenSharePromptExemptComputerGroupIds`, or their
+site in `screenSharePromptExemptSiteIds`, and Screen Share opens on them without the prompt
+for every role. A smart group keeps the list current by itself. The action log records each
+session that skipped the prompt this way. A Mac whose groups cannot be read is prompted.
 
 Things to know:
 

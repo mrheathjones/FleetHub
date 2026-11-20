@@ -405,6 +405,13 @@ struct FeaturesConfiguration: Codable {
         /// What happens when nobody is logged in at the Mac, so there is
         /// nobody to ask: true (default) opens the session, false refuses.
         let screenSharePromptAllowWhenNoUser: Bool?
+        /// Jamf site ids whose Macs are never prompted (kiosks, signage and
+        /// other Macs with nobody at them). `-1` = Macs in no site.
+        let screenSharePromptExemptSiteIds: [String]?
+        /// Jamf computer group ids (smart or static) whose members are
+        /// never prompted. Needs GROUP_MEMBERSHIPS on the device record,
+        /// which the device page always fetches.
+        let screenSharePromptExemptComputerGroupIds: [String]?
 
         var effectiveScreenSharePrompt: Bool { screenSharePrompt ?? false }
         /// An unrecognized method falls back to jamfHelper, never to "no
@@ -431,6 +438,24 @@ struct FeaturesConfiguration: Codable {
             min(300, max(10, screenSharePromptTimeoutSeconds ?? 60))
         }
         var effectiveScreenSharePromptAllowWhenNoUser: Bool { screenSharePromptAllowWhenNoUser ?? true }
+
+        private static func normalizedIDs(_ ids: [String]?) -> Set<String> {
+            Set((ids ?? []).map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }.filter { !$0.isEmpty })
+        }
+
+        /// Whether a Mac is exempt from the Screen Share approval prompt by
+        /// its site or one of its computer groups. A Mac whose site or
+        /// groups are unknown matches nothing, so it is prompted.
+        func isExemptFromScreenSharePrompt(siteID: String?, groupIDs: [String]) -> Bool {
+            let sites = Self.normalizedIDs(screenSharePromptExemptSiteIds)
+            if !sites.isEmpty {
+                var site = (siteID ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+                if site.isEmpty { site = "-1" }
+                if sites.contains(site) { return true }
+            }
+            let groups = Self.normalizedIDs(screenSharePromptExemptComputerGroupIds)
+            return !groups.isEmpty && !groups.isDisjoint(with: Self.normalizedIDs(groupIDs))
+        }
 
         var effectiveVPNIPExtensionAttribute: VPNIPExtensionAttributeRef? {
             guard let id = vpnIPExtensionAttributeID, id > 0 else { return nil }
@@ -516,7 +541,8 @@ struct FeaturesConfiguration: Codable {
             screenSharePrompt: nil, screenSharePromptMethod: nil,
             screenSharePromptTitle: nil, screenSharePromptMessage: nil,
             screenSharePromptIconPath: nil, screenSharePromptTimeoutSeconds: nil,
-            screenSharePromptAllowWhenNoUser: nil
+            screenSharePromptAllowWhenNoUser: nil,
+            screenSharePromptExemptSiteIds: nil, screenSharePromptExemptComputerGroupIds: nil
         )
     }
 
