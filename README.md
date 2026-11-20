@@ -20,7 +20,8 @@ action is logged.
 - **Actions:** restart, shut down, Bluetooth and Remote Desktop, blank push, local admin
   password, FileVault key, unlock account, move to site, erase, and Return to Service.
 - **Remote sessions:** Screen Share, and SSH in a FleetHub terminal window signed in as the
-  Mac's management account.
+  Mac's management account. Screen Share can ask the
+  person at the Mac to allow the session first, per role (applied by FleetHub, not by macOS).
 - **Reports:** a Health Scorecard and a report builder with saved reports and export.
 - **Cleanup:** find stale devices and act on them in bulk, in Jamf Pro and Jamf Protect.
 - **My Devices:** a read-only view of the signed-in person's own devices.
@@ -39,6 +40,7 @@ The screenshots show sample data.
 | `FleetHub` | The main app. |
 | `FleetHubMenuBar` | A menu bar companion for quick search. It ships inside `FleetHub.app` and starts at login. |
 | `FleetHubSetup` | A guided app for the Jamf admin. It produces the configuration profiles, lists the Jamf privileges each role needs, and can upload the profiles and the credential script to Jamf Pro. |
+| `FleetHubPrompt` | Optional. A small app for the Macs being supported: it shows the FleetHub-branded Allow / Deny prompt when Screen Share is set to ask first. |
 
 ## How It Fits Together
 
@@ -152,7 +154,7 @@ xcodebuild build -project FleetHub.xcodeproj -scheme FleetHub \
   -destination 'platform=macOS' CODE_SIGNING_ALLOWED=NO
 ```
 
-The schemes are `FleetHub`, `FleetHubMenuBar` and `FleetHubSetup`. The project has one package
+The schemes are `FleetHub`, `FleetHubMenuBar`, `FleetHubSetup` and `FleetHubPrompt`. The project has one package
 dependency, [SwiftTerm](https://github.com/migueldeicaza/SwiftTerm), pinned to an exact version.
 
 **Trying it without a Jamf tenant.** A Debug build started with the `-FleetHubDemo` launch

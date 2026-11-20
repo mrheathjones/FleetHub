@@ -40,6 +40,48 @@ struct DeviceActionOverlays: View {
 
         // SSH: progress, changed host key, failure
         sshOverlay
+
+        // Screen Share approval: waiting on the person at the Mac, or refused
+        screenShareApprovalOverlay
+    }
+
+    // MARK: - Screen Share Approval Overlay
+
+    @ViewBuilder
+    private var screenShareApprovalOverlay: some View {
+        switch executor.screenShareApprovalPrompt {
+        case .working(let step):
+            ActionDialog(width: 400) {
+                ActionDialogHeader(icon: "person.crop.circle.badge.questionmark", tone: .accent,
+                                   title: "Asking for Approval", subtitle: computer.displayName)
+                ProgressView()
+                    .progressViewStyle(.linear)
+                    .tint(FleetHubTheme.accentFill)
+                Text(step)
+                    .font(.system(size: 13))
+                    .foregroundStyle(FleetHubTheme.ink)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(minHeight: 34, alignment: .topLeading)
+                ActionDialogFooter {
+                    ActionDialogButton(title: "Cancel", style: .outline) { executor.cancelScreenShareApproval() }
+                }
+            }
+        case .failed(let title, let message):
+            ActionDialog(width: 400, onBackdropTap: { executor.cancelScreenShareApproval() }) {
+                ActionDialogHeader(icon: "xmark.circle.fill", tone: .bad, title: title,
+                                   subtitle: computer.displayName)
+                Text(message)
+                    .font(.system(size: 13))
+                    .foregroundStyle(FleetHubTheme.muted)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .textSelection(.enabled)
+                ActionDialogFooter {
+                    ActionDialogButton(title: "Close", style: .primary) { executor.cancelScreenShareApproval() }
+                }
+            }
+        case nil:
+            EmptyView()
+        }
     }
 
     // MARK: - SSH Overlay

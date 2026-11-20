@@ -121,6 +121,7 @@
 		A1C0DE0000000000000CAP02 /* UserCapabilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C0DE0000000000000CAP01 /* UserCapabilities.swift */; };
 		SSCOPE_F001 /* SiteScope.swift in Sources */ = {isa = PBXBuildFile; fileRef = SSCOPE_S001 /* SiteScope.swift */; };
 		SSCOPE_F003 /* SiteScopeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = SSCOPE_S002 /* SiteScopeManager.swift */; };
+		SSPROMPT_F001 /* ScreenShareApproval.swift in Sources */ = {isa = PBXBuildFile; fileRef = SSPROMPT_S001 /* ScreenShareApproval.swift */; };
 		F078 /* NetworkTuning.swift in Sources */ = {isa = PBXBuildFile; fileRef = S078 /* NetworkTuning.swift */; };
 		F079 /* Branding.swift in Sources */ = {isa = PBXBuildFile; fileRef = S079 /* Branding.swift */; };
 		F090 /* ProfileAvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = S090 /* ProfileAvatarView.swift */; };
@@ -198,6 +199,8 @@
 		FDVX08 /* DeviceOverviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SDVX08 /* DeviceOverviewView.swift */; };
 		FDVX09 /* DeviceSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = SDVX09 /* DeviceSection.swift */; };
 		SU_F001 /* FleetHubSetupApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = SU_S001 /* FleetHubSetupApp.swift */; };
+		PR_F001 /* FleetHubPromptApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = PR_S001 /* FleetHubPromptApp.swift */; };
+		PR_FA01 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A001 /* Assets.xcassets */; };
 		SU_F002 /* SetupModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = SU_S002 /* SetupModel.swift */; };
 		SU_F003 /* SetupTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = SU_S003 /* SetupTheme.swift */; };
 		SU_F004 /* SetupOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = SU_S004 /* SetupOutput.swift */; };
@@ -358,6 +361,7 @@
 		A1C0DE0000000000000CAP01 /* UserCapabilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCapabilities.swift; sourceTree = "<group>"; };
 		SSCOPE_S001 /* SiteScope.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SiteScope.swift; sourceTree = "<group>"; };
 		SSCOPE_S002 /* SiteScopeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SiteScopeManager.swift; sourceTree = "<group>"; };
+		SSPROMPT_S001 /* ScreenShareApproval.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenShareApproval.swift; sourceTree = "<group>"; };
 		S078 /* NetworkTuning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkTuning.swift; sourceTree = "<group>"; };
 		S079 /* Branding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Branding.swift; sourceTree = "<group>"; };
 		S090 /* ProfileAvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileAvatarView.swift; sourceTree = "<group>"; };
@@ -395,6 +399,9 @@
 		SDVX08 /* DeviceOverviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceOverviewView.swift; sourceTree = "<group>"; };
 		SDVX09 /* DeviceSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceSection.swift; sourceTree = "<group>"; };
 		SU_S001 /* FleetHubSetupApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FleetHubSetupApp.swift; path = FleetHubSetup/FleetHubSetupApp.swift; sourceTree = SOURCE_ROOT; };
+		PR_S001 /* FleetHubPromptApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FleetHubPromptApp.swift; path = FleetHubPrompt/FleetHubPromptApp.swift; sourceTree = SOURCE_ROOT; };
+		PR_E001 /* FleetHubPrompt.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = FleetHubPrompt.entitlements; sourceTree = "<group>"; };
+		PR_P001 /* FleetHubPrompt.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FleetHubPrompt.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		SU_S002 /* SetupModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SetupModel.swift; path = FleetHubSetup/SetupModel.swift; sourceTree = SOURCE_ROOT; };
 		SU_S003 /* SetupTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SetupTheme.swift; path = FleetHubSetup/SetupTheme.swift; sourceTree = SOURCE_ROOT; };
 		SU_S004 /* SetupOutput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SetupOutput.swift; path = FleetHubSetup/SetupOutput.swift; sourceTree = SOURCE_ROOT; };
@@ -441,6 +448,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		PR_FRMWK001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -476,6 +490,7 @@
 				P001 /* FleetHub.app */,
 				MB_P001 /* FleetHubMenuBar.app */,
 				SU_P001 /* FleetHubSetup.app */,
+				PR_P001 /* FleetHubPrompt.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -547,6 +562,7 @@
 				SABM5 /* JamfPreStageService.swift */,
 				SSITE1 /* JamfSiteService.swift */,
 				SSCOPE_S002 /* SiteScopeManager.swift */,
+				SSPROMPT_S001 /* ScreenShareApproval.swift */,
 				S016 /* ComputerSearchModels.swift */,
 				S017 /* ComputerSearchService.swift */,
 				S900 /* ComputerHistoryModels.swift */,
@@ -842,6 +858,16 @@
 			path = FleetHubSetup;
 			sourceTree = SOURCE_ROOT;
 		};
+		PR_GRP001 /* FleetHubPrompt */ = {
+			isa = PBXGroup;
+			children = (
+				PR_S001 /* FleetHubPromptApp.swift */,
+				PR_E001 /* FleetHubPrompt.entitlements */,
+			);
+			name = FleetHubPrompt;
+			path = FleetHubPrompt;
+			sourceTree = "<group>";
+		};
 		SU_GRP002 /* schemas */ = {
 			isa = PBXGroup;
 			children = (
@@ -913,6 +939,23 @@
 			productReference = SU_P001 /* FleetHubSetup.app */;
 			productType = "com.apple.product-type.application";
 		};
+		PR_TGT001 /* FleetHubPrompt */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = PR_CFG003 /* Build configuration list for PBXNativeTarget "FleetHubPrompt" */;
+			buildPhases = (
+				PR_SRC001PH /* Sources */,
+				PR_FRMWK001 /* Frameworks */,
+				PR_RES001 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = FleetHubPrompt;
+			productName = FleetHubPrompt;
+			productReference = PR_P001 /* FleetHubPrompt.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -927,6 +970,9 @@
 						CreatedOnToolsVersion = 15.0;
 					};
 					SU_TGT001 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+					PR_TGT001 = {
 						CreatedOnToolsVersion = 15.0;
 					};
 					TGT001 = {
@@ -953,6 +999,7 @@
 				TGT001 /* FleetHub */,
 				MB_TGT001 /* FleetHubMenuBar */,
 				SU_TGT001 /* FleetHubSetup */,
+				PR_TGT001 /* FleetHubPrompt */,
 			);
 		};
 /* End PBXProject section */
@@ -984,6 +1031,14 @@
 				SU_FJ04 /* FleetHub_UI_SCHEMA.json in Resources */,
 				SU_FA01 /* Assets.xcassets in Resources */,
 				SU_FSH1 /* Import-FleetHub-Credentials.sh in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		PR_RES001 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				PR_FA01 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1094,6 +1149,7 @@
 				A1C0DE0000000000000CAP02 /* UserCapabilities.swift in Sources */,
 				SSCOPE_F001 /* SiteScope.swift in Sources */,
 				SSCOPE_F003 /* SiteScopeManager.swift in Sources */,
+				SSPROMPT_F001 /* ScreenShareApproval.swift in Sources */,
 				F078 /* NetworkTuning.swift in Sources */,
 				F079 /* Branding.swift in Sources */,
 				F090 /* ProfileAvatarView.swift in Sources */,
@@ -1210,6 +1266,14 @@
 				SU_F006 /* SetupConnectSteps.swift in Sources */,
 				SU_F007 /* SetupConfigureStep.swift in Sources */,
 				SU_F008 /* SetupFinishSteps.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		PR_SRC001PH /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				PR_F001 /* FleetHubPromptApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1351,7 +1415,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 201;
+				CURRENT_PROJECT_VERSION = 206;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -1379,7 +1443,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 201;
+				CURRENT_PROJECT_VERSION = 206;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -1407,7 +1471,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 201;
+				CURRENT_PROJECT_VERSION = 206;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -1437,7 +1501,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 201;
+				CURRENT_PROJECT_VERSION = 206;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -1467,7 +1531,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 201;
+				CURRENT_PROJECT_VERSION = 206;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -1488,6 +1552,37 @@
 			};
 			name = Debug;
 		};
+		PR_CFG_TGT_DEBUG /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = FleetHubPrompt/FleetHubPrompt.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 206;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSUIElement = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_CFBundleDisplayName = "FleetHub Prompt";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.herojoneslabs.fleethub.prompt;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
 		SU_CFG_TGT_RELEASE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1497,7 +1592,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 201;
+				CURRENT_PROJECT_VERSION = 206;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -1512,6 +1607,37 @@
 				);
 				MARKETING_VERSION = 1.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.herojoneslabs.fleethub.setup;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		PR_CFG_TGT_RELEASE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = FleetHubPrompt/FleetHubPrompt.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 206;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSUIElement = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_CFBundleDisplayName = "FleetHub Prompt";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.herojoneslabs.fleethub.prompt;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -1553,6 +1679,15 @@
 			buildConfigurations = (
 				SU_CFG_TGT_DEBUG /* Debug */,
 				SU_CFG_TGT_RELEASE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		PR_CFG003 /* Build configuration list for PBXNativeTarget "FleetHubPrompt" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				PR_CFG_TGT_DEBUG /* Debug */,
+				PR_CFG_TGT_RELEASE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -18,6 +18,8 @@ Jamf's inventory carries building and department as ids. FleetHub reads the name
 
 Screen Share opens Apple's Screen Sharing app, which FleetHub cannot place inside its own window. FleetHub opens a small floating panel beside it instead, with the device, the session time, the password rotation countdown (when automatic sign-in used the management account's password), **Copy Password** (roles with `viewLocalAdminPassword` only) and **End Session**.
 
+When your organization turns on the approval prompt, the person at the Mac must click **Allow** before the session opens, unless your role is exempt. FleetHub shows who it is waiting on and says why if the session is refused. [Integrations.md](Integrations.md#asking-before-screen-share) describes the setup and its limits.
+
 End Session quits Apple's Screen Sharing app, so it closes every Screen Sharing session that app has open, not only this one. Closing the panel leaves the session running. The panel notices when Screen Sharing quits and records the session's length in the action log.
 
 ## SSH

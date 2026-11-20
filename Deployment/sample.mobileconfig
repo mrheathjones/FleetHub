@@ -586,6 +586,15 @@
 			<dict>
 				<key>inventoryRefreshInterval</key>
 				<integer>15</integer>
+				<!-- Ask the person at the Mac before Screen Share opens.
+				     Off by default. Applied by FleetHub, not by macOS.
+				     Exempt a role with screenShareWithoutPrompt in the
+				     access payload. Method: fleethubPrompt, swiftDialog
+				     or jamfHelper. -->
+				<key>screenSharePrompt</key>
+				<false/>
+				<key>screenSharePromptMethod</key>
+				<string>jamfHelper</string>
 			</dict>
 
 			<!-- Top-level area switches. These only HIDE an area the
