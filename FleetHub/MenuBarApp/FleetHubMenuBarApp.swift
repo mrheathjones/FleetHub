@@ -54,6 +54,23 @@ struct FleetHubMenuBarApp: App {
 
 final class MenuBarAppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
+        // One copy only. macOS and FleetHub can both start the companion;
+        // the later one steps aside.
+        if let bundleID = Bundle.main.bundleIdentifier {
+            let me = NSRunningApplication.current
+            let others = NSRunningApplication.runningApplications(withBundleIdentifier: bundleID)
+                .filter { $0.processIdentifier != me.processIdentifier }
+            let iAmLater = others.contains { other in
+                guard let theirs = other.launchDate, let mine = me.launchDate else {
+                    return other.processIdentifier < me.processIdentifier
+                }
+                return theirs < mine || (theirs == mine && other.processIdentifier < me.processIdentifier)
+            }
+            if iAmLater {
+                logger.info("FleetHubMenuBar is already running; this copy is quitting")
+                exit(0)
+            }
+        }
         // Pure menu-bar app — no Dock icon
         NSApp.setActivationPolicy(.accessory)
         logger.info("FleetHubMenuBar launched")

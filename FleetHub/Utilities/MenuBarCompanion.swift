@@ -120,7 +120,13 @@ final class MenuBarCompanion: ObservableObject {
         errorMessage = nil
         do {
             try service.register()
-            launchIfNeeded()
+            // macOS starts a newly registered login item by itself, a
+            // moment later. Starting it here as well made two copies, so
+            // only step in if it has still not appeared.
+            Task { [weak self] in
+                try? await Task.sleep(for: .seconds(5))
+                self?.launchIfNeeded()
+            }
             AppLog.notice("Menu bar companion turned on (by user: \(byUser))")
         } catch {
             AppLog.error("Menu bar companion could not be turned on: \(error.localizedDescription)")
@@ -140,8 +146,8 @@ final class MenuBarCompanion: ObservableObject {
         NSRunningApplication.runningApplications(withBundleIdentifier: Self.bundleIdentifier)
     }
 
-    /// Registration normally starts the companion; this covers the case
-    /// where it does not, so the icon appears as soon as the switch is on.
+    /// Starts the companion when no copy is running: after a registration
+    /// that did not start it, or when it was quit by hand.
     private func launchIfNeeded() {
         guard runningCopies.isEmpty, let url = embeddedURL else { return }
         let configuration = NSWorkspace.OpenConfiguration()
