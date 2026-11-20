@@ -80,6 +80,7 @@ struct DashboardContentView: View {
     
     // Cache references for observing changes
     @ObservedObject private var computerCache = ComputerInventoryCache.shared
+    @ObservedObject private var siteScope = SiteScopeManager.shared
     @ObservedObject private var mobileCache = MobileDeviceInventoryCache.shared
     @ObservedObject private var healthCalculator = HealthMetricsCalculator.shared
     @ObservedObject private var session = UserSession.shared
@@ -258,6 +259,16 @@ struct DashboardContentView: View {
         }
         .onChange(of: mobileCache.visionOSCount) { _, newValue in
             deviceCounts[.visionOS] = newValue
+        }
+        .onReceive(SiteScopeManager.shared.$revision.dropFirst()) { _ in
+            // The site scope changed: close any pushed list or device
+            // (it may be outside the new scope) and take the counts as
+            // they are now, zero included.
+            if !navigationPath.isEmpty { navigationPath = NavigationPath() }
+            deviceCounts[.macOS] = computerCache.totalCount
+            deviceCounts[.iOS] = mobileCache.iOSCount
+            deviceCounts[.iPadOS] = mobileCache.iPadOSCount
+            deviceCounts[.visionOS] = mobileCache.visionOSCount
         }
         .onChange(of: navigationPath.count) { oldValue, newValue in
             withAnimation(.easeInOut(duration: 0.2)) {
@@ -510,7 +521,12 @@ struct DashboardContentView: View {
             // empty or broken card.
             // When an integration IS named but cannot be used yet, the card
             // still appears and says what is missing.
-            if ComplianceBenchmarkService.isAvailable || ComplianceBenchmarkService.unavailableReason != nil {
+            // Jamf reports benchmark results for the whole fleet only, so
+            // the card is left out while the view is limited to sites: it
+            // would show other sites' numbers. A device's own benchmark
+            // results still appear on its record.
+            if !siteScope.isLimitedNow,
+               ComplianceBenchmarkService.isAvailable || ComplianceBenchmarkService.unavailableReason != nil {
                 ComplianceBenchmarksCard()
             }
         }

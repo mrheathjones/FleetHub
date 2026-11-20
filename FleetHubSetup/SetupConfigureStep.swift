@@ -253,6 +253,11 @@ struct SetupAccessForm: View {
                                    selection: $model.emailModeRoleName)
                 }
             }
+            SetupRowLine()
+            SetupToggleRow(
+                title: "Limit Devices By Site",
+                detail: "For organizations that use Jamf Pro sites. Each role then sees only the devices in its Visible Sites. FleetHub applies this limit; Jamf Pro does not, so a person's own API credential can still read every device.",
+                isOn: $model.siteScoping)
         }
         .confirmationDialog(
             "Remove \(roleToRemove?.displayName ?? "this role")?",
@@ -270,7 +275,8 @@ struct SetupAccessForm: View {
         }
 
         if let index = selectedIndex {
-            SetupRoleEditor(role: $model.roles[index], showsJamfRole: model.provisionsClients) {
+            SetupRoleEditor(role: $model.roles[index], showsJamfRole: model.provisionsClients,
+                            showsVisibleSites: model.siteScoping) {
                 roleToRemove = model.roles[index]
             }
         }
@@ -280,8 +286,15 @@ struct SetupAccessForm: View {
 struct SetupRoleEditor: View {
     @Binding var role: SetupRole
     let showsJamfRole: Bool
+    /// True while Limit Devices By Site is on: the Visible Site scope is
+    /// offered only then, since the app ignores it otherwise.
+    let showsVisibleSites: Bool
     let remove: () -> Void
     @State private var scopeKind: SetupScopeKind = .site
+
+    private var scopeKinds: [SetupScopeKind] {
+        SetupScopeKind.allCases.filter { $0 != .visibleSite || showsVisibleSites }
+    }
 
     var body: some View {
         SetupCard {
@@ -337,8 +350,11 @@ struct SetupRoleEditor: View {
     private var scopeEditor: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Scope").font(.system(size: 12, weight: .semibold)).foregroundStyle(SetupTheme.control)
-            SetupSegmented(options: SetupScopeKind.allCases.map { ($0, scopeLabel($0)) }, selection: $scopeKind)
-            Text(scopeKind.explanation + " With nothing added, the matching actions stay unavailable.")
+            SetupSegmented(options: scopeKinds.map { ($0, scopeLabel($0)) }, selection: $scopeKind)
+                .onChange(of: showsVisibleSites) { _, shown in
+                    if !shown, scopeKind == .visibleSite { scopeKind = .site }
+                }
+            Text(scopeKind.explanation)
                 .font(.system(size: 12)).foregroundStyle(SetupTheme.muted)
                 .fixedSize(horizontal: false, vertical: true)
             SetupToggleRow(title: scopeKind.allTitle, isOn: scopeBinding.all)

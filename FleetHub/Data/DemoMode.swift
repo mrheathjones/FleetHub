@@ -100,7 +100,8 @@ enum DemoMode {
 
         let mobileCache = MobileDeviceInventoryCache.shared
         return DeviceCounts(
-            macOS: computers.count,
+            // From the cache, which has applied any site scope.
+            macOS: ComputerInventoryCache.shared.totalCount,
             iOS: mobileCache.iOSCount,
             iPadOS: mobileCache.iPadOSCount,
             visionOS: mobileCache.visionOSCount
@@ -754,6 +755,7 @@ extension StaleDevice {
         self.isManaged = isManaged
         self.managementId = managementId
         self.siteName = siteName
+        self.siteID = SiteScope.noSiteID
     }
 }
 #endif

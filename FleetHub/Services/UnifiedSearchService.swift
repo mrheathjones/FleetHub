@@ -284,7 +284,12 @@ final class UnifiedDeviceSearchService: ObservableObject {
             }
             
             let searchResponse = try JSONDecoder().decode(ComputerSearchResponse.self, from: data)
-            return searchResponse.results.map { Computer.fromSearchResult($0) }
+            // Site scope: applies in the main window and the menu bar
+            // companion alike.
+            let scope = SiteScopeStore.current
+            return searchResponse.results
+                .filter { scope.includes(siteID: $0.general?.site?.id) }
+                .map { Computer.fromSearchResult($0) }
         } catch {
             AppLog.error("❌ Computer search error: \(error.localizedDescription)")
             return []
@@ -421,6 +426,7 @@ final class UnifiedDeviceSearchService: ObservableObject {
             }
             
             let device = try JSONDecoder().decode(MobileDevice.self, from: data)
+            guard SiteScopeStore.includes(device) else { return nil }
             return device
         } catch {
             AppLog.error("❌ Mobile device detail fetch error for ID \(id): \(error.localizedDescription)")

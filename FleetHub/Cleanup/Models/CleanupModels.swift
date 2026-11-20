@@ -67,6 +67,9 @@ struct StaleDevice: Identifiable, Hashable, Sendable {
     let isManaged: Bool
     let managementId: String?
     let siteName: String
+    /// Jamf's site id, `-1` when the Mac is in no site. Used for the site
+    /// scope; the name above is for display.
+    let siteID: String
 
     var daysSinceContact: Int? {
         guard let lastContactTime else { return nil }
@@ -91,6 +94,7 @@ struct StaleDevice: Identifiable, Hashable, Sendable {
         managementId = record.general?.managementId
         let site = record.general?.site
         siteName = (site?.name?.isEmpty == false) ? site!.name! : "None"
+        siteID = (site?.id?.isEmpty == false) ? site!.id! : SiteScope.noSiteID
     }
 }
 

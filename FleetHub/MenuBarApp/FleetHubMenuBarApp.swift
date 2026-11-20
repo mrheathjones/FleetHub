@@ -369,6 +369,11 @@ struct MenuBarContentView: View {
         // the service guards cancellation before publishing, so it can never
         // overwrite the newer results.
         cancelInFlightSearch()
+        // Site scope: limited to the sites the main app recorded for the
+        // signed-in person. Read per search, so a change in their roles
+        // is picked up without restarting the companion.
+        SiteScopeStore.loadForCompanion(
+            enabled: MDMConfigurationManager.shared.configuration.siteScopingEnabled)
         inFlightSearch = Task {
             await searchService.searchDevices(query: query)
             guard !Task.isCancelled else { return }

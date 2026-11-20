@@ -278,6 +278,27 @@ that a role without a capability really cannot use it.
 Test destructive actions (Erase, Return to Service, Cleanup deletes) against a test device
 before you grant them to anyone.
 
+### Limiting People to Their Jamf Sites
+
+If your organization uses Jamf Pro sites, FleetHub can show each person only the devices in
+their sites. It is off unless you turn it on.
+
+1. In the Access profile, set **Limit Devices By Site** (`siteScoping`) to true.
+2. On every role, fill in **Visible Sites** (`visibleSites`) with Jamf site IDs. Use `all` for
+   roles that should see everything, and `-1` to include devices that belong to no site.
+3. Push the profile and relaunch FleetHub.
+
+A role with no Visible Sites sees no devices once the switch is on, so fill in every role
+first. People with more than one site get a site switcher in the top bar.
+
+**FleetHub applies this limit; Jamf Pro does not.** A Jamf Pro API client cannot be
+restricted to a site, so each person's own API credential can still read every device in
+Jamf Pro. Site scoping controls what FleetHub shows and acts on. It is not a security
+boundary against someone who uses their API credential outside FleetHub.
+
+The full rules, and what site scoping does not cover, are in
+[Configuration.md](Configuration.md#site-scoping--limiting-people-to-their-jamf-sites).
+
 ### Menu Bar Search and the Login Item Profile
 
 `FleetHub.app` carries a small companion, `FleetHubMenuBar.app`, inside itself at

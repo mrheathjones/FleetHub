@@ -128,11 +128,11 @@ final class ComputerInventoryService: ObservableObject {
                 }
             }
             
-            computers = allComputers
-            totalCount = reportedTotal
-            
-            // Update cache
+            // The cache applies the site scope; publish what it kept, so
+            // this service never holds devices outside the person's sites.
             cache.updateCache(computers: allComputers, totalCount: reportedTotal)
+            computers = cache.computers
+            totalCount = cache.totalCount
             
             if truncated {
                 errorMessage = "Computer inventory truncated: stopped after \(Self.maxPages) pages (\(allComputers.count) of \(reportedTotal) computers). Jamf Pro is reporting more devices than the sweep could fetch."
@@ -179,8 +179,9 @@ final class ComputerInventoryService: ObservableObject {
                 bearerToken: token
             )
             
-            computers = response.results
-            totalCount = response.totalCount
+            let scope = SiteScopeStore.current
+            computers = response.results.filter { scope.includes(siteID: $0.general?.site?.id) }
+            totalCount = scope.isRestricted ? computers.count : response.totalCount
             
             AppLog.notice("✅ ComputerInventoryService: Fetched \(computers.count) computers (total: \(totalCount))")
             

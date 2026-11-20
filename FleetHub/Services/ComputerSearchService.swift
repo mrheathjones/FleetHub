@@ -200,7 +200,9 @@ final class ComputerSearchService: ObservableObject {
         
         do {
             let searchResponse = try JSONDecoder().decode(ComputerSearchResponse.self, from: data)
-            return searchResponse.results ?? []
+            // Site scope: a search never returns a device outside it.
+            let scope = SiteScopeStore.current
+            return (searchResponse.results ?? []).filter { scope.includes(siteID: $0.general?.site?.id) }
         } catch {
             throw ComputerSearchError.decodingError(error)
         }
@@ -266,6 +268,12 @@ final class ComputerSearchService: ObservableObject {
             
             // Convert to Computer
             let computer = Computer.fromSearchResult(firstResult)
+            // Site scope: every way of opening a Mac (lists, search, deep
+            // links, My Devices) loads its record here, so this is the gate.
+            guard SiteScopeStore.includes(computer) else {
+                AppLog.notice("Computer \(id) is outside the signed-in person's sites; not opened")
+                throw ComputerSearchError.computerNotFound
+            }
             return computer
         } catch let error as ComputerSearchError {
             throw error

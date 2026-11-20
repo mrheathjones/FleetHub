@@ -157,8 +157,19 @@ final class CleanupViewModel {
             let client = try client()
             let days = settings.staleDays
             async let totalTask = client.fetchTotalComputerCount()
-            devices = try await client.fetchStaleComputers(olderThanDays: days)
-            totalComputers = try await totalTask
+            let stale = try await client.fetchStaleComputers(olderThanDays: days)
+            let fleetTotal = try await totalTask
+            // Site scope: only stale Macs in the person's sites, measured
+            // against the Macs in those sites.
+            let scope = SiteScopeStore.current
+            if scope.isRestricted {
+                devices = stale.filter { scope.includes(siteID: $0.siteID) }
+                let cache = ComputerInventoryCache.shared
+                totalComputers = cache.hasCachedData ? cache.totalCount : devices.count
+            } else {
+                devices = stale
+                totalComputers = fleetTotal
+            }
             selection.formIntersection(devices.map(\.id))
             lastRefresh = Date()
         } catch {
@@ -170,7 +181,16 @@ final class CleanupViewModel {
         if settings.isProtectConfigured {
             do {
                 let protect = try protect()
-                protectDevices = try await protect.fetchAllComputers()
+                let all = try await protect.fetchAllComputers()
+                // Jamf Protect has no sites. Under a site scope, keep only
+                // the records whose serial number belongs to a Mac in scope.
+                if SiteScopeStore.current.isRestricted {
+                    let serials = Set(ComputerInventoryCache.shared.computers
+                        .compactMap { $0.hardware?.serialNumber?.uppercased() })
+                    protectDevices = all.filter { serials.contains($0.serial.uppercased()) }
+                } else {
+                    protectDevices = all
+                }
                 protectLoaded = true
                 protectError = nil
             } catch {
@@ -239,7 +259,8 @@ final class CleanupViewModel {
             let client = try client()
             async let sitesTask = client.fetchSites()
             async let groupsTask = client.fetchStaticGroups()
-            sites = try await sitesTask
+            let scope = SiteScopeStore.current
+            sites = try await sitesTask.filter { scope.includes(siteID: $0.id) }
             staticGroups = try await groupsTask
         } catch {
             // Pickers degrade gracefully; the action sheet shows the error.

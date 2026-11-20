@@ -65,25 +65,39 @@ struct AccessConfiguration: Codable {
     /// resolves to `UserCapabilities.none`. There is no built-in fallback role.
     var roles: [RoleDefinition]?
 
+    /// Turns site scoping on for this organization. When true, every person
+    /// sees only the devices in the Jamf sites their roles list under
+    /// `visibleSites`; a role that lists none sees no devices (fail-closed).
+    /// Absent or false → nobody is limited by site and `visibleSites` is
+    /// ignored, which is how the app behaved before sites were supported.
+    ///
+    /// ENFORCED BY THE APP, NOT BY JAMF: a Jamf API client cannot be limited
+    /// to a site, so the person's own API credential can still read every
+    /// device. This decides what FleetHub shows and acts on.
+    var siteScoping: Bool?
+
     // MARK: - Effective accessors
 
     var effectiveConfigurationVersion: String { configurationVersion ?? "2.0" }
     var effectiveRoles: [RoleDefinition] { roles ?? [] }
+    var effectiveSiteScoping: Bool { siteScoping ?? false }
 
     // MARK: - Domain decode (resilient by key)
 
     enum CodingKeys: String, CodingKey {
-        case configurationVersion, role, roles
+        case configurationVersion, role, roles, siteScoping
     }
 
     init(
         configurationVersion: String? = nil,
         role: String? = nil,
-        roles: [RoleDefinition]? = nil
+        roles: [RoleDefinition]? = nil,
+        siteScoping: Bool? = nil
     ) {
         self.configurationVersion = configurationVersion
         self.role = role
         self.roles = roles
+        self.siteScoping = siteScoping
     }
 
     /// Per-key resilient decode. ManagedDomainLoader catches a thrown decode
@@ -97,6 +111,18 @@ struct AccessConfiguration: Codable {
         configurationVersion = try? container.decode(String.self, forKey: .configurationVersion)
         role = try? container.decode(String.self, forKey: .role)
         roles = Self.decodeRoles(from: container)
+        // Present but malformed → ON, the fail-closed direction: a typo must
+        // never silently show every site to people meant to see one.
+        if container.contains(.siteScoping) {
+            if let value = try? container.decode(Bool.self, forKey: .siteScoping) {
+                siteScoping = value
+            } else {
+                AppLog.notice("⚠️ access: malformed 'siteScoping' — treated as TRUE (fail-closed)")
+                siteScoping = true
+            }
+        } else {
+            siteScoping = nil
+        }
     }
 
     /// Lenient `roles` decode over the array shape. Each element is decoded
@@ -191,6 +217,14 @@ struct AccessConfiguration: Codable {
         /// when granted in `computerActions`, since a move with nowhere to go
         /// is not a capability (fail-closed).
         var allowedSites: [String]?
+        /// Jamf site IDs whose devices this role may SEE and act on, read
+        /// only when the access domain's `siteScoping` is true. IDs, not
+        /// names, for the same reason as `allowedSites`. Exact id match plus
+        /// the RESERVED literal `all` = every site, including devices in no
+        /// site. Devices in no site carry the id `-1`. Absent/empty → the
+        /// role's holders see no devices (fail-closed). Separate from
+        /// `allowedSites`, which only decides where a device may be MOVED.
+        var visibleSites: [String]?
         /// Whether abmAssign offers the optional PreStage registration step
         /// after a successful assignment. Absent → false (fail-closed).
         var allowPrestageOnAssign: Bool?
@@ -238,6 +272,7 @@ struct AccessConfiguration: Codable {
         var effectiveAllowedMdmServers: [String] { Self.normalizedList(allowedMdmServers) }
         var effectiveAllowedPrestages: [String] { Self.normalizedList(allowedPrestages) }
         var effectiveAllowedSites: [String] { Self.normalizedList(allowedSites) }
+        var effectiveVisibleSites: [String] { Self.normalizedList(visibleSites) }
 
         /// Absent/malformed → false (fail-closed).
         var effectiveAllowPrestageOnAssign: Bool { allowPrestageOnAssign ?? false }
@@ -246,7 +281,7 @@ struct AccessConfiguration: Codable {
 
         enum CodingKeys: String, CodingKey {
             case name, modules, deviceTabs, computerActions, mobileDeviceActions, cleanupActions
-            case allowedMdmServers, allowedPrestages, allowedSites
+            case allowedMdmServers, allowedPrestages, allowedSites, visibleSites
             case allowPrestageOnAssign, returnToServiceOptions, allowExport
             case allowScorecardDiagnostics
             case jamfApiRoleName
@@ -262,6 +297,7 @@ struct AccessConfiguration: Codable {
             allowedMdmServers: [String]? = nil,
             allowedPrestages: [String]? = nil,
             allowedSites: [String]? = nil,
+            visibleSites: [String]? = nil,
             allowPrestageOnAssign: Bool? = nil,
             returnToServiceOptions: ReturnToServiceOptions? = nil,
             allowExport: Bool? = nil,
@@ -277,6 +313,7 @@ struct AccessConfiguration: Codable {
             self.allowedMdmServers = allowedMdmServers
             self.allowedPrestages = allowedPrestages
             self.allowedSites = allowedSites
+            self.visibleSites = visibleSites
             self.allowPrestageOnAssign = allowPrestageOnAssign
             self.returnToServiceOptions = returnToServiceOptions
             self.allowExport = allowExport
@@ -304,6 +341,7 @@ struct AccessConfiguration: Codable {
             allowedMdmServers = Self.decodeList(container, .allowedMdmServers)
             allowedPrestages = Self.decodeList(container, .allowedPrestages)
             allowedSites = Self.decodeList(container, .allowedSites)
+            visibleSites = Self.decodeList(container, .visibleSites)
             allowPrestageOnAssign = Self.decodeBool(container, .allowPrestageOnAssign)
             returnToServiceOptions = try? container.decodeIfPresent(ReturnToServiceOptions.self, forKey: .returnToServiceOptions)
             allowExport = Self.decodeBool(container, .allowExport)

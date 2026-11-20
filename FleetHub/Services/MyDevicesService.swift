@@ -370,7 +370,9 @@ final class MyDevicesService: ObservableObject {
             let code = (response as? HTTPURLResponse)?.statusCode ?? -1
             throw MyDevicesError.httpError(statusCode: code)
         }
-        return try JSONDecoder().decode(MobileDevice.self, from: data)
+        let device = try JSONDecoder().decode(MobileDevice.self, from: data)
+        guard SiteScopeStore.includes(device) else { throw SiteScopeStore.outOfScopeError }
+        return device
     }
 
     // MARK: - Identity resolution
@@ -522,7 +524,12 @@ final class MyDevicesService: ObservableObject {
             }
 
             let decoded = try JSONDecoder().decode(Response.self, from: data)
-            return decoded.results.map { Computer.fromSearchResult($0) }
+            // Site scope applies here too: with scoping on, a person's own
+            // device shows only when it is in a site their roles list.
+            let scope = SiteScopeStore.current
+            return decoded.results
+                .filter { scope.includes(siteID: $0.general?.site?.id) }
+                .map { Computer.fromSearchResult($0) }
         } catch {
             AppLog.error("❌ MyDevices: computer lookup failed: \(error.localizedDescription)")
             if errorMessage == nil {
@@ -577,7 +584,8 @@ final class MyDevicesService: ObservableObject {
             }
 
             let decoded = try JSONDecoder().decode(MobileDeviceInventoryResponse.self, from: data)
-            return decoded.results
+            let scope = SiteScopeStore.current
+            return decoded.results.filter { scope.includes(siteID: $0.general?.siteId) }
         } catch {
             AppLog.error("❌ MyDevices: mobile device lookup failed: \(error.localizedDescription)")
             return []

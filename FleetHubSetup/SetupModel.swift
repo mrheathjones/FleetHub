@@ -111,11 +111,12 @@ struct SetupScope: Equatable, Codable {
 }
 
 enum SetupScopeKind: String, CaseIterable, Identifiable {
-    case site, mdmServer, prestage
+    case site, mdmServer, prestage, visibleSite
     var id: String { rawValue }
 
     var title: String {
         switch self {
+        case .visibleSite: "Visible Site"
         case .site: "Site"
         case .mdmServer: "ABM Server"
         case .prestage: "PreStage"
@@ -124,6 +125,7 @@ enum SetupScopeKind: String, CaseIterable, Identifiable {
 
     var allTitle: String {
         switch self {
+        case .visibleSite: "All Sites"
         case .site: "All Sites"
         case .mdmServer: "All ABM Device Servers"
         case .prestage: "All PreStages"
@@ -132,6 +134,7 @@ enum SetupScopeKind: String, CaseIterable, Identifiable {
 
     var placeholder: String {
         switch self {
+        case .visibleSite: "Jamf Pro site ID, for example 3 (-1 for devices in no site)"
         case .site: "Jamf Pro site ID, for example 3"
         case .mdmServer: "ABM device server name"
         case .prestage: "PreStage enrollment ID, for example 12"
@@ -140,9 +143,10 @@ enum SetupScopeKind: String, CaseIterable, Identifiable {
 
     var explanation: String {
         switch self {
-        case .site: "Sites this role may move devices into with Move to Site."
-        case .mdmServer: "Apple Business Manager device servers this role may assign devices to."
-        case .prestage: "PreStage enrollments this role may assign devices to."
+        case .visibleSite: "Sites whose devices this role sees and acts on. With nothing added, this role sees no devices."
+        case .site: "Sites this role may move devices into with Move to Site. With nothing added, the matching actions stay unavailable."
+        case .mdmServer: "Apple Business Manager device servers this role may assign devices to. With nothing added, the matching actions stay unavailable."
+        case .prestage: "PreStage enrollments this role may assign devices to. With nothing added, the matching actions stay unavailable."
         }
     }
 }
@@ -238,9 +242,14 @@ struct SetupRole: Identifiable, Equatable, Codable {
     var allowedSites: SetupScope
     var allowedMdmServers: SetupScope
     var allowedPrestages: SetupScope
+    /// Sites whose devices this role sees, written only while Limit
+    /// Devices By Site is on. Optional so a setup saved before the list
+    /// existed still opens; absent means every site.
+    var visibleSites: SetupScope?
 
     func scope(_ kind: SetupScopeKind) -> SetupScope {
         switch kind {
+        case .visibleSite: visibleSites ?? .everything
         case .site: allowedSites
         case .mdmServer: allowedMdmServers
         case .prestage: allowedPrestages
@@ -249,6 +258,7 @@ struct SetupRole: Identifiable, Equatable, Codable {
 
     mutating func setScope(_ scope: SetupScope, for kind: SetupScopeKind) {
         switch kind {
+        case .visibleSite: visibleSites = scope
         case .site: allowedSites = scope
         case .mdmServer: allowedMdmServers = scope
         case .prestage: allowedPrestages = scope
@@ -346,6 +356,8 @@ struct SetupRole: Identifiable, Equatable, Codable {
         if !allowedSites.profileValue.isEmpty { entry["allowedSites"] = allowedSites.profileValue }
         if !allowedMdmServers.profileValue.isEmpty { entry["allowedMdmServers"] = allowedMdmServers.profileValue }
         if !allowedPrestages.profileValue.isEmpty { entry["allowedPrestages"] = allowedPrestages.profileValue }
+        // Removed again by the access profile when site scoping is off.
+        entry["visibleSites"] = (visibleSites ?? .everything).profileValue
         if allowExport { entry["allowExport"] = true }
         if allowScorecardDiagnostics { entry["allowScorecardDiagnostics"] = true }
         return entry
@@ -431,6 +443,8 @@ final class SetupModel: ObservableObject {
     }
     /// Email sign-in only: the single role every user on the Mac holds.
     @Published var emailModeRoleName = ""
+    /// Limit Devices By Site: each role then sees only its Visible Sites.
+    @Published var siteScoping = false
     @Published var abmEnabled = false
     @Published var abmClientID = ""
     @Published var abmKeyID = ""
@@ -664,8 +678,12 @@ final class SetupModel: ObservableObject {
         }
         // On the Platform backend there are no per-user clients, so a Jamf
         // API role name would name nothing.
+        // Site scoping is opt-in. Off: the key and every role's
+        // visibleSites list are left out, so nobody is limited by site.
+        if siteScoping { access["siteScoping"] = true }
         access["roles"] = usableRoles.map { role -> [String: Any] in
             var entry = role.dictionary
+            if !siteScoping { entry.removeValue(forKey: "visibleSites") }
             if !provisionsClients { entry.removeValue(forKey: "jamfApiRoleName") }
             return entry
         }
@@ -1013,6 +1031,7 @@ extension SetupModel {
         var entraClientID: String?
         var entraRedirectURI: String?
         var emailModeRoleName: String?
+        var siteScoping: Bool?
         var abmEnabled: Bool?
         var abmClientID: String?
         var abmKeyID: String?
@@ -1066,6 +1085,7 @@ extension SetupModel {
             entraClientID: entraClientID,
             entraRedirectURI: entraRedirectURI,
             emailModeRoleName: emailModeRoleName,
+            siteScoping: siteScoping,
             abmEnabled: abmEnabled,
             abmClientID: abmClientID,
             abmKeyID: abmKeyID,
@@ -1118,6 +1138,7 @@ extension SetupModel {
         if let value = saved.entraClientID { entraClientID = value }
         if let value = saved.entraRedirectURI { entraRedirectURI = value }
         if let value = saved.emailModeRoleName { emailModeRoleName = value }
+        if let value = saved.siteScoping { siteScoping = value }
         if let value = saved.abmEnabled { abmEnabled = value }
         if let value = saved.abmClientID { abmClientID = value }
         if let value = saved.abmKeyID { abmKeyID = value }
