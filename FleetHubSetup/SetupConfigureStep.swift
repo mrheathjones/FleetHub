@@ -286,14 +286,16 @@ struct SetupAccessForm: View {
 struct SetupRoleEditor: View {
     @Binding var role: SetupRole
     let showsJamfRole: Bool
-    /// True while Limit Devices By Site is on: the Visible Site scope is
-    /// offered only then, since the app ignores it otherwise.
+    /// True while Limit Devices By Site is on: Visible Sites is shown only
+    /// then, since the app ignores it otherwise.
     let showsVisibleSites: Bool
     let remove: () -> Void
     @State private var scopeKind: SetupScopeKind = .site
 
+    /// Visible Sites has its own section on the card, so it is not one of
+    /// the Scope choices.
     private var scopeKinds: [SetupScopeKind] {
-        SetupScopeKind.allCases.filter { $0 != .visibleSite || showsVisibleSites }
+        SetupScopeKind.allCases.filter { $0 != .visibleSite }
     }
 
     var body: some View {
@@ -329,6 +331,10 @@ struct SetupRoleEditor: View {
                 SetupChipPicker(options: SetupRole.allCleanupActions, titles: SetupRole.cleanupActionTitles,
                                 selection: $role.cleanupActions)
             }
+            if showsVisibleSites {
+                SetupRowLine()
+                visibleSitesEditor
+            }
             SetupRowLine()
             scopeEditor
             SetupRowLine()
@@ -347,13 +353,31 @@ struct SetupRoleEditor: View {
         return scope.all ? "\(kind.title) · All" : scope.values.isEmpty ? kind.title : "\(kind.title) · \(scope.values.count)"
     }
 
+    private var visibleSitesBinding: Binding<SetupScope> {
+        Binding(get: { role.scope(.visibleSite) }, set: { role.setScope($0, for: .visibleSite) })
+    }
+
+    /// Which sites' devices this role sees. Shown while Limit Devices By
+    /// Site is on.
+    private var visibleSitesEditor: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("Visible Sites").font(.system(size: 12, weight: .semibold)).foregroundStyle(SetupTheme.control)
+            Text(SetupScopeKind.visibleSite.explanation)
+                .font(.system(size: 12)).foregroundStyle(SetupTheme.muted)
+                .fixedSize(horizontal: false, vertical: true)
+            SetupToggleRow(title: SetupScopeKind.visibleSite.allTitle, isOn: visibleSitesBinding.all)
+            if !role.scope(.visibleSite).all {
+                SetupListEditor(values: visibleSitesBinding.values,
+                                placeholder: SetupScopeKind.visibleSite.placeholder,
+                                addLabel: "Add Visible Site")
+            }
+        }
+    }
+
     private var scopeEditor: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Scope").font(.system(size: 12, weight: .semibold)).foregroundStyle(SetupTheme.control)
             SetupSegmented(options: scopeKinds.map { ($0, scopeLabel($0)) }, selection: $scopeKind)
-                .onChange(of: showsVisibleSites) { _, shown in
-                    if !shown, scopeKind == .visibleSite { scopeKind = .site }
-                }
             Text(scopeKind.explanation)
                 .font(.system(size: 12)).foregroundStyle(SetupTheme.muted)
                 .fixedSize(horizontal: false, vertical: true)

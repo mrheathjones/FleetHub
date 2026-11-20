@@ -69,7 +69,13 @@ final class SiteScopeManager: ObservableObject {
     private var jamfSiteNames: [String: String] = [:]
     /// Site names seen on computers in the inventory, by id.
     private var inventorySiteNames: [String: String] = [:]
+    /// True while a request for the site names is running, or once one
+    /// has succeeded.
     private var didFetchSites = false
+    /// Failed requests so far. The request is retried after each inventory
+    /// load, a few times: an API role without Read Sites never succeeds.
+    private var failedSiteFetches = 0
+    private static let maxSiteFetchAttempts = 3
     private var cancellables: Set<AnyCancellable> = []
 
     private init() {
@@ -91,6 +97,16 @@ final class SiteScopeManager: ObservableObject {
             .sink { [weak self] names in
                 self?.inventorySiteNames = names
                 self?.rebuildChoices()
+            }
+            .store(in: &cancellables)
+
+        // The first request for the site names can fail when it runs before
+        // the person's API credential is ready. An inventory load proves
+        // the credential works, so try again then.
+        ComputerInventoryCache.shared.$lastFetchDate
+            .compactMap { $0 }
+            .sink { [weak self] _ in
+                Task { @MainActor in self?.fetchSiteNamesIfNeeded() }
             }
             .store(in: &cancellables)
 
@@ -142,13 +158,18 @@ final class SiteScopeManager: ObservableObject {
         SiteScopeStore.publishForCompanion(visibleSites: enabled ? visibleSites : nil)
         rebuildChoices()
         apply()
-        if enabled, !visibleSites.isEmpty { fetchSiteNames() }
+        fetchSiteNamesIfNeeded()
+    }
+
+    private func fetchSiteNamesIfNeeded() {
+        guard isEnabled, !visibleSites.isEmpty else { return }
+        fetchSiteNames()
     }
 
     /// Site names for the switcher. Fail-soft: without the Read Sites
     /// privilege the names come from the inventory, or fall back to the id.
     private func fetchSiteNames() {
-        guard !didFetchSites else { return }
+        guard !didFetchSites, failedSiteFetches < Self.maxSiteFetchAttempts else { return }
         didFetchSites = true
         Task { [weak self] in
             do {
@@ -158,6 +179,7 @@ final class SiteScopeManager: ObservableObject {
             } catch {
                 AppLog.notice("Site names could not be read from Jamf Pro; using the names in the inventory: \(error.localizedDescription)")
                 self?.didFetchSites = false
+                self?.failedSiteFetches += 1
             }
         }
     }
