@@ -105,6 +105,9 @@ struct UserCapabilities: Equatable {
     /// OR'd across roles. Fail-closed: these name sites, groups and device counts
     /// the rest of the console does not otherwise expose.
     let allowScorecardDiagnostics: Bool
+    /// True when a role exempts the person from the Screen Share approval
+    /// prompt. Read only while that prompt is turned on.
+    let screenShareWithoutPrompt: Bool
 
     /// Order is significant for `modules` and preserved verbatim apart from
     /// de-duplication: the FIRST occurrence of an id keeps its position and
@@ -122,7 +125,8 @@ struct UserCapabilities: Equatable {
         allowPrestageOnAssign: Bool = false,
         returnToServiceOptions: AccessConfiguration.ReturnToServiceOptions = .empty,
         allowExport: Bool,
-        allowScorecardDiagnostics: Bool
+        allowScorecardDiagnostics: Bool,
+        screenShareWithoutPrompt: Bool = false
     ) {
         var seen: Set<String> = []
         var ordered: [String] = []
@@ -153,6 +157,7 @@ struct UserCapabilities: Equatable {
         self.returnToServiceOptions = returnToServiceOptions
         self.allowExport = allowExport
         self.allowScorecardDiagnostics = allowScorecardDiagnostics
+        self.screenShareWithoutPrompt = screenShareWithoutPrompt
     }
 
     /// The fail-closed value: grants nothing at all. Used before
@@ -187,6 +192,7 @@ struct UserCapabilities: Equatable {
             && lhs.returnToServiceOptions == rhs.returnToServiceOptions
             && lhs.allowExport == rhs.allowExport
             && lhs.allowScorecardDiagnostics == rhs.allowScorecardDiagnostics
+            && lhs.screenShareWithoutPrompt == rhs.screenShareWithoutPrompt
     }
 
     /// Unions role definitions — a user holding multiple roles gets the SUM of
@@ -222,6 +228,7 @@ struct UserCapabilities: Equatable {
         var allowPrestageOnAssign = false
         var allowExport = false
         var allowScorecardDiagnostics = false
+        var screenShareWithoutPrompt = false
 
         // RTS cleanup options are folded ONLY from roles that actually grant
         // the returnToService action, and combined with AND (most-restrictive
@@ -261,6 +268,8 @@ struct UserCapabilities: Equatable {
             allowExport = allowExport || definition.effectiveAllowExport
             allowScorecardDiagnostics = allowScorecardDiagnostics
                 || definition.effectiveAllowScorecardDiagnostics
+            screenShareWithoutPrompt = screenShareWithoutPrompt
+                || definition.effectiveScreenShareWithoutPrompt
 
             if definition.effectiveComputerActions.contains(rtsActionID) {
                 let rts = definition.returnToServiceOptions ?? .empty
@@ -286,7 +295,8 @@ struct UserCapabilities: Equatable {
                     deleteJamfRecord: rtsDeleteJamf, deleteEntraObject: rtsDeleteEntra)
                 : .empty,
             allowExport: allowExport,
-            allowScorecardDiagnostics: allowScorecardDiagnostics
+            allowScorecardDiagnostics: allowScorecardDiagnostics,
+            screenShareWithoutPrompt: screenShareWithoutPrompt
         )
     }
 

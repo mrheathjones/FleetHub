@@ -288,12 +288,21 @@ Jamf API client, so what they need is set up in Jamf Pro and on the managed Macs
 | `computers.sshPasswordRotationMinutes` | Match Jamf's Password Rotation Time. Used when the real time cannot be read. Default 60. |
 | `computers.screenShareAutoSignIn` | `true` to sign Screen Share in with the management account. Default `false`, because it passes the password to macOS in a `vnc://` address. |
 | `computers.vpnIPExtensionAttributeID` | If an extension attribute holds each Mac's VPN address, its numeric ID. FleetHub then connects to that address. |
+| `computers.screenSharePrompt` | `true` to ask the person at the Mac before Screen Share opens. Default `false`. See *Asking before Screen Share* below. |
+| `computers.screenSharePromptMethod` | What shows the prompt: `fleethubPrompt`, `swiftDialog` or `jamfHelper` (default). |
+| `computers.screenSharePromptTitle`, `…Message`, `…IconPath` | The prompt's wording and image. In the message, `{technician}` and `{device}` are filled in. The icon path is a path on the Mac being supported. |
+| `computers.screenSharePromptTimeoutSeconds` | Seconds to answer; no answer is a Deny. Default 60 (10 to 300). |
+| `computers.screenSharePromptAllowWhenNoUser` | With nobody logged in, `true` (default) opens the session and `false` refuses it. |
 
 ### Access profile
 
 Grant the actions per role in `computerActions`: `viewLocalAdminPassword`, `viewFileVaultKey`,
 `ssh`, `screenShare`. Screen Share's automatic sign-in and the Copy Password buttons also
 need `viewLocalAdminPassword`.
+
+While `computers.screenSharePrompt` is on, a role with `screenShareWithoutPrompt = true` opens
+Screen Share without asking. Leave it unset on roles that must be allowed by the person at the
+Mac. A person who holds any exempt role is not prompted.
 
 ### On the managed Macs
 
@@ -302,6 +311,45 @@ need `viewLocalAdminPassword`.
 | SSH | **Remote Login** on, and the Jamf management account allowed to use it. FleetHub cannot turn it on. |
 | Screen Share | **Remote Management** or Screen Sharing on. FleetHub's Enable Remote Desktop action can turn Remote Management on through Jamf. |
 | Both | The technician's Mac must be able to reach the Mac's address: the VPN address when you collect one, otherwise the address in Jamf inventory. |
+| Screen Share approval prompt | **Remote Login** on (the prompt is shown over SSH), the management account an administrator, and the prompt tool you chose: the **FleetHub Prompt** package, swiftDialog, or nothing extra for jamfHelper. |
+
+### Asking before Screen Share
+
+With `computers.screenSharePrompt` on, clicking Screen Share first shows an **Allow / Deny**
+prompt on the Mac being supported, and the session opens only on Allow. Roles you exempt with
+`screenShareWithoutPrompt` skip it.
+
+**FleetHub applies this, not macOS.** The prompt is a step FleetHub runs before it opens
+Screen Sharing. Someone who holds the management account's password can still connect with
+Apple's Screen Sharing app directly, without FleetHub and without the prompt. Treat it as a
+courtesy and an audit record, not as a security boundary.
+
+How it works:
+
+1. FleetHub signs in to the Mac over SSH with the Jamf management account (the same way the
+   SSH action does), so the person's Jamf API role needs **View Local Admin Password**. The
+   role does not need the `ssh` or `viewLocalAdminPassword` actions: no terminal opens and the
+   password is not shown.
+2. It starts the prompt in the logged-in person's session and waits for the answer.
+3. Allow opens the session. Deny, no answer in time, or a prompt that could not be shown
+   (Remote Login off, tool not installed, sign-in refused) all refuse it, and FleetHub says
+   which. The request and its result are recorded in the action log.
+
+Choosing what shows the prompt (`screenSharePromptMethod`):
+
+| Value | Shows | Needs on the Macs being supported |
+| --- | --- | --- |
+| `fleethubPrompt` | A FleetHub-branded window with a countdown. | The **FleetHub Prompt** package (`FleetHubPrompt-<version>.pkg`), installed with a Jamf policy. It installs to `/Library/Application Support/FleetHub/` and does nothing until FleetHub starts it. |
+| `swiftDialog` | A swiftDialog window with your title, message and icon. | swiftDialog at `/usr/local/bin/dialog`. |
+| `jamfHelper` | A plain Jamf window with your title, message and icon. | Nothing: it is part of the Jamf framework. |
+
+Things to know:
+
+- A locked or unattended Mac cannot answer, so the request times out and is refused.
+- Cancelling in FleetHub stops waiting, but a prompt already on the Mac's screen stays until
+  it is answered or times out. Its answer is then ignored.
+- In the FleetHub Prompt app neither button is the default, so Return does not answer by
+  accident; Escape and closing the window are a Deny.
 
 ### Check
 

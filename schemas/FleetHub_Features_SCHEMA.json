@@ -141,6 +141,46 @@
           "default": false,
           "description": "When on, the Screen Share button signs in for the operator: the app looks up the device's Jamf management account and its current LAPS password with the operator's own Jamf API client and passes them to the built-in Screen Sharing app, so no credential prompt appears. Requires the operator's role to grant BOTH the screenShare and viewLocalAdminPassword computer actions, and the Jamf API role to hold View Local Admin Password; otherwise Screen Share opens with the normal prompt. Jamf records the password view against the operator and rotates the password afterwards per your LAPS settings. Default off."
         },
+        "screenSharePrompt": {
+          "type": "boolean",
+          "title": "Screen Share: Ask Before Connecting",
+          "default": false,
+          "description": "When on, the person at the Mac must click Allow before a Screen Share session opens. FleetHub shows the prompt on the target Mac over SSH with the Jamf management account, so the Macs need Remote Login on and the operator's Jamf API role needs View Local Admin Password. Exempt a role with screenShareWithoutPrompt in the access profile. Anything other than Allow (Deny, no answer, a prompt that could not be shown) refuses the session. ENFORCED BY FLEETHUB, NOT BY macOS: someone who holds the management account's password can still connect with Screen Sharing directly. Default off."
+        },
+        "screenSharePromptMethod": {
+          "type": "string",
+          "title": "Screen Share Prompt: Shown With",
+          "default": "jamfHelper",
+          "enum": ["fleethubPrompt", "swiftDialog", "jamfHelper"],
+          "description": "What shows the prompt on the target Mac. fleethubPrompt = the FleetHub Prompt app (install the FleetHubPrompt package on managed Macs). swiftDialog = /usr/local/bin/dialog (must be installed). jamfHelper = part of the Jamf framework, nothing to install. An unrecognized value is treated as jamfHelper."
+        },
+        "screenSharePromptTitle": {
+          "type": "string",
+          "title": "Screen Share Prompt: Title",
+          "description": "Heading of the prompt. Default: Screen Sharing Request."
+        },
+        "screenSharePromptMessage": {
+          "type": "string",
+          "title": "Screen Share Prompt: Message",
+          "description": "Text of the prompt. {technician} is replaced by the signed-in person's name and {device} by the Mac's name. Leave unset for the built-in wording."
+        },
+        "screenSharePromptIconPath": {
+          "type": "string",
+          "title": "Screen Share Prompt: Icon Path",
+          "description": "Path, ON THE TARGET MAC, of an image to show in the prompt. Optional. The FleetHub Prompt app shows the FleetHub icon without one."
+        },
+        "screenSharePromptTimeoutSeconds": {
+          "type": "integer",
+          "title": "Screen Share Prompt: Time to Answer (seconds)",
+          "default": 60,
+          "description": "Seconds the person has to answer. No answer counts as Deny. Kept between 10 and 300."
+        },
+        "screenSharePromptAllowWhenNoUser": {
+          "type": "boolean",
+          "title": "Screen Share Prompt: Connect When Nobody Is Logged In",
+          "default": true,
+          "description": "With nobody logged in at the Mac there is nobody to ask. true (default) opens the session; false refuses it."
+        },
         "vpnIPExtensionAttributeID": {
           "type": "integer",
           "title": "VPN IP Extension Attribute ID",

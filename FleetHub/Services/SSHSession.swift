@@ -280,6 +280,55 @@ final class SSHSession: @unchecked Sendable {
                         "-p", String(target.port), "-l", target.username, target.host])
     }
 
+    /// Runs one command on the Mac over the connection already signed in,
+    /// and returns what it printed. `input` is written to the command's
+    /// standard input, which is then closed. Throws when ssh could not run
+    /// the command or it outlived `timeout`.
+    func run(command: String, input: Data = Data(), timeout: TimeInterval) async throws -> (status: Int32, output: String) {
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: Self.sshPath)
+        process.arguments = ["-F", "/dev/null", "-S", controlPath, "-o", "ControlMaster=no",
+                             "-o", "BatchMode=yes",
+                             "-p", String(target.port), "-l", target.username, target.host, command]
+        let inputPipe = Pipe()
+        let outputPipe = Pipe()
+        process.standardInput = inputPipe
+        process.standardOutput = outputPipe
+        process.standardError = FileHandle.nullDevice
+
+        let collected = LockedText()
+        outputPipe.fileHandleForReading.readabilityHandler = { handle in
+            let data = handle.availableData
+            if !data.isEmpty { collected.append(String(decoding: data, as: UTF8.self)) }
+        }
+        defer { outputPipe.fileHandleForReading.readabilityHandler = nil }
+
+        do {
+            try process.run()
+        } catch {
+            throw SSHFailure.other("Could not start ssh: \(error.localizedDescription)")
+        }
+        let writer = inputPipe.fileHandleForWriting
+        _ = fcntl(writer.fileDescriptor, F_SETNOSIGPIPE, 1)
+        try? writer.write(contentsOf: input)
+        try? writer.close()
+
+        let deadline = Date().addingTimeInterval(timeout)
+        while process.isRunning {
+            if Task.isCancelled || Date() >= deadline {
+                process.terminate()
+                if Task.isCancelled { throw CancellationError() }
+                throw SSHFailure.timedOut
+            }
+            try? await Task.sleep(for: .milliseconds(200))
+        }
+        // Let the last of the output arrive.
+        try? await Task.sleep(for: .milliseconds(100))
+        let rest = outputPipe.fileHandleForReading.availableData
+        if !rest.isEmpty { collected.append(String(decoding: rest, as: UTF8.self)) }
+        return (process.terminationStatus, collected.value)
+    }
+
     /// Ends the connection and removes every temporary file. Safe to call twice.
     func close() {
         let process: Process? = lock.withLock {

@@ -58,6 +58,15 @@ final class DeviceCommandExecutor {
     var sshPrompt: SSHPrompt?
     @ObservationIgnored private var sshTask: Task<Void, Never>?
 
+    /// What the Screen Share approval step is showing: waiting on the person
+    /// at the Mac, or why the session did not open. nil when nothing is shown.
+    enum ScreenShareApprovalPrompt: Equatable {
+        case working(String)
+        case failed(title: String, message: String)
+    }
+    var screenShareApprovalPrompt: ScreenShareApprovalPrompt?
+    @ObservationIgnored private var screenShareApprovalTask: Task<Bool, Never>?
+
     init(computer: Computer) {
         self.computer = computer
     }
@@ -551,6 +560,150 @@ final class DeviceCommandExecutor {
     /// means the role could not read it, so it is not asked for again.
     private static var jamfRotationPeriod: [String: TimeInterval?] = [:]
 
+    // MARK: - Screen Share approval
+
+    /// Dismisses the approval step. A prompt already on the Mac's screen
+    /// stays there until it is answered or times out; its answer is ignored.
+    func cancelScreenShareApproval() {
+        screenShareApprovalTask?.cancel()
+        screenShareApprovalTask = nil
+        screenShareApprovalPrompt = nil
+    }
+
+    /// Shows the Allow / Deny prompt on the Mac and waits for the answer.
+    /// True only when the person allowed the session (or nobody is logged
+    /// in and the profile lets that through). Every other result, a failure
+    /// to ask included, refuses: the step never fails open.
+    private func requestScreenShareApproval(address: String, viaVPN: Bool) async -> Bool {
+        let name = computer.displayName
+        let settings = MDMConfigurationManager.shared.configuration.features?.effectiveComputers
+            ?? FeaturesConfiguration.ComputersSettings.empty
+        let method = settings.effectiveScreenSharePromptMethod
+        let port = settings.effectiveSSHPort
+        let shownAddress = viaVPN ? "\(address) (VPN)" : address
+
+        func log(_ success: Bool, _ detail: String) {
+            ActionLogService.shared.logAction(
+                actionName: "Screen Share Approval",
+                actionCategory: "Device Actions",
+                deviceName: name,
+                deviceSerialNumber: computer.serialNumber ?? "Unknown",
+                deviceId: computer.id,
+                ipAddressUsed: address,
+                success: success,
+                errorMessage: success ? nil : detail
+            )
+        }
+        func refuse(_ title: String, _ message: String) -> Bool {
+            guard !Task.isCancelled else { return false }
+            screenShareApprovalPrompt = .failed(title: title, message: message)
+            log(false, title)
+            return false
+        }
+
+        screenShareApprovalPrompt = .working("Checking that \(name) can be reached at \(shownAddress)…")
+        guard await SSHSession.isReachable(host: address, port: port) else {
+            return refuse("Could Not Ask for Approval",
+                          "\(name) did not answer on port \(port) at \(shownAddress), so the person at the Mac could not be asked. The approval prompt needs Remote Login turned on. Screen Sharing was not opened.")
+        }
+        guard !Task.isCancelled else { return false }
+
+        let credential: (username: String, password: String)
+        do {
+            credential = try await fetchManagementAccountCredential()
+            logSSH("Used management account password for Screen Share approval", category: "Security", success: true)
+        } catch {
+            logSSH("Used management account password for Screen Share approval", category: "Security",
+                   success: false, error: error.localizedDescription)
+            return refuse("Could Not Ask for Approval",
+                          "FleetHub could not get the management account password for \(name): \(error.localizedDescription). Screen Sharing was not opened.")
+        }
+        guard !Task.isCancelled else { return false }
+
+        let session: SSHSession
+        do {
+            session = try SSHSession(target: SSHTarget(
+                host: address, port: port, username: credential.username,
+                hostKeyAlias: Self.hostKeyAlias(serial: computer.serialNumber, fallback: address)))
+            try await session.connect(password: credential.password)
+        } catch {
+            guard !Task.isCancelled else { return false }
+            let reason: String
+            switch error as? SSHFailure {
+            case .hostKeyChanged:
+                reason = "the identity this Mac presented does not match the one FleetHub saved. Open an SSH session to review and replace the saved key, then try again"
+            case .permissionDenied:
+                reason = "the Mac refused the management account's password"
+            case .connectionRefused:
+                reason = "the Mac refused the connection; Remote Login is probably turned off"
+            case .timedOut:
+                reason = "the Mac stopped answering"
+            case .other(let detail):
+                reason = "ssh reported: \(detail)"
+            case nil:
+                reason = error.localizedDescription
+            }
+            return refuse("Could Not Ask for Approval",
+                          "FleetHub could not sign in to \(name) to show the prompt: \(reason). Screen Sharing was not opened.")
+        }
+        defer { session.close() }
+        guard !Task.isCancelled else { return false }
+
+        let timeout = settings.effectiveScreenSharePromptTimeoutSeconds
+        let request = ScreenShareApproval.Request(
+            method: method,
+            title: settings.effectiveScreenSharePromptTitle,
+            message: ScreenShareApproval.message(template: settings.effectiveScreenSharePromptMessage,
+                                                 technician: UserSession.shared.displayName, device: name),
+            iconPath: settings.effectiveScreenSharePromptIconPath,
+            timeoutSeconds: timeout
+        )
+        screenShareApprovalPrompt = .working("Waiting for the person at \(name) to allow screen sharing. They have \(timeout) seconds to answer.")
+
+        let outcome: ScreenShareApproval.Outcome
+        do {
+            let result = try await session.run(command: ScreenShareApproval.remoteCommand(for: request),
+                                               input: Data((credential.password + "\n").utf8),
+                                               timeout: TimeInterval(timeout + 30))
+            outcome = ScreenShareApproval.parse(output: result.output, method: method)
+        } catch is CancellationError {
+            return false
+        } catch {
+            outcome = .failed("the Mac stopped answering before the prompt was answered")
+        }
+        guard !Task.isCancelled else { return false }
+
+        switch outcome {
+        case .allowed:
+            screenShareApprovalPrompt = nil
+            log(true, "Allowed")
+            return true
+        case .noUserLoggedIn:
+            if settings.effectiveScreenSharePromptAllowWhenNoUser {
+                screenShareApprovalPrompt = nil
+                log(true, "Nobody logged in")
+                return true
+            }
+            return refuse("Nobody to Ask",
+                          "Nobody is logged in at \(name), and your organization does not allow screen sharing without approval. Screen Sharing was not opened.")
+        case .denied:
+            return refuse("Request Declined",
+                          "The person at \(name) declined the screen sharing request.")
+        case .timedOut:
+            return refuse("No Answer",
+                          "The person at \(name) did not answer within \(timeout) seconds. The Mac may be locked or unattended. Screen Sharing was not opened.")
+        case .toolMissing:
+            return refuse("Prompt Not Installed",
+                          "\(ScreenShareApproval.toolName(for: method)) is not installed on \(name), so the person could not be asked. Screen Sharing was not opened.")
+        case .adminRightsRefused:
+            return refuse("Could Not Ask for Approval",
+                          "The management account on \(name) could not get administrator rights to show the prompt. Screen Sharing was not opened.")
+        case .failed(let detail):
+            return refuse("Could Not Ask for Approval",
+                          "The prompt on \(name) did not work: \(detail). Screen Sharing was not opened.")
+        }
+    }
+
     // MARK: - Screen Share
     
     private func launchScreenShare(openURL: OpenURLAction) async {
@@ -595,6 +748,20 @@ final class DeviceCommandExecutor {
                 errorMessage: "Invalid IP address"
             )
             return
+        }
+
+        // Approval prompt (features computers.screenSharePrompt, default off):
+        // the person at the Mac must allow the session first, unless one of
+        // the operator's roles exempts them. Read fresh here, so a profile
+        // or role change applies to the very next session.
+        let promptSettings = MDMConfigurationManager.shared.configuration.features?.effectiveComputers
+        if promptSettings?.effectiveScreenSharePrompt == true,
+           !UserSession.shared.capabilities.screenShareWithoutPrompt {
+            let task = Task { await requestScreenShareApproval(address: targetIP, viaVPN: hasVPN) }
+            screenShareApprovalTask = task
+            let approved = await task.value
+            screenShareApprovalTask = nil
+            guard approved else { return }
         }
 
         // Optional automatic sign-in (features computers.screenShareAutoSignIn,

@@ -379,6 +379,58 @@ struct FeaturesConfiguration: Codable {
         /// default). Used for the SSH window's countdown when Jamf does not
         /// report the rotation time itself.
         let sshPasswordRotationMinutes: Int?
+        /// Opt-in: ask the person at the Mac before Screen Share opens.
+        /// When on, FleetHub shows an Allow / Deny prompt on the target Mac
+        /// (over SSH, with the management account) and opens the session
+        /// only on Allow. A role can be exempted with the access profile's
+        /// `screenShareWithoutPrompt`. ENFORCED BY FLEETHUB, not by macOS:
+        /// someone holding the account's password can still connect with
+        /// Screen Sharing directly. Defaults OFF.
+        let screenSharePrompt: Bool?
+        /// What shows the prompt on the target Mac: `fleethubPrompt` (the
+        /// FleetHub Prompt app, installed on managed Macs), `swiftDialog`,
+        /// or `jamfHelper` (part of the Jamf framework; the default, since
+        /// it needs nothing installed).
+        let screenSharePromptMethod: String?
+        /// Prompt heading. Default "Screen Sharing Request".
+        let screenSharePromptTitle: String?
+        /// Prompt text. `{technician}` is replaced by the signed-in
+        /// person's name and `{device}` by the Mac's name.
+        let screenSharePromptMessage: String?
+        /// Path ON THE TARGET MAC of an image for the prompt. Optional.
+        let screenSharePromptIconPath: String?
+        /// Seconds the person has to answer; no answer counts as Deny.
+        /// Default 60, kept between 10 and 300.
+        let screenSharePromptTimeoutSeconds: Int?
+        /// What happens when nobody is logged in at the Mac, so there is
+        /// nobody to ask: true (default) opens the session, false refuses.
+        let screenSharePromptAllowWhenNoUser: Bool?
+
+        var effectiveScreenSharePrompt: Bool { screenSharePrompt ?? false }
+        /// An unrecognized method falls back to jamfHelper, never to "no
+        /// prompt".
+        var effectiveScreenSharePromptMethod: ScreenSharePromptMethod {
+            let raw = (screenSharePromptMethod ?? "").trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+            return ScreenSharePromptMethod.allCases.first { $0.rawValue.lowercased() == raw } ?? .jamfHelper
+        }
+        var effectiveScreenSharePromptTitle: String {
+            let text = (screenSharePromptTitle ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+            return text.isEmpty ? "Screen Sharing Request" : text
+        }
+        var effectiveScreenSharePromptMessage: String {
+            let text = (screenSharePromptMessage ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+            return text.isEmpty
+                ? "{technician} from IT is asking to view and control this Mac\u{2019}s screen. Allow only if you are expecting this."
+                : text
+        }
+        var effectiveScreenSharePromptIconPath: String? {
+            let text = (screenSharePromptIconPath ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+            return text.isEmpty ? nil : text
+        }
+        var effectiveScreenSharePromptTimeoutSeconds: Int {
+            min(300, max(10, screenSharePromptTimeoutSeconds ?? 60))
+        }
+        var effectiveScreenSharePromptAllowWhenNoUser: Bool { screenSharePromptAllowWhenNoUser ?? true }
 
         var effectiveVPNIPExtensionAttribute: VPNIPExtensionAttributeRef? {
             guard let id = vpnIPExtensionAttributeID, id > 0 else { return nil }
@@ -460,8 +512,17 @@ struct FeaturesConfiguration: Codable {
             inventoryRefreshInterval: nil, inventorySections: nil,
             showDeviceHistory: nil, historyPageSize: nil,
             screenShareAutoSignIn: nil, vpnIPExtensionAttributeID: nil, sshPort: nil,
-            sshPasswordRotationMinutes: nil
+            sshPasswordRotationMinutes: nil,
+            screenSharePrompt: nil, screenSharePromptMethod: nil,
+            screenSharePromptTitle: nil, screenSharePromptMessage: nil,
+            screenSharePromptIconPath: nil, screenSharePromptTimeoutSeconds: nil,
+            screenSharePromptAllowWhenNoUser: nil
         )
+    }
+
+    /// What shows the Screen Share approval prompt on the target Mac.
+    enum ScreenSharePromptMethod: String, CaseIterable {
+        case fleethubPrompt, swiftDialog, jamfHelper
     }
 
     // MARK: - Mobile Devices

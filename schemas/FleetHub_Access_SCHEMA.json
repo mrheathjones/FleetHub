@@ -216,6 +216,12 @@
             "default": false,
             "description": "Whether this role sees the scorecard's coverage diagnostics: which devices no card measures, targets matching nothing, and the Scope IDs inspector. These name sites, groups and device counts the rest of the console does not expose, so it is off unless granted. OR'd across roles. Users who have it get a show/hide toggle on the scorecard."
           },
+          "screenShareWithoutPrompt": {
+            "type": "boolean",
+            "title": "Screen Share Without Asking",
+            "default": false,
+            "description": "Exempts this role from the Screen Share approval prompt (features: computers.screenSharePrompt). Read only while that prompt is on. Absent or false = this role's holders must be allowed by the person at the Mac. OR'd across matched roles, so a person holding any exempt role is not prompted. Typical: true for administrators, unset for technicians."
+          },
           "jamfApiRoleName": {
             "type": "string",
             "title": "Jamf API Role Name",

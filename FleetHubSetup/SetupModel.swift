@@ -246,6 +246,9 @@ struct SetupRole: Identifiable, Equatable, Codable {
     /// Devices By Site is on. Optional so a setup saved before the list
     /// existed still opens; absent means every site.
     var visibleSites: SetupScope?
+    /// Exempts the role from the Screen Share approval prompt. Optional so
+    /// roles saved before the prompt existed still load.
+    var screenShareWithoutPrompt: Bool?
 
     func scope(_ kind: SetupScopeKind) -> SetupScope {
         switch kind {
@@ -360,6 +363,8 @@ struct SetupRole: Identifiable, Equatable, Codable {
         entry["visibleSites"] = (visibleSites ?? .everything).profileValue
         if allowExport { entry["allowExport"] = true }
         if allowScorecardDiagnostics { entry["allowScorecardDiagnostics"] = true }
+        // Removed again by the access profile when the prompt is off.
+        if screenShareWithoutPrompt == true { entry["screenShareWithoutPrompt"] = true }
         return entry
     }
 }
@@ -465,6 +470,15 @@ final class SetupModel: ObservableObject {
     @Published var localAdminUsername = ""
     @Published var showDeviceHistory = false
     @Published var screenShareAutoSignIn = false
+    /// Ask Before Screen Share: the person at the Mac must allow a session.
+    @Published var screenSharePrompt = false
+    /// fleethubPrompt, swiftDialog or jamfHelper.
+    @Published var screenSharePromptMethod = "fleethubPrompt"
+    @Published var screenSharePromptTitle = ""
+    @Published var screenSharePromptMessage = ""
+    @Published var screenSharePromptIconPath = ""
+    @Published var screenSharePromptTimeoutSeconds = 60
+    @Published var screenSharePromptAllowWhenNoUser = true
     /// Numeric id of the extension attribute holding the VPN IP; blank = not collected.
     @Published var vpnIPExtensionAttributeID = ""
     /// Minutes Jamf waits after a LAPS password is viewed before rotating it.
@@ -684,6 +698,7 @@ final class SetupModel: ObservableObject {
         access["roles"] = usableRoles.map { role -> [String: Any] in
             var entry = role.dictionary
             if !siteScoping { entry.removeValue(forKey: "visibleSites") }
+            if !screenSharePrompt { entry.removeValue(forKey: "screenShareWithoutPrompt") }
             if !provisionsClients { entry.removeValue(forKey: "jamfApiRoleName") }
             return entry
         }
@@ -699,6 +714,15 @@ final class SetupModel: ObservableObject {
         var computers: [String: Any] = [:]
         if showDeviceHistory { computers["showDeviceHistory"] = true }
         if screenShareAutoSignIn { computers["screenShareAutoSignIn"] = true }
+        if screenSharePrompt {
+            computers["screenSharePrompt"] = true
+            computers["screenSharePromptMethod"] = screenSharePromptMethod
+            if !trimmed(screenSharePromptTitle).isEmpty { computers["screenSharePromptTitle"] = trimmed(screenSharePromptTitle) }
+            if !trimmed(screenSharePromptMessage).isEmpty { computers["screenSharePromptMessage"] = trimmed(screenSharePromptMessage) }
+            if !trimmed(screenSharePromptIconPath).isEmpty { computers["screenSharePromptIconPath"] = trimmed(screenSharePromptIconPath) }
+            if screenSharePromptTimeoutSeconds != 60 { computers["screenSharePromptTimeoutSeconds"] = screenSharePromptTimeoutSeconds }
+            if !screenSharePromptAllowWhenNoUser { computers["screenSharePromptAllowWhenNoUser"] = false }
+        }
         if let id = Int(trimmed(vpnIPExtensionAttributeID)), id > 0 { computers["vpnIPExtensionAttributeID"] = id }
         if sshPasswordRotationMinutes != 60 { computers["sshPasswordRotationMinutes"] = sshPasswordRotationMinutes }
         if !computers.isEmpty { features["computers"] = computers }
@@ -809,7 +833,10 @@ final class SetupModel: ObservableObject {
 
         var secrets: [String] = []
         if role.computerActions.contains("viewLocalAdminPassword") || role.computerActions.contains("ssh")
-            || (screenShareAutoSignIn && role.computerActions.contains("screenShare")) {
+            || (screenShareAutoSignIn && role.computerActions.contains("screenShare"))
+            // The approval prompt is shown over SSH with the management account.
+            || (screenSharePrompt && role.computerActions.contains("screenShare")
+                && role.screenShareWithoutPrompt != true) {
             secrets.append("View Local Admin Password")
         }
         // Jamf rotates a password a set time after its FIRST view. The audit
@@ -889,7 +916,7 @@ final class SetupModel: ObservableObject {
         let cleanup = all.reduce(into: Set<String>()) { $0.formUnion($1.cleanupActions) }
         if !computer.isEmpty || !mobile.isEmpty { actions += ["device-actions:execute", "device-actions:read"] }
         if computer.contains("viewLocalAdminPassword") || computer.contains("ssh")
-            || (screenShareAutoSignIn && computer.contains("screenShare")) {
+            || ((screenShareAutoSignIn || screenSharePrompt) && computer.contains("screenShare")) {
             actions.append("local-admin-passwords:read")
         }
         if computer.contains("viewFileVaultKey") { actions.append("FileVault recovery key read (confirm)") }
@@ -937,7 +964,8 @@ extension SetupModel {
         }
         let commandSet: Set<String> = ["sendBlankPush", "restart", "restartSilent", "shutdown"]
         let remoteSet: Set<String> = ["enableRemoteDesktop", "disableRemoteDesktop", "enableBluetooth", "disableBluetooth"]
-        let autoShare = screenShareAutoSignIn && computer.contains("screenShare")
+        let autoShare = (screenShareAutoSignIn || (screenSharePrompt && role.screenShareWithoutPrompt != true))
+            && computer.contains("screenShare")
         return [
             entry("Search and View Devices", role.modules.contains("devices") || role.modules.contains("dashboard"), reads),
             entry("My Devices", role.modules.contains("myDevices") && myDevicesEnabled,
@@ -949,7 +977,7 @@ extension SetupModel {
             entry("Remote Desktop and Bluetooth", !computer.isDisjoint(with: remoteSet),
                   "Remote Desktop and Bluetooth commands"),
             entry("Screen Share", computer.contains("screenShare"),
-                  autoShare ? "View Local Admin Password, for automatic sign-in" : "No Jamf privilege; opens the built-in Screen Sharing"),
+                  autoShare ? "View Local Admin Password, for automatic sign-in or the approval prompt" : "No Jamf privilege; opens the built-in Screen Sharing"),
             entry("SSH", computer.contains("ssh"),
                   "View Local Admin Password; Remote Login must be on for the Mac and allow the management account"),
             entry("Unlock User Account", computer.contains("unlockUserAccount"), "Unlock User Account command"),
@@ -1048,6 +1076,13 @@ extension SetupModel {
         var localAdminUsername: String?
         var showDeviceHistory: Bool?
         var screenShareAutoSignIn: Bool?
+        var screenSharePrompt: Bool?
+        var screenSharePromptMethod: String?
+        var screenSharePromptTitle: String?
+        var screenSharePromptMessage: String?
+        var screenSharePromptIconPath: String?
+        var screenSharePromptTimeoutSeconds: Int?
+        var screenSharePromptAllowWhenNoUser: Bool?
         var sshPasswordRotationMinutes: Int?
         var vpnIPExtensionAttributeID: String?
         var myDevicesEnabled: Bool?
@@ -1102,6 +1137,13 @@ extension SetupModel {
             localAdminUsername: localAdminUsername,
             showDeviceHistory: showDeviceHistory,
             screenShareAutoSignIn: screenShareAutoSignIn,
+            screenSharePrompt: screenSharePrompt,
+            screenSharePromptMethod: screenSharePromptMethod,
+            screenSharePromptTitle: screenSharePromptTitle,
+            screenSharePromptMessage: screenSharePromptMessage,
+            screenSharePromptIconPath: screenSharePromptIconPath,
+            screenSharePromptTimeoutSeconds: screenSharePromptTimeoutSeconds,
+            screenSharePromptAllowWhenNoUser: screenSharePromptAllowWhenNoUser,
             sshPasswordRotationMinutes: sshPasswordRotationMinutes,
             vpnIPExtensionAttributeID: vpnIPExtensionAttributeID,
             myDevicesEnabled: myDevicesEnabled,
@@ -1155,6 +1197,13 @@ extension SetupModel {
         if let value = saved.localAdminUsername { localAdminUsername = value }
         if let value = saved.showDeviceHistory { showDeviceHistory = value }
         if let value = saved.screenShareAutoSignIn { screenShareAutoSignIn = value }
+        if let value = saved.screenSharePrompt { screenSharePrompt = value }
+        if let value = saved.screenSharePromptMethod { screenSharePromptMethod = value }
+        if let value = saved.screenSharePromptTitle { screenSharePromptTitle = value }
+        if let value = saved.screenSharePromptMessage { screenSharePromptMessage = value }
+        if let value = saved.screenSharePromptIconPath { screenSharePromptIconPath = value }
+        if let value = saved.screenSharePromptTimeoutSeconds { screenSharePromptTimeoutSeconds = value }
+        if let value = saved.screenSharePromptAllowWhenNoUser { screenSharePromptAllowWhenNoUser = value }
         if let value = saved.sshPasswordRotationMinutes { sshPasswordRotationMinutes = value }
         if let value = saved.vpnIPExtensionAttributeID { vpnIPExtensionAttributeID = value }
         if let value = saved.myDevicesEnabled { myDevicesEnabled = value }

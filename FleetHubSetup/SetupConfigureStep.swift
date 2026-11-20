@@ -276,7 +276,8 @@ struct SetupAccessForm: View {
 
         if let index = selectedIndex {
             SetupRoleEditor(role: $model.roles[index], showsJamfRole: model.provisionsClients,
-                            showsVisibleSites: model.siteScoping) {
+                            showsVisibleSites: model.siteScoping,
+                            showsScreenSharePrompt: model.screenSharePrompt) {
                 roleToRemove = model.roles[index]
             }
         }
@@ -289,6 +290,9 @@ struct SetupRoleEditor: View {
     /// True while Limit Devices By Site is on: Visible Sites is shown only
     /// then, since the app ignores it otherwise.
     let showsVisibleSites: Bool
+    /// True while Ask Before Screen Share is on: the role's exemption is
+    /// shown only then.
+    let showsScreenSharePrompt: Bool
     let remove: () -> Void
     @State private var scopeKind: SetupScopeKind = .site
 
@@ -341,6 +345,12 @@ struct SetupRoleEditor: View {
             SetupToggleRow(title: "Allow Export", detail: "CSV and report exports.", isOn: $role.allowExport)
             SetupToggleRow(title: "Allow Scorecard Diagnostics",
                            detail: "Shows why a device fails a health card.", isOn: $role.allowScorecardDiagnostics)
+            if showsScreenSharePrompt {
+                SetupToggleRow(title: "Screen Share Without Asking",
+                               detail: "This role opens Screen Share without the approval prompt. Leave off for roles that must be allowed by the person at the Mac.",
+                               isOn: Binding(get: { role.screenShareWithoutPrompt ?? false },
+                                             set: { role.screenShareWithoutPrompt = $0 }))
+            }
         }
     }
 
@@ -587,6 +597,14 @@ struct SetupFeaturesForm: View {
         }
     }
 
+    private var promptMethodHelp: String {
+        switch model.screenSharePromptMethod {
+        case "swiftDialog": "swiftDialog must be installed on the Macs being supported (/usr/local/bin/dialog)."
+        case "jamfHelper": "Part of the Jamf framework on every managed Mac, so nothing extra to install."
+        default: "Install the FleetHub Prompt package on the Macs being supported with a Jamf policy."
+        }
+    }
+
     var body: some View {
         SetupCard("Devices") {
             SetupToggleRow(title: "Show Device History",
@@ -594,6 +612,33 @@ struct SetupFeaturesForm: View {
             SetupToggleRow(title: "Screen Share Signs In Automatically",
                            detail: "Fetches the Jamf management account and its rotating password, so a technician only clicks Screen Share. Needs the Screen Share and Local Admin Password actions on the role.",
                            isOn: $model.screenShareAutoSignIn)
+            SetupToggleRow(title: "Ask Before Screen Share",
+                           detail: "The person at the Mac must click Allow before a session opens. Exempt a role with Screen Share Without Asking, on the role. Needs Remote Login on the Macs. FleetHub applies this; macOS does not, so someone holding the management account's password can still connect with Screen Sharing directly.",
+                           isOn: $model.screenSharePrompt)
+            if model.screenSharePrompt {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Prompt Shown With")
+                        .font(.system(size: 12, weight: .semibold)).foregroundStyle(SetupTheme.control)
+                    SetupSegmented(options: [("fleethubPrompt", "FleetHub Prompt"), ("swiftDialog", "swiftDialog"),
+                                             ("jamfHelper", "jamfHelper")],
+                                   selection: $model.screenSharePromptMethod)
+                    Text(promptMethodHelp)
+                        .font(.system(size: 12)).foregroundStyle(SetupTheme.muted)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                SetupField(label: "Prompt Title", text: $model.screenSharePromptTitle, placeholder: "Screen Sharing Request")
+                SetupField(label: "Prompt Message", text: $model.screenSharePromptMessage,
+                           placeholder: "{technician} from IT is asking to view and control this Mac’s screen.",
+                           help: "{technician} becomes the signed-in person's name and {device} the Mac's name. Leave blank for the built-in wording.")
+                SetupField(label: "Prompt Icon Path", text: $model.screenSharePromptIconPath, placeholder: "Optional",
+                           help: "The path of an image on the Macs being supported, if you want your own. The FleetHub Prompt app shows the FleetHub icon without one.")
+                SetupStepperRow(title: "Time to Answer",
+                                detail: "No answer in this time counts as Deny.",
+                                value: $model.screenSharePromptTimeoutSeconds, range: 10...300, unit: "seconds")
+                SetupToggleRow(title: "Connect When Nobody Is Logged In",
+                               detail: "With nobody at the Mac there is nobody to ask. On opens the session; off refuses it.",
+                               isOn: $model.screenSharePromptAllowWhenNoUser)
+            }
             SetupField(label: "VPN IP Extension Attribute ID", text: $model.vpnIPExtensionAttributeID, placeholder: "Optional, for example 42",
                        help: "If you collect each Mac's VPN IP address in a Jamf extension attribute, enter that attribute's numeric ID. Find it in the address bar when you open the attribute in Jamf Pro (…id=42). FleetHub then shows the VPN address with a VPN badge on the device page, and Screen Share and SSH connect to it. Leave blank if you do not collect it.")
             SetupStepperRow(title: "SSH Password Rotation",

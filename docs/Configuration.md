@@ -128,6 +128,7 @@ roles = (
 | `mobileDeviceActions` | array of string | no mobile actions | the `deviceActions.mobileDevice.actions[].id` set — forward-looking, no mobile actions menu exists yet |
 | `cleanupActions` | array of string | no cleanup actions | `unmanage`, `addToGroup`, `moveToSite`, `deleteFromProtect`, `deleteRecord` |
 | `allowExport` | bool | `false` | — (a single switch over **every** export surface — see below) |
+| `screenShareWithoutPrompt` | bool | `false` | Exempts the role from the Screen Share approval prompt (features `computers.screenSharePrompt`). Ignored while that prompt is off. OR'd across roles. See [Integrations.md](Integrations.md#asking-before-screen-share). |
 | `visibleSites` | array of string | no devices **while `siteScoping` is on**; ignored otherwise | Jamf site IDs, `all`, or `-1` for devices in no site — see *Site scoping* below |
 
 **`allowExport` is app-wide, not Reports-only.** It gates every path that moves data out of

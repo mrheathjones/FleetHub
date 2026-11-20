@@ -37,7 +37,19 @@ PROJECT=""
 # FleetHubSetup), so this MUST be set — auto-detection only works with one.
 # Build the admin Setup app's package with:
 #   FLEETHUB_SCHEME=FleetHubSetup ./build-pkg.sh
+# Build the Screen Share approval prompt's package (installed on the Macs
+# being supported, see docs/Integrations.md) with:
+#   FLEETHUB_SCHEME=FleetHubPrompt ./build-pkg.sh
 SCHEME="${FLEETHUB_SCHEME:-FleetHub}"
+
+# Where the package installs the app. The prompt app is not something a
+# person opens, so it stays out of /Applications; FleetHub starts it from
+# this exact path.
+if [[ "$SCHEME" == "FleetHubPrompt" ]]; then
+    INSTALL_DIR="/Library/Application Support/FleetHub"
+else
+    INSTALL_DIR="/Applications"
+fi
 
 # Output directory for the .pkg. Empty = "<project folder>/dist".
 OUTPUT=""
@@ -287,8 +299,8 @@ cat > "$SCRIPTS_DIR/preinstall" <<PREINSTALL_EOF
 # payload installs to /Applications (never a .localized shunt). Always exits 0.
 
 TARGET_VOL="\${3:-/}"
-APP="\${TARGET_VOL%/}/Applications/${APP_BASENAME}"
-LOCALIZED_DIR="\${TARGET_VOL%/}/Applications/${APP_BASENAME%.app}.localized"
+APP="\${TARGET_VOL%/}${INSTALL_DIR}/${APP_BASENAME}"
+LOCALIZED_DIR="\${TARGET_VOL%/}${INSTALL_DIR}/${APP_BASENAME%.app}.localized"
 
 if [[ -d "\${APP}" ]]
 then
@@ -331,7 +343,7 @@ pkgbuild --analyze --root "$STAGING" "$COMPONENT_PLIST" >/dev/null
 info "Building component package…"
 pkgbuild \
     --root "$STAGING" \
-    --install-location /Applications \
+    --install-location "$INSTALL_DIR" \
     --identifier "$BUNDLE_ID" \
     --version "$FULL_VERSION" \
     --scripts "$SCRIPTS_DIR" \

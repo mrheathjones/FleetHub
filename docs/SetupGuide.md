@@ -86,7 +86,8 @@ cd FleetHub
 open FleetHub.xcodeproj
 ```
 
-There are three schemes: `FleetHub`, `FleetHubMenuBar` and `FleetHubSetup`. Building `FleetHub`
+There are four schemes: `FleetHub`, `FleetHubMenuBar`, `FleetHubSetup` and `FleetHubPrompt` (the
+optional Screen Share approval prompt, for the Macs being supported). Building `FleetHub`
 also builds the menu bar companion and places it inside the app. The project carries
 no development team, so set your own team for signing, or build unsigned to try it:
 

@@ -240,6 +240,11 @@ struct AccessConfiguration: Codable {
         /// Scope IDs inspector. Fail-closed — these expose fleet composition and
         ///配置 detail that only whoever maintains the profile needs.
         var allowScorecardDiagnostics: Bool?
+        /// Exempts this role from the Screen Share approval prompt (features
+        /// `computers.screenSharePrompt`). Read only while that prompt is on.
+        /// Absent = false: the role's holders must be allowed by the person
+        /// at the Mac. OR'd across matched roles.
+        var screenShareWithoutPrompt: Bool?
 
         /// Name of the Jamf Pro API Role attached to the per-user API client
         /// of anyone holding this role. Every app function runs as that
@@ -278,12 +283,13 @@ struct AccessConfiguration: Codable {
         var effectiveAllowPrestageOnAssign: Bool { allowPrestageOnAssign ?? false }
         var effectiveAllowExport: Bool { allowExport ?? false }
         var effectiveAllowScorecardDiagnostics: Bool { allowScorecardDiagnostics ?? false }
+        var effectiveScreenShareWithoutPrompt: Bool { screenShareWithoutPrompt ?? false }
 
         enum CodingKeys: String, CodingKey {
             case name, modules, deviceTabs, computerActions, mobileDeviceActions, cleanupActions
             case allowedMdmServers, allowedPrestages, allowedSites, visibleSites
             case allowPrestageOnAssign, returnToServiceOptions, allowExport
-            case allowScorecardDiagnostics
+            case allowScorecardDiagnostics, screenShareWithoutPrompt
             case jamfApiRoleName
         }
 
@@ -302,6 +308,7 @@ struct AccessConfiguration: Codable {
             returnToServiceOptions: ReturnToServiceOptions? = nil,
             allowExport: Bool? = nil,
             allowScorecardDiagnostics: Bool? = nil,
+            screenShareWithoutPrompt: Bool? = nil,
             jamfApiRoleName: String? = nil
         ) {
             self.name = name
@@ -318,6 +325,7 @@ struct AccessConfiguration: Codable {
             self.returnToServiceOptions = returnToServiceOptions
             self.allowExport = allowExport
             self.allowScorecardDiagnostics = allowScorecardDiagnostics
+            self.screenShareWithoutPrompt = screenShareWithoutPrompt
             self.jamfApiRoleName = jamfApiRoleName
         }
 
@@ -346,6 +354,7 @@ struct AccessConfiguration: Codable {
             returnToServiceOptions = try? container.decodeIfPresent(ReturnToServiceOptions.self, forKey: .returnToServiceOptions)
             allowExport = Self.decodeBool(container, .allowExport)
             allowScorecardDiagnostics = Self.decodeBool(container, .allowScorecardDiagnostics)
+            screenShareWithoutPrompt = Self.decodeBool(container, .screenShareWithoutPrompt)
             jamfApiRoleName = try? container.decode(String.self, forKey: .jamfApiRoleName)
         }
 
