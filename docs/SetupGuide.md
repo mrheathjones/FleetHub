@@ -86,7 +86,8 @@ cd FleetHub
 open FleetHub.xcodeproj
 ```
 
-There are three schemes: `FleetHub`, `FleetHubMenuBar` and `FleetHubSetup`. The project carries
+There are three schemes: `FleetHub`, `FleetHubMenuBar` and `FleetHubSetup`. Building `FleetHub`
+also builds the menu bar companion and places it inside the app. The project carries
 no development team, so set your own team for signing, or build unsigned to try it:
 
 ```sh
@@ -276,6 +277,83 @@ that a role without a capability really cannot use it.
 
 Test destructive actions (Erase, Return to Service, Cleanup deletes) against a test device
 before you grant them to anyone.
+
+### Menu Bar Search and the Login Item Profile
+
+`FleetHub.app` carries a small companion, `FleetHubMenuBar.app`, inside itself at
+`Contents/Library/LoginItems`. It puts a device search in the menu bar and opens results in
+FleetHub. There is nothing separate to install.
+
+It is on by default. The first time a person opens FleetHub, the app registers the companion
+with macOS as a login item, so it starts then and at every login after that. It searches with
+the Jamf credential of the person who signed in to FleetHub, so it finds nothing until they
+have signed in once.
+
+| Who | How to turn it off |
+| --- | --- |
+| One person | FleetHub → Settings → Preferences → Menu Bar Search. The choice is kept. |
+| Everyone | Set `userExperience.menuBarSearch` to `false` in the Features profile. The companion is not started, a running copy is removed, and the Settings switch is hidden. |
+
+**Stop macOS asking about it.** macOS tells the user when an app adds a login item, and lets
+them switch it off in System Settings → General → Login Items. A Managed Login Items profile
+approves the companion ahead of time. Apple describes the payload as one that "auto-enables and
+auto-allows matched items".
+
+In Jamf Pro: **Computers → Configuration Profiles → New**, level **Computer Level**, payload
+**Managed Login Items**. Add one rule, and scope the profile to the same Macs as the package.
+Deliver it before or with the package, so it is in place when FleetHub first opens.
+
+| Field | Value |
+| --- | --- |
+| Rule Type | Bundle Identifier Prefix |
+| Rule Value | `com.herojoneslabs.fleethub` |
+| Comment | FleetHub menu bar search |
+
+The prefix covers both FleetHub and the companion (`com.herojoneslabs.fleethub.menubar`). If you
+changed the bundle identifiers, use your own prefix. If you would sooner approve everything your
+organization signs, use Rule Type **Team Identifier** with the ten-character team ID of the
+Developer ID you signed the package with.
+
+The same payload as a profile, for another MDM or for checking what Jamf sends (payload type
+`com.apple.servicemanagement`, macOS 13 or later, device channel only):
+
+```xml
+<dict>
+    <key>PayloadType</key>
+    <string>com.apple.servicemanagement</string>
+    <key>PayloadIdentifier</key>
+    <string>com.example.fleethub.loginitems</string>
+    <key>PayloadUUID</key>
+    <string>REPLACE-WITH-A-NEW-UUID</string>
+    <key>PayloadVersion</key>
+    <integer>1</integer>
+    <key>Rules</key>
+    <array>
+        <dict>
+            <key>RuleType</key>
+            <string>BundleIdentifierPrefix</string>
+            <key>RuleValue</key>
+            <string>com.herojoneslabs.fleethub</string>
+            <key>Comment</key>
+            <string>FleetHub menu bar search</string>
+        </dict>
+    </array>
+</dict>
+```
+
+Check it on a Mac after FleetHub has been opened once:
+
+```sh
+sudo sfltool dumpbtm | grep -B2 -A12 -i fleethub
+```
+
+The companion should be listed as enabled and managed. With the profile in place the user
+cannot switch the item off in System Settings; the FleetHub Settings switch is then the way to
+stop it.
+
+**Keychain.** The companion reads the Jamf credential FleetHub saved. Depending on how your
+build is signed, macOS may ask the user once to let FleetHub Menu Bar use that Keychain item;
+choosing Always Allow settles it. No profile can answer that prompt.
 
 ---
 

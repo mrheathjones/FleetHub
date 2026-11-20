@@ -114,6 +114,10 @@ struct FleetHubApp: App {
         } else {
             logger.info("ABM is not configured - AppleCare lookups disabled")
         }
+
+        // Menu bar search: on by default, unless the user or the
+        // organization's profile turned it off.
+        MenuBarCompanion.shared.applyPolicy()
     }
     
     var body: some Scene {

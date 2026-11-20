@@ -17,6 +17,7 @@ struct SettingsView: View {
     /// land after sign-in.
     @ObservedObject private var session = UserSession.shared
 
+    @ObservedObject private var menuBar = MenuBarCompanion.shared
     @State private var showingResetAlert = false
     @State private var biometricTestResult: String?
     @State private var biometricTestOK = false
@@ -428,7 +429,33 @@ struct SettingsView: View {
                     .labelsHidden()
                     .accessibilityLabel("Show Device Icons")
             }
+            if menuBar.isOffered {
+                settingRow("Menu Bar Search", menuBarSubtitle) {
+                    HStack(spacing: 10) {
+                        if menuBar.needsApproval {
+                            Button("Open Login Items") { menuBar.openLoginItemsSettings() }
+                                .controlSize(.small)
+                        }
+                        Toggle("", isOn: Binding(
+                            get: { menuBar.isEnabled || menuBar.needsApproval },
+                            set: { menuBar.setEnabled($0) }
+                        ))
+                        .toggleStyle(.switch)
+                        .labelsHidden()
+                        .accessibilityLabel("Menu Bar Search")
+                    }
+                }
+                .onAppear { menuBar.refresh() }
+            }
         }
+    }
+
+    private var menuBarSubtitle: String {
+        if let error = menuBar.errorMessage { return error }
+        if menuBar.needsApproval {
+            return "Waiting for your approval in System Settings, under General, Login Items."
+        }
+        return "Keep a device search in the menu bar. It starts when you log in to this Mac."
     }
 
     private var appearancePicker: some View {

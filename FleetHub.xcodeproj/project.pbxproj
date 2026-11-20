@@ -76,6 +76,8 @@
 		F902 /* DeviceHistorySectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = S902 /* DeviceHistorySectionView.swift */; };
 		F910 /* MyDevicesService.swift in Sources */ = {isa = PBXBuildFile; fileRef = S910 /* MyDevicesService.swift */; };
 		F911 /* LocalDeviceIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = S911 /* LocalDeviceIdentity.swift */; };
+		MBC_F001 /* MenuBarCompanion.swift in Sources */ = {isa = PBXBuildFile; fileRef = MBC_S001 /* MenuBarCompanion.swift */; };
+		MB_EMB_F001 /* FleetHubMenuBar.app in Embed Login Items */ = {isa = PBXBuildFile; fileRef = MB_P001 /* FleetHubMenuBar.app */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		LOG_F001 /* AppLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = LOG_S001 /* AppLog.swift */; };
 		LOG_F002 /* AppLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = LOG_S001 /* AppLog.swift */; };
 		LOG_F003 /* AppLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = LOG_S001 /* AppLog.swift */; };
@@ -216,6 +218,30 @@
 		ST_F002 /* ModelFilterMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = ST_S002 /* ModelFilterMenu.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		MB_PROXY001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = PRJ001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = MB_TGT001;
+			remoteInfo = FleetHubMenuBar;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		MB_EMB_PH001 /* Embed Login Items */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Contents/Library/LoginItems;
+			dstSubfolderSpec = 1;
+			files = (
+				MB_EMB_F001 /* FleetHubMenuBar.app in Embed Login Items */,
+			);
+			name = "Embed Login Items";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		7EB171372F7960E100105721 /* ActionLogEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionLogEntry.swift; sourceTree = "<group>"; };
 		7EB1713A2F7960FA00105721 /* ActionLogService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionLogService.swift; sourceTree = "<group>"; };
@@ -287,6 +313,7 @@
 		S902 /* DeviceHistorySectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceHistorySectionView.swift; sourceTree = "<group>"; };
 		S910 /* MyDevicesService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyDevicesService.swift; sourceTree = "<group>"; };
 		S911 /* LocalDeviceIdentity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalDeviceIdentity.swift; sourceTree = "<group>"; };
+		MBC_S001 /* MenuBarCompanion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarCompanion.swift; sourceTree = "<group>"; };
 		LOG_S001 /* AppLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLog.swift; sourceTree = "<group>"; };
 		S912 /* MyDevicesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyDevicesView.swift; sourceTree = "<group>"; };
 		S045 /* HealthFilteredDeviceListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthFilteredDeviceListView.swift; sourceTree = "<group>"; };
@@ -541,6 +568,7 @@
 				SABM6 /* ActionBranding.swift */,
 				S911 /* LocalDeviceIdentity.swift */,
 				LOG_S001 /* AppLog.swift */,
+				MBC_S001 /* MenuBarCompanion.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -846,10 +874,12 @@
 				SRC001PH /* Sources */,
 				FRMWK001 /* Frameworks */,
 				RES001 /* Resources */,
+				MB_EMB_PH001 /* Embed Login Items */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				MB_DEP001 /* PBXTargetDependency */,
 			);
 			packageProductDependencies = (
 				PKG_PD_SWIFTTERM /* SwiftTerm */,
@@ -1008,6 +1038,7 @@
 			files = (
 				CLF1 /* CleanupModels.swift in Sources */,
 				LOG_F001 /* AppLog.swift in Sources */,
+				MBC_F001 /* MenuBarCompanion.swift in Sources */,
 				CLF2 /* JamfCleanupClient.swift in Sources */,
 				CLF3 /* JamfProtectClient.swift in Sources */,
 				CLF4 /* CleanupSettings.swift in Sources */,
@@ -1174,6 +1205,14 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		MB_DEP001 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = MB_TGT001 /* FleetHubMenuBar */;
+			targetProxy = MB_PROXY001 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
 		CFG_DEBUG /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -1302,7 +1341,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 194;
+				CURRENT_PROJECT_VERSION = 195;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -1330,7 +1369,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 194;
+				CURRENT_PROJECT_VERSION = 195;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -1358,7 +1397,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 194;
+				CURRENT_PROJECT_VERSION = 195;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -1388,7 +1427,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 194;
+				CURRENT_PROJECT_VERSION = 195;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -1418,7 +1457,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 194;
+				CURRENT_PROJECT_VERSION = 195;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -1448,7 +1487,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 194;
+				CURRENT_PROJECT_VERSION = 195;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;

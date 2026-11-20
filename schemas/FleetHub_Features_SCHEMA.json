@@ -27,6 +27,12 @@
           "title": "Show Settings",
           "description": "Show the Settings area in the app.",
           "default": true
+        },
+        "menuBarSearch": {
+          "type": "boolean",
+          "title": "Menu Bar Search",
+          "description": "Offer the menu bar search companion. When on, FleetHub starts it the first time the app is opened and at every login after that, unless the user turns it off in Settings. When off, it is never started, a copy already running is removed, and the Settings switch is hidden. Pair it with a Managed Login Items profile so macOS does not ask the user about the new login item.",
+          "default": true
         }
       }
     },

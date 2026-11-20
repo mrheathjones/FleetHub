@@ -35,7 +35,7 @@ The screenshots show sample data.
 | Target | What It Is |
 | --- | --- |
 | `FleetHub` | The main app. |
-| `FleetHubMenuBar` | A menu bar companion for quick search. |
+| `FleetHubMenuBar` | A menu bar companion for quick search. It ships inside `FleetHub.app` and starts at login. |
 | `FleetHubSetup` | A guided app for the Jamf admin. It produces the configuration profiles, lists the Jamf privileges each role needs, and can upload the profiles and the credential script to Jamf Pro. |
 
 ## How It Fits Together

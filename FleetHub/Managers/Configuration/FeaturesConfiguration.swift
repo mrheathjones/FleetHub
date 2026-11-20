@@ -224,13 +224,20 @@ struct FeaturesConfiguration: Codable {
         let showAnnouncements: Bool?
         /// Show the Settings area. Default true.
         let showSettings: Bool?
+        /// Offer the menu bar search companion, which FleetHub starts at
+        /// login unless the user turns it off in Settings. Default true.
+        /// False removes it: it is not started, a copy already registered
+        /// is unregistered, and the Settings switch is hidden.
+        let menuBarSearch: Bool?
 
         var effectiveShowAnnouncements: Bool { showAnnouncements ?? true }
         var effectiveShowSettings: Bool { showSettings ?? true }
+        var effectiveMenuBarSearch: Bool { menuBarSearch ?? true }
 
         static let empty = UserExperienceSettings(
             showAnnouncements: nil,
-            showSettings: nil
+            showSettings: nil,
+            menuBarSearch: nil
         )
     }
 

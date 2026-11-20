@@ -75,8 +75,10 @@ installs. Create the notary profile once:
 
 **Jamf Pro → Settings → Packages** → upload the `.pkg`. Then a **Policy** with a **Packages**
 payload (Install) scoped to the target Smart Group, trigger Recurring Check-in / Self Service as
-appropriate. The companion **FleetHubMenuBar** is bundled in the same app build but is a separate
-target — package/scope it separately only if you ship it.
+appropriate. The menu bar companion **FleetHubMenuBar** is inside `FleetHub.app`
+(`Contents/Library/LoginItems`), so this one package installs both. FleetHub starts it at login
+by default; deploy a Managed Login Items profile with it so macOS does not ask the user. See
+[`docs/SetupGuide.md`](../docs/SetupGuide.md), section 8.
 
 ---
 

@@ -568,6 +568,8 @@
 				<true/>
 				<key>showSettings</key>
 				<true/>
+				<key>menuBarSearch</key>
+				<true/>
 			</dict>
 
 			<!-- Local admin account for the LAPS lookup in the device view. -->
